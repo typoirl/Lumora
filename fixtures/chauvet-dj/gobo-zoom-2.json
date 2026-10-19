@@ -1,0 +1,27 @@
+{
+  "name": "Gobo Zoom 2",
+  "shortName": "Gobo Zoom 2",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Other"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    }
+  ]
+}

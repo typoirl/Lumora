@@ -1,0 +1,233 @@
+{
+  "name": "COLORband T3BT ILS",
+  "shortName": "COLORband T3BT ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      3,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            36
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 1"
+        },
+        {
+          "dmxRange": [
+            37,
+            68
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 2"
+        },
+        {
+          "dmxRange": [
+            69,
+            100
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 3"
+        },
+        {
+          "dmxRange": [
+            101,
+            132
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 4"
+        },
+        {
+          "dmxRange": [
+            133,
+            164
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 5"
+        },
+        {
+          "dmxRange": [
+            165,
+            196
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 6"
+        },
+        {
+          "dmxRange": [
+            197,
+            228
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 7"
+        },
+        {
+          "dmxRange": [
+            229,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto Program 8"
+        }
+      ]
+    },
+    "Auto speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            250
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Program speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Sound-active mode"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue"
+      ]
+    },
+    {
+      "name": "5Ch",
+      "shortName": "5Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Dimmer",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "13Ch",
+      "shortName": "13Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Auto programs",
+        "Auto speed",
+        "Dimmer"
+      ]
+    }
+  ]
+}

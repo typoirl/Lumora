@@ -1,0 +1,1195 @@
+{
+  "name": "EPIX Flex Drive",
+  "shortName": "EPIX Flex Drive",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "Output 1",
+          "Output 2",
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "15",
+          "16",
+          "17",
+          "18",
+          "19",
+          "20",
+          "21",
+          "22",
+          "23",
+          "24",
+          "25",
+          "26",
+          "27",
+          "28",
+          "29",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "38",
+          "39",
+          "40",
+          "41",
+          "42",
+          "43",
+          "44",
+          "45",
+          "46",
+          "47",
+          "48",
+          "49",
+          "50",
+          "51",
+          "52",
+          "53",
+          "54",
+          "55",
+          "56",
+          "57",
+          "58",
+          "59",
+          "60",
+          "61",
+          "62",
+          "63",
+          "64",
+          "65",
+          "66",
+          "67",
+          "68",
+          "69",
+          "70",
+          "71",
+          "72",
+          "73",
+          "74",
+          "75",
+          "76",
+          "77",
+          "78",
+          "79",
+          "80",
+          "81",
+          "82",
+          "83",
+          "84",
+          "85",
+          "86",
+          "87",
+          "88",
+          "89",
+          "90",
+          "91",
+          "92",
+          "93",
+          "94",
+          "95",
+          "96",
+          "97",
+          "98",
+          "99",
+          "100",
+          "101",
+          "102",
+          "103",
+          "104",
+          "105",
+          "106",
+          "107",
+          "108",
+          "109",
+          "110",
+          "111",
+          "112",
+          "113",
+          "114",
+          "115",
+          "116",
+          "117",
+          "118",
+          "119",
+          "120",
+          "121",
+          "122",
+          "123",
+          "124",
+          "125",
+          "126",
+          "127",
+          "128",
+          "129",
+          "130",
+          "131",
+          "132",
+          "133",
+          "134",
+          "135",
+          "136",
+          "137",
+          "138",
+          "139",
+          "140",
+          "141",
+          "142",
+          "143",
+          "144",
+          "145",
+          "146",
+          "147",
+          "148",
+          "149",
+          "150",
+          "151",
+          "152",
+          "153",
+          "154",
+          "155",
+          "156",
+          "157",
+          "158",
+          "159",
+          "160",
+          "161",
+          "162",
+          "163",
+          "164",
+          "165",
+          "166",
+          "167",
+          "168",
+          "169",
+          "170"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Master dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Foreground red": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground green": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground blue": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            50
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            51,
+            90
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            91,
+            140
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Synchronized random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            141,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Background red": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background green": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background blue": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            50
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            51,
+            90
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            91,
+            140
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Synchronized random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            141,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Foreground program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            20
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 0"
+        },
+        {
+          "dmxRange": [
+            21,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            61,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            66,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Multi-color program"
+        },
+        {
+          "dmxRange": [
+            81,
+            100
+          ],
+          "type": "Effect",
+          "comment": "Color fade program 1"
+        },
+        {
+          "dmxRange": [
+            101,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Color fade program 2"
+        },
+        {
+          "dmxRange": [
+            121,
+            140
+          ],
+          "type": "Effect",
+          "comment": "Color fade program 3"
+        },
+        {
+          "dmxRange": [
+            141,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Foreground speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Foreground offset": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Short to long"
+      }
+    },
+    "Background program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            20
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 0"
+        },
+        {
+          "dmxRange": [
+            21,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            61,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            66,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Background speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Background offset": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Short to long"
+      }
+    },
+    "No function": {
+      "capability": {
+        "type": "NoFunction"
+      }
+    },
+    "Test mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            20
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            21,
+            30
+          ],
+          "type": "Maintenance",
+          "comment": "Test white"
+        },
+        {
+          "dmxRange": [
+            31,
+            40
+          ],
+          "type": "Maintenance",
+          "comment": "Test color fade"
+        },
+        {
+          "dmxRange": [
+            41,
+            50
+          ],
+          "type": "Maintenance",
+          "comment": "Test color scroll"
+        },
+        {
+          "dmxRange": [
+            51,
+            60
+          ],
+          "type": "Maintenance",
+          "comment": "Test red"
+        },
+        {
+          "dmxRange": [
+            61,
+            70
+          ],
+          "type": "Maintenance",
+          "comment": "Test green"
+        },
+        {
+          "dmxRange": [
+            71,
+            80
+          ],
+          "type": "Maintenance",
+          "comment": "Test blue"
+        },
+        {
+          "dmxRange": [
+            81,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Master dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Foreground red $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground green $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground blue $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground strobe $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            50
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            51,
+            90
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            91,
+            140
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Synchronized random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            141,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Background red $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background green $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background blue $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background strobe $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            50
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            51,
+            90
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            91,
+            140
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Synchronized random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            141,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Foreground program $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            20
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 0"
+        },
+        {
+          "dmxRange": [
+            21,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            61,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            66,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Multi-color program"
+        },
+        {
+          "dmxRange": [
+            81,
+            100
+          ],
+          "type": "Effect",
+          "comment": "Color fade program 1"
+        },
+        {
+          "dmxRange": [
+            101,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Color fade program 2"
+        },
+        {
+          "dmxRange": [
+            121,
+            140
+          ],
+          "type": "Effect",
+          "comment": "Color fade program 3"
+        },
+        {
+          "dmxRange": [
+            141,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Foreground speed $pixelKey": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Foreground offset $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Short to long"
+      }
+    },
+    "Background program $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            20
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 0"
+        },
+        {
+          "dmxRange": [
+            21,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            61,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            66,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Background speed $pixelKey": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Background offset $pixelKey": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Short to long"
+      }
+    },
+    "No function $pixelKey": {
+      "capability": {
+        "type": "NoFunction"
+      }
+    },
+    "Test mode $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            20
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            21,
+            30
+          ],
+          "type": "Maintenance",
+          "comment": "Test white"
+        },
+        {
+          "dmxRange": [
+            31,
+            40
+          ],
+          "type": "Maintenance",
+          "comment": "Test color fade"
+        },
+        {
+          "dmxRange": [
+            41,
+            50
+          ],
+          "type": "Maintenance",
+          "comment": "Test color scroll"
+        },
+        {
+          "dmxRange": [
+            51,
+            60
+          ],
+          "type": "Maintenance",
+          "comment": "Test red"
+        },
+        {
+          "dmxRange": [
+            61,
+            70
+          ],
+          "type": "Maintenance",
+          "comment": "Test green"
+        },
+        {
+          "dmxRange": [
+            71,
+            80
+          ],
+          "type": "Maintenance",
+          "comment": "Test blue"
+        },
+        {
+          "dmxRange": [
+            81,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "17 Channel",
+      "shortName": "17Channel",
+      "channels": [
+        "Master dimmer",
+        "Foreground red",
+        "Foreground green",
+        "Foreground blue",
+        "Foreground strobe",
+        "Background red",
+        "Background green",
+        "Background blue",
+        "Background strobe",
+        "Foreground program",
+        "Foreground speed",
+        "Foreground offset",
+        "Background program",
+        "Background speed",
+        "Background offset",
+        "No function",
+        "Test mode"
+      ]
+    },
+    {
+      "name": "34 Channel",
+      "shortName": "34Channel",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Output 1",
+            "Output 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Master dimmer $pixelKey",
+            "Foreground red $pixelKey",
+            "Foreground green $pixelKey",
+            "Foreground blue $pixelKey",
+            "Foreground strobe $pixelKey",
+            "Background red $pixelKey",
+            "Background green $pixelKey",
+            "Background blue $pixelKey",
+            "Background strobe $pixelKey",
+            "Foreground program $pixelKey",
+            "Foreground speed $pixelKey",
+            "Foreground offset $pixelKey",
+            "Background program $pixelKey",
+            "Background speed $pixelKey",
+            "Background offset $pixelKey",
+            "No function $pixelKey",
+            "Test mode $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Pixel (170 px per universe)",
+      "shortName": "Pixel(170pxperuniverse)",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100",
+            "101",
+            "102",
+            "103",
+            "104",
+            "105",
+            "106",
+            "107",
+            "108",
+            "109",
+            "110",
+            "111",
+            "112",
+            "113",
+            "114",
+            "115",
+            "116",
+            "117",
+            "118",
+            "119",
+            "120",
+            "121",
+            "122",
+            "123",
+            "124",
+            "125",
+            "126",
+            "127",
+            "128",
+            "129",
+            "130",
+            "131",
+            "132",
+            "133",
+            "134",
+            "135",
+            "136",
+            "137",
+            "138",
+            "139",
+            "140",
+            "141",
+            "142",
+            "143",
+            "144",
+            "145",
+            "146",
+            "147",
+            "148",
+            "149",
+            "150",
+            "151",
+            "152",
+            "153",
+            "154",
+            "155",
+            "156",
+            "157",
+            "158",
+            "159",
+            "160",
+            "161",
+            "162",
+            "163",
+            "164",
+            "165",
+            "166",
+            "167",
+            "168",
+            "169",
+            "170"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

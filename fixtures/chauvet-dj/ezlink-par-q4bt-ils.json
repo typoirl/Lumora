@@ -1,0 +1,167 @@
+{
+  "name": "EZLink Par Q4BT ILS",
+  "shortName": "EZLink Par Q4BT ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            55
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            56,
+            106
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            107,
+            157
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            158,
+            208
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            209,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        }
+      ]
+    },
+    "Auto speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            250
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Program speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Sound-active mode"
+        }
+      ]
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber"
+      ]
+    },
+    {
+      "name": "8Ch",
+      "shortName": "8Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "Strobe",
+        "Auto programs",
+        "Auto speed",
+        "Dimmer"
+      ]
+    }
+  ]
+}

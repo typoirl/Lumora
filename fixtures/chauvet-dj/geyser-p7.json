@@ -1,0 +1,184 @@
+{
+  "name": "Geyser P7",
+  "shortName": "Geyser P7",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Smoke",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      2,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Fog": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Fog output"
+        }
+      ]
+    },
+    "Color Macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macros"
+        }
+      ]
+    },
+    "Color Macro Speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macro speed, slow to fast"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            14
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            15,
+            255
+          ],
+          "type": "Intensity",
+          "comment": "0–100%"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "Ultraviolet $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "15Ch",
+      "shortName": "15Ch",
+      "channels": [
+        "Fog",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey",
+            "Ultraviolet $pixelKey"
+          ]
+        },
+        "Color Macro",
+        "Color Macro Speed",
+        "Strobe",
+        "Dimmer"
+      ]
+    }
+  ]
+}

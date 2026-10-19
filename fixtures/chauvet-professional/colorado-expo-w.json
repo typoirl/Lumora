@@ -1,0 +1,127 @@
+{
+  "name": "COLORado Expo W",
+  "shortName": "COLORado Expo W",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Other"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Preset dimmer speed from display menu"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slowest)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Strobe",
+        "Dimmer mode"
+      ]
+    },
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "2Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine"
+      ]
+    },
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    }
+  ]
+}

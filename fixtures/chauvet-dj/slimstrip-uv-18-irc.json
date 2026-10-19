@@ -1,0 +1,74 @@
+{
+  "name": "SlimSTRIP UV-18 IRC",
+  "shortName": "SlimSTRIP UV-18 IRC",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            1
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            2,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Sound-Active": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-Active"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "3-CH",
+      "shortName": "3-CH",
+      "channels": [
+        "Strobe",
+        "Dimmer",
+        "Sound-Active"
+      ]
+    }
+  ]
+}

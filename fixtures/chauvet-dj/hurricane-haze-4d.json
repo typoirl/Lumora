@@ -1,0 +1,35 @@
+{
+  "name": "Hurricane Haze 4D",
+  "shortName": "Hurricane Haze 4D",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Hazer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fan speed": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Low to high"
+      }
+    },
+    "Haze output": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Low to high"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "2Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Fan speed",
+        "Haze output"
+      ]
+    }
+  ]
+}

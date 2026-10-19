@@ -1,0 +1,272 @@
+{
+  "name": "Mini Kinta",
+  "shortName": "Mini Kinta",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Kinta color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            20
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            21,
+            35
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            36,
+            50
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            51,
+            65
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            66,
+            80
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red/Green"
+        },
+        {
+          "dmxRange": [
+            81,
+            95
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red/Blue"
+        },
+        {
+          "dmxRange": [
+            96,
+            110
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffffff"
+          ],
+          "comment": "Red/White"
+        },
+        {
+          "dmxRange": [
+            111,
+            125
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green/Blue"
+        },
+        {
+          "dmxRange": [
+            126,
+            140
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#ffffff"
+          ],
+          "comment": "Green/White"
+        },
+        {
+          "dmxRange": [
+            141,
+            155
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff",
+            "#ffffff"
+          ],
+          "comment": "Blue/White"
+        },
+        {
+          "dmxRange": [
+            156,
+            170
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red/Green/Blue"
+        },
+        {
+          "dmxRange": [
+            171,
+            185
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#ffffff"
+          ],
+          "comment": "Red/Green/White"
+        },
+        {
+          "dmxRange": [
+            186,
+            200
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff",
+            "#ffffff"
+          ],
+          "comment": "Green/Blue/White"
+        },
+        {
+          "dmxRange": [
+            201,
+            215
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red/Green/Blue/White"
+        },
+        {
+          "dmxRange": [
+            216,
+            230
+          ],
+          "type": "ColorPreset",
+          "comment": "Automatic (4-color chase)"
+        },
+        {
+          "dmxRange": [
+            231,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Automatic (7-color chase)"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No strobe"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Motor Rotation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Motor indexing"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Motor speed (bi-directional)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "3-CH",
+      "shortName": "3-CH",
+      "channels": [
+        "Kinta color",
+        "Strobe",
+        "Motor Rotation"
+      ]
+    }
+  ]
+}

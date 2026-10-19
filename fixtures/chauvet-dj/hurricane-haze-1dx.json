@@ -1,0 +1,41 @@
+{
+  "name": "Hurricane Haze 1DX",
+  "shortName": "Hurricane Haze 1DX",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Hazer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Haze Volume": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Haze volume, low to high"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Haze Volume"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,278 @@
+{
+  "name": "Ovation F-265WW",
+  "shortName": "Ovation F-265WW",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Zoom",
+        "comment": "Narrow to wide"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            10,
+            99
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            110,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning effect, slow to fast"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Motor reset": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            200
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            201,
+            220
+          ],
+          "type": "Effect",
+          "comment": "Motor reset"
+        },
+        {
+          "dmxRange": [
+            221,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer reset"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer S-curve"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer linear"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer square"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer inverse square"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed off"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 1"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 2"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 3"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Fan auto"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Fan on"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Fan off"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Fan silent"
+        },
+        {
+          "dmxRange": [
+            112,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch: 8bit Dim",
+      "shortName": "1Ch:8bitDim",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "2Ch: 16bit Dim",
+      "shortName": "2Ch:16bitDim",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine"
+      ]
+    },
+    {
+      "name": "2Ch: 8bit Dim+Zoom",
+      "shortName": "2Ch:8bitDim+Zoom",
+      "channels": [
+        "Dimmer",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "6Ch: 16bit-Full",
+      "shortName": "6Ch:16bit-Full",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Zoom",
+        "Strobe",
+        "Motor reset",
+        "Control"
+      ]
+    }
+  ]
+}

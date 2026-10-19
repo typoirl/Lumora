@@ -1,0 +1,236 @@
+{
+  "name": "STRIKE P38",
+  "shortName": "STRIKE P38",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Red shift": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Red shift off"
+        }
+      ]
+    },
+    "Dimmer speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Current dimmer speed mode"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed off (linear)"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 2"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 3 (slowest)"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Auto 1"
+        },
+        {
+          "dmxRange": [
+            81,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Auto 2"
+        },
+        {
+          "dmxRange": [
+            161,
+            240
+          ],
+          "type": "Effect",
+          "comment": "Auto 3"
+        },
+        {
+          "dmxRange": [
+            241,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine"
+      ]
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      },
+      "fineChannelAliases": [
+        "Amber fine"
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1 Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "3 Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Red shift",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "4 Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red shift",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "5 Ch",
+      "shortName": "5Ch",
+      "channels": [
+        "Dimmer",
+        "Red shift",
+        "Strobe",
+        "Auto program",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "6 Ch",
+      "shortName": "6Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red shift",
+        "Strobe",
+        "Auto program",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "7 Ch",
+      "shortName": "7Ch",
+      "channels": [
+        "White",
+        "White fine",
+        "Amber",
+        "Amber fine",
+        "Strobe",
+        "Auto program",
+        "Dimmer speed"
+      ]
+    }
+  ]
+}

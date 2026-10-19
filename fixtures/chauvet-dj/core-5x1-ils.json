@@ -1,0 +1,309 @@
+{
+  "name": "Core 5X1 ILS",
+  "shortName": "Core 5X1 ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      5,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Color Temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "2700K–8000K"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto Programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            37
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            38,
+            64
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            65,
+            91
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            92,
+            118
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            119,
+            145
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            146,
+            172
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            173,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            200,
+            226
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            227,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        }
+      ]
+    },
+    "Auto Speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Auto program speed, slow to fast"
+      }
+    },
+    "Dimmer Speed Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed set from display"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode fast (dIM1)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode medium (dIM2)"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode slow (dIM3)"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "4CH",
+      "shortName": "4CH",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "10CH",
+      "shortName": "10CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Color Temperature",
+        "Strobe",
+        "Auto Programs",
+        "Auto Speed",
+        "Dimmer Speed Mode"
+      ]
+    },
+    {
+      "name": "22CH",
+      "shortName": "22CH",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        },
+        "Strobe"
+      ]
+    }
+  ]
+}

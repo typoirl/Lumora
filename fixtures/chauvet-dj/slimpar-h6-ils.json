@@ -1,0 +1,256 @@
+{
+  "name": "SlimPAR H6 ILS",
+  "shortName": "SlimPAR H6 ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Ultraviolet": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Color macros": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macros"
+        }
+      ]
+    },
+    "Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            50
+          ],
+          "type": "Effect",
+          "comment": "Automatic 6-color snap"
+        },
+        {
+          "dmxRange": [
+            51,
+            100
+          ],
+          "type": "Effect",
+          "comment": "Automatic 6-color fade"
+        },
+        {
+          "dmxRange": [
+            101,
+            150
+          ],
+          "type": "Effect",
+          "comment": "Automatic 34-color snap"
+        },
+        {
+          "dmxRange": [
+            151,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Automatic 34-color fade"
+        },
+        {
+          "dmxRange": [
+            201,
+            225
+          ],
+          "type": "Effect",
+          "comment": "Sound-active 6-color snap"
+        },
+        {
+          "dmxRange": [
+            226,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active 34-color snap"
+        }
+      ]
+    },
+    "Program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Program speed, slow to fast"
+      }
+    },
+    "Dimmer speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed set from display menu"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2 (medium)"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3 (slow)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "6-Ch",
+      "shortName": "6-Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Ultraviolet"
+      ]
+    },
+    {
+      "name": "8-Ch",
+      "shortName": "8-Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Ultraviolet",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "12-Ch",
+      "shortName": "12-Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Ultraviolet",
+        "Strobe",
+        "Color macros",
+        "Program",
+        "Program speed",
+        "Dimmer speed"
+      ]
+    }
+  ]
+}

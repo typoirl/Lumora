@@ -1,0 +1,23 @@
+{
+  "name": "RGBW LED Par",
+  "shortName": "RGBW Par",
+  "manufacturer": "Generic",
+  "categories": ["Color Changer"],
+  "availableChannels": {
+    "Dimmer": { "capability": { "type": "Intensity" } },
+    "Red": { "capability": { "type": "ColorIntensity", "color": "Red" } },
+    "Green": { "capability": { "type": "ColorIntensity", "color": "Green" } },
+    "Blue": { "capability": { "type": "ColorIntensity", "color": "Blue" } },
+    "White": { "capability": { "type": "ColorIntensity", "color": "White" } },
+    "Strobe": {
+      "capabilities": [
+        { "dmxRange": [0, 9], "type": "ShutterStrobe", "shutterEffect": "Open" },
+        { "dmxRange": [10, 255], "type": "ShutterStrobe", "shutterEffect": "Strobe", "speedStart": "slow", "speedEnd": "fast" }
+      ]
+    }
+  },
+  "modes": [
+    { "name": "6-channel", "shortName": "6ch", "channels": ["Dimmer", "Red", "Green", "Blue", "White", "Strobe"] },
+    { "name": "4-channel", "shortName": "4ch", "channels": ["Red", "Green", "Blue", "White"] }
+  ]
+}

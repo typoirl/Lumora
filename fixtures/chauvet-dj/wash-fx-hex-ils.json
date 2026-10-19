@@ -1,0 +1,365 @@
+{
+  "name": "Wash FX Hex ILS",
+  "shortName": "Wash FX Hex ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      6,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            20
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            21,
+            35
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            36,
+            50
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            51,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            66,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            81,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            96,
+            110
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            111,
+            125
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            126,
+            140
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            141,
+            155
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            156,
+            170
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            171,
+            185
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            186,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            201,
+            215
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            216,
+            230
+          ],
+          "type": "Effect",
+          "comment": "Auto program 15"
+        },
+        {
+          "dmxRange": [
+            231,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 16"
+        }
+      ]
+    },
+    "Auto program speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            250
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Sound-active"
+        }
+      ]
+    },
+    "Program dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "UV": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Strobe": {
+      "capability": {
+        "type": "ShutterStrobe",
+        "shutterEffect": "Strobe",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Strobe, slow to fast"
+      }
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macro"
+        }
+      ]
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "UV $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Auto programs",
+        "Auto program speed",
+        "Program dimmer"
+      ]
+    },
+    {
+      "name": "6Ch",
+      "shortName": "6Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV"
+      ]
+    },
+    {
+      "name": "11Ch",
+      "shortName": "11Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV",
+        "Strobe",
+        "Auto programs",
+        "Color macro",
+        "Auto program speed",
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "40Ch",
+      "shortName": "40Ch",
+      "channels": [
+        "Auto programs",
+        "Auto program speed",
+        "Dimmer",
+        "Strobe",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey",
+            "White $pixelKey",
+            "UV $pixelKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

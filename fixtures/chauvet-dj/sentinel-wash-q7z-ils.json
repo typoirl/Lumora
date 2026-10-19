@@ -1,0 +1,352 @@
+{
+  "name": "Sentinel Wash Q7Z ILS",
+  "shortName": "Sentinel Wash Q7Z ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Moving Head",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Pan": {
+      "capability": {
+        "type": "Pan",
+        "angleStart": "0deg",
+        "angleEnd": "540deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Pan fine"
+      ]
+    },
+    "Tilt": {
+      "capability": {
+        "type": "Tilt",
+        "angleStart": "0deg",
+        "angleEnd": "225deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Tilt fine"
+      ]
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Zoom",
+        "comment": "Wide to narrow"
+      }
+    },
+    "Pan/Tilt speed": {
+      "capability": {
+        "type": "PanTiltSpeed",
+        "speedStart": "fast",
+        "speedEnd": "slow"
+      }
+    },
+    "Function": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Black out on pan/tilt movement"
+        },
+        {
+          "dmxRange": [
+            16,
+            95
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Pan reset"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Tilt reset"
+        },
+        {
+          "dmxRange": [
+            112,
+            143
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            144,
+            151
+          ],
+          "type": "Maintenance",
+          "comment": "Zoom reset"
+        },
+        {
+          "dmxRange": [
+            152,
+            159
+          ],
+          "type": "Maintenance",
+          "comment": "All reset"
+        },
+        {
+          "dmxRange": [
+            160,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Movement macros": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            23
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 1"
+        },
+        {
+          "dmxRange": [
+            24,
+            39
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 2"
+        },
+        {
+          "dmxRange": [
+            40,
+            55
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 3"
+        },
+        {
+          "dmxRange": [
+            56,
+            71
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 4"
+        },
+        {
+          "dmxRange": [
+            72,
+            87
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 5"
+        },
+        {
+          "dmxRange": [
+            88,
+            103
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 6"
+        },
+        {
+          "dmxRange": [
+            104,
+            119
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 7"
+        },
+        {
+          "dmxRange": [
+            120,
+            135
+          ],
+          "type": "Effect",
+          "comment": "Movement macro 8"
+        },
+        {
+          "dmxRange": [
+            136,
+            151
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 1"
+        },
+        {
+          "dmxRange": [
+            152,
+            167
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 2"
+        },
+        {
+          "dmxRange": [
+            168,
+            183
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 3"
+        },
+        {
+          "dmxRange": [
+            184,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 4"
+        },
+        {
+          "dmxRange": [
+            200,
+            215
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 5"
+        },
+        {
+          "dmxRange": [
+            216,
+            231
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 6"
+        },
+        {
+          "dmxRange": [
+            232,
+            247
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 7"
+        },
+        {
+          "dmxRange": [
+            248,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active movement macro 8"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "9CH",
+      "shortName": "9CH",
+      "channels": [
+        "Pan",
+        "Tilt",
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "14CH",
+      "shortName": "14CH",
+      "channels": [
+        "Pan",
+        "Pan fine",
+        "Tilt",
+        "Tilt fine",
+        "Pan/Tilt speed",
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe",
+        "Zoom",
+        "Function",
+        "Movement macros"
+      ]
+    }
+  ]
+}

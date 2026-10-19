@@ -1,0 +1,538 @@
+{
+  "name": "COLORdash Accent 5X IP",
+  "shortName": "COLORdash Accent 5X IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "UV": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            30
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 1"
+        },
+        {
+          "dmxRange": [
+            31,
+            50
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 2"
+        },
+        {
+          "dmxRange": [
+            51,
+            70
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 3"
+        },
+        {
+          "dmxRange": [
+            71,
+            90
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 4"
+        },
+        {
+          "dmxRange": [
+            91,
+            110
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 5"
+        },
+        {
+          "dmxRange": [
+            111,
+            130
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 6"
+        },
+        {
+          "dmxRange": [
+            131,
+            150
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 7"
+        },
+        {
+          "dmxRange": [
+            151,
+            170
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 8"
+        },
+        {
+          "dmxRange": [
+            171,
+            200
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 9"
+        },
+        {
+          "dmxRange": [
+            201,
+            205
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 10"
+        },
+        {
+          "dmxRange": [
+            206,
+            210
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 11"
+        },
+        {
+          "dmxRange": [
+            211,
+            215
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 12"
+        },
+        {
+          "dmxRange": [
+            216,
+            220
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 13"
+        },
+        {
+          "dmxRange": [
+            221,
+            225
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 14"
+        },
+        {
+          "dmxRange": [
+            226,
+            230
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 15"
+        },
+        {
+          "dmxRange": [
+            231,
+            235
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 16"
+        },
+        {
+          "dmxRange": [
+            236,
+            240
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 17"
+        },
+        {
+          "dmxRange": [
+            241,
+            245
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 18"
+        },
+        {
+          "dmxRange": [
+            246,
+            250
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 19"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 20"
+        }
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            209
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800-5700K"
+        },
+        {
+          "dmxRange": [
+            210,
+            215
+          ],
+          "type": "ColorTemperature",
+          "comment": "5701-5999K"
+        },
+        {
+          "dmxRange": [
+            216,
+            216
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            217,
+            222
+          ],
+          "type": "ColorTemperature",
+          "comment": "6001-6499K"
+        },
+        {
+          "dmxRange": [
+            223,
+            223
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            224,
+            229
+          ],
+          "type": "ColorTemperature",
+          "comment": "6501-6999K"
+        },
+        {
+          "dmxRange": [
+            230,
+            230
+          ],
+          "type": "ColorTemperature",
+          "comment": "7000K"
+        },
+        {
+          "dmxRange": [
+            231,
+            236
+          ],
+          "type": "ColorTemperature",
+          "comment": "7001-7499K"
+        },
+        {
+          "dmxRange": [
+            237,
+            237
+          ],
+          "type": "ColorTemperature",
+          "comment": "7500K"
+        },
+        {
+          "dmxRange": [
+            238,
+            243
+          ],
+          "type": "ColorTemperature",
+          "comment": "7501-7999K"
+        },
+        {
+          "dmxRange": [
+            244,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "8000K"
+        }
+      ]
+    },
+    "Automatic program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            61,
+            110
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            111,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            161,
+            210
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 4"
+        },
+        {
+          "dmxRange": [
+            211,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 5"
+        }
+      ]
+    },
+    "Automatic speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Program speed, slow to fast"
+      }
+    },
+    "Dimmer speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Preset dimmer speed from display menu"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 2 (medium)"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 3 (slow)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "6CH",
+      "shortName": "6CH",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV"
+      ]
+    },
+    {
+      "name": "8CH",
+      "shortName": "8CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "9CH",
+      "shortName": "9CH",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "13CH",
+      "shortName": "13CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV",
+        "Strobe",
+        "Color macro",
+        "Color temperature",
+        "Automatic program",
+        "Automatic speed",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "14CH",
+      "shortName": "14CH",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "UV",
+        "Strobe",
+        "Color macro",
+        "Color temperature",
+        "Automatic program",
+        "Automatic speed",
+        "Dimmer speed"
+      ]
+    }
+  ]
+}

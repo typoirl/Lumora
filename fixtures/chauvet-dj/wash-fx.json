@@ -1,0 +1,298 @@
+{
+  "name": "Wash FX",
+  "shortName": "Wash FX",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      6,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Strobe": {
+      "capability": {
+        "type": "ShutterStrobe",
+        "shutterEffect": "Strobe",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Strobe 0-20 Hz, slow to fast"
+      }
+    },
+    "Auto Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            20
+          ],
+          "type": "Effect",
+          "comment": "Pattern 1"
+        },
+        {
+          "dmxRange": [
+            21,
+            35
+          ],
+          "type": "Effect",
+          "comment": "Pattern 2"
+        },
+        {
+          "dmxRange": [
+            36,
+            50
+          ],
+          "type": "Effect",
+          "comment": "Pattern 3"
+        },
+        {
+          "dmxRange": [
+            51,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Pattern 4"
+        },
+        {
+          "dmxRange": [
+            66,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Pattern 5"
+        },
+        {
+          "dmxRange": [
+            81,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Pattern 6"
+        },
+        {
+          "dmxRange": [
+            96,
+            110
+          ],
+          "type": "Effect",
+          "comment": "Pattern 7"
+        },
+        {
+          "dmxRange": [
+            111,
+            125
+          ],
+          "type": "Effect",
+          "comment": "Pattern 8"
+        },
+        {
+          "dmxRange": [
+            126,
+            140
+          ],
+          "type": "Effect",
+          "comment": "Pattern 9"
+        },
+        {
+          "dmxRange": [
+            141,
+            155
+          ],
+          "type": "Effect",
+          "comment": "Pattern 10"
+        },
+        {
+          "dmxRange": [
+            156,
+            170
+          ],
+          "type": "Effect",
+          "comment": "Pattern 11"
+        },
+        {
+          "dmxRange": [
+            171,
+            185
+          ],
+          "type": "Effect",
+          "comment": "Pattern 12"
+        },
+        {
+          "dmxRange": [
+            186,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Pattern 13"
+        },
+        {
+          "dmxRange": [
+            201,
+            215
+          ],
+          "type": "Effect",
+          "comment": "Pattern 14"
+        },
+        {
+          "dmxRange": [
+            216,
+            230
+          ],
+          "type": "Effect",
+          "comment": "Pattern 15"
+        },
+        {
+          "dmxRange": [
+            231,
+            245
+          ],
+          "type": "Effect",
+          "comment": "Pattern 16"
+        },
+        {
+          "dmxRange": [
+            246,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-Active"
+        }
+      ]
+    },
+    "Auto Program Speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Auto or Sound Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Auto"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-Active"
+        }
+      ]
+    },
+    "Master Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "7CH",
+      "shortName": "7CH",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Strobe",
+        "Auto Program",
+        "Auto Program Speed",
+        "Auto or Sound Program"
+      ]
+    },
+    {
+      "name": "23CH",
+      "shortName": "23CH",
+      "channels": [
+        "Master Dimmer",
+        "Auto Program",
+        "Auto Program Speed",
+        "Strobe",
+        "Auto or Sound Program",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

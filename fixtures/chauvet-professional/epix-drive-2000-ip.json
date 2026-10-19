@@ -1,0 +1,709 @@
+{
+  "name": "EPIX Drive 2000 IP",
+  "shortName": "EPIX Drive 2000 IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      100,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Auto program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            24
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            25,
+            38
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            39,
+            51
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            52,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            66,
+            78
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            79,
+            91
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            92,
+            105
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            106,
+            119
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            120,
+            133
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            134,
+            146
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            147,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            161,
+            173
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            174,
+            187
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            188,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            201,
+            214
+          ],
+          "type": "Effect",
+          "comment": "Auto program 15"
+        },
+        {
+          "dmxRange": [
+            215,
+            227
+          ],
+          "type": "Effect",
+          "comment": "Auto program 16"
+        },
+        {
+          "dmxRange": [
+            228,
+            241
+          ],
+          "type": "Effect",
+          "comment": "Auto program 17"
+        },
+        {
+          "dmxRange": [
+            242,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Cycle auto programs 1-17"
+        }
+      ]
+    },
+    "Speed": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Slow to fast"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer speed mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Fast dimmer"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Medium dimmer"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Slow dimmer"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "Pixel",
+      "shortName": "Pixel",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "301-CH",
+      "shortName": "301-CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15",
+            "16",
+            "17",
+            "18",
+            "19",
+            "20",
+            "21",
+            "22",
+            "23",
+            "24",
+            "25",
+            "26",
+            "27",
+            "28",
+            "29",
+            "30",
+            "31",
+            "32",
+            "33",
+            "34",
+            "35",
+            "36",
+            "37",
+            "38",
+            "39",
+            "40",
+            "41",
+            "42",
+            "43",
+            "44",
+            "45",
+            "46",
+            "47",
+            "48",
+            "49",
+            "50",
+            "51",
+            "52",
+            "53",
+            "54",
+            "55",
+            "56",
+            "57",
+            "58",
+            "59",
+            "60",
+            "61",
+            "62",
+            "63",
+            "64",
+            "65",
+            "66",
+            "67",
+            "68",
+            "69",
+            "70",
+            "71",
+            "72",
+            "73",
+            "74",
+            "75",
+            "76",
+            "77",
+            "78",
+            "79",
+            "80",
+            "81",
+            "82",
+            "83",
+            "84",
+            "85",
+            "86",
+            "87",
+            "88",
+            "89",
+            "90",
+            "91",
+            "92",
+            "93",
+            "94",
+            "95",
+            "96",
+            "97",
+            "98",
+            "99",
+            "100"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        },
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "7-CH-Drive",
+      "shortName": "7-CH-Drive",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Auto program",
+        "Speed",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "8-CH-fixture",
+      "shortName": "8-CH-fixture",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Auto program",
+        "Speed",
+        "Strobe",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "50-Section",
+      "shortName": "50-Section",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3",
+            "5",
+            "7",
+            "9",
+            "11",
+            "13",
+            "15",
+            "17",
+            "19",
+            "21",
+            "23",
+            "25",
+            "27",
+            "29",
+            "31",
+            "33",
+            "35",
+            "37",
+            "39",
+            "41",
+            "43",
+            "45",
+            "47",
+            "49",
+            "51",
+            "53",
+            "55",
+            "57",
+            "59",
+            "61",
+            "63",
+            "65",
+            "67",
+            "69",
+            "71",
+            "73",
+            "75",
+            "77",
+            "79",
+            "81",
+            "83",
+            "85",
+            "87",
+            "89",
+            "91",
+            "93",
+            "95",
+            "97",
+            "99"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "25-Section",
+      "shortName": "25-Section",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "5",
+            "9",
+            "13",
+            "17",
+            "21",
+            "25",
+            "29",
+            "33",
+            "37",
+            "41",
+            "45",
+            "49",
+            "53",
+            "57",
+            "61",
+            "65",
+            "69",
+            "73",
+            "77",
+            "81",
+            "85",
+            "89",
+            "93",
+            "97"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10-Section",
+      "shortName": "10-Section",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "11",
+            "21",
+            "31",
+            "41",
+            "51",
+            "61",
+            "71",
+            "81",
+            "91"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5-Section",
+      "shortName": "5-Section",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "21",
+            "41",
+            "61",
+            "81"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

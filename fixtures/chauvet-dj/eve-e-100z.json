@@ -1,0 +1,106 @@
+{
+  "name": "EVE E-100Z",
+  "shortName": "EVE E-100Z",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Other"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe (slow to fast)"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer Speed Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed set from display"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode Off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 - fast"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2 - medium"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3 - slow"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1-CH",
+      "shortName": "1-CH",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "3-CH",
+      "shortName": "3-CH",
+      "channels": [
+        "Dimmer",
+        "Strobe",
+        "Dimmer Speed Mode"
+      ]
+    }
+  ]
+}

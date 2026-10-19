@@ -1,0 +1,41 @@
+{
+  "name": "Hurricane 1600",
+  "shortName": "Hurricane 1600",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Smoke"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fog output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "Generic",
+          "comment": "0-100%"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Fog output"
+      ]
+    }
+  ]
+}

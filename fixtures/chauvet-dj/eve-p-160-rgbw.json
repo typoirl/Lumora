@@ -1,0 +1,353 @@
+{
+  "name": "EVE P-160 RGBW",
+  "shortName": "EVE P-160 RGBW",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Color Macros": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macros"
+        }
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            25
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800K"
+        },
+        {
+          "dmxRange": [
+            26,
+            50
+          ],
+          "type": "ColorTemperature",
+          "comment": "3000K"
+        },
+        {
+          "dmxRange": [
+            51,
+            75
+          ],
+          "type": "ColorTemperature",
+          "comment": "3200K"
+        },
+        {
+          "dmxRange": [
+            76,
+            100
+          ],
+          "type": "ColorTemperature",
+          "comment": "3500K"
+        },
+        {
+          "dmxRange": [
+            101,
+            125
+          ],
+          "type": "ColorTemperature",
+          "comment": "4000K"
+        },
+        {
+          "dmxRange": [
+            126,
+            150
+          ],
+          "type": "ColorTemperature",
+          "comment": "4500K"
+        },
+        {
+          "dmxRange": [
+            151,
+            175
+          ],
+          "type": "ColorTemperature",
+          "comment": "5000K"
+        },
+        {
+          "dmxRange": [
+            176,
+            200
+          ],
+          "type": "ColorTemperature",
+          "comment": "5600K"
+        },
+        {
+          "dmxRange": [
+            201,
+            225
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            226,
+            250
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Auto Programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            31
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            32,
+            63
+          ],
+          "type": "Effect",
+          "comment": "Pulse 0–100%"
+        },
+        {
+          "dmxRange": [
+            64,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Pulse 100–0%"
+        },
+        {
+          "dmxRange": [
+            96,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Pulse 100–0–100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Color fade program"
+        },
+        {
+          "dmxRange": [
+            160,
+            191
+          ],
+          "type": "Effect",
+          "comment": "7-color snap program"
+        },
+        {
+          "dmxRange": [
+            192,
+            223
+          ],
+          "type": "Effect",
+          "comment": "18-color snap program"
+        },
+        {
+          "dmxRange": [
+            224,
+            249
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program 1"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program 2"
+        }
+      ]
+    },
+    "Program Speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Program speed, slow to fast"
+      }
+    },
+    "Dimmer Speed Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed set from display"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2 (medium)"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3 (slow)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "4-CH",
+      "shortName": "4-CH",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "6-CH",
+      "shortName": "6-CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "11CH",
+      "shortName": "11CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Color Macros",
+        "Color temperature",
+        "Strobe",
+        "Auto Programs",
+        "Program Speed",
+        "Dimmer Speed Mode"
+      ]
+    }
+  ]
+}

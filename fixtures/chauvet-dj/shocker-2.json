@@ -1,0 +1,489 @@
+{
+  "name": "Shocker 2",
+  "shortName": "Shocker 2",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      2,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto Programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            81,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            121,
+            170
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            171,
+            220
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            221,
+            249
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound show"
+        }
+      ]
+    },
+    "Auto Speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Speed, slow to fast"
+      }
+    },
+    "Dimmer Speed Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Preset dimmer speed"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1, fastest"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2, middle"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3, slow"
+        }
+      ]
+    },
+    "Strobe 2": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            132
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            133,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe macros"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto Programs 8ch": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            27
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            28,
+            44
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            45,
+            61
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            62,
+            78
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            79,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            96,
+            112
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            113,
+            129
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            130,
+            146
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            147,
+            163
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            164,
+            180
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            181,
+            197
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            198,
+            214
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            215,
+            231
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            232,
+            249
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound show"
+        }
+      ]
+    },
+    "Master/Slave Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            6
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            7,
+            50
+          ],
+          "type": "Maintenance",
+          "comment": "Master"
+        },
+        {
+          "dmxRange": [
+            51,
+            100
+          ],
+          "type": "Maintenance",
+          "comment": "Slave 1"
+        },
+        {
+          "dmxRange": [
+            101,
+            150
+          ],
+          "type": "Maintenance",
+          "comment": "Slave 2"
+        },
+        {
+          "dmxRange": [
+            151,
+            200
+          ],
+          "type": "Maintenance",
+          "comment": "Slave 3"
+        },
+        {
+          "dmxRange": [
+            201,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Slave 4"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "2Ch",
+      "shortName": "2Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Strobe"
+      ]
+    },
+    {
+      "name": "7Ch",
+      "shortName": "7Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Auto Programs",
+        "Auto Speed",
+        "Dimmer Speed Mode"
+      ]
+    },
+    {
+      "name": "8Ch",
+      "shortName": "8Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Strobe 2",
+        "Auto Programs 8ch",
+        "Auto Speed",
+        "Master/Slave Mode",
+        "Dimmer Speed Mode"
+      ]
+    }
+  ]
+}

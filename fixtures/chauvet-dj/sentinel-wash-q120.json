@@ -1,0 +1,377 @@
+{
+  "name": "Sentinel Wash Q120",
+  "shortName": "Sentinel Wash Q120",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Moving Head",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Pan": {
+      "capability": {
+        "type": "Pan",
+        "angleStart": "0deg",
+        "angleEnd": "540deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Pan fine"
+      ]
+    },
+    "Tilt": {
+      "capability": {
+        "type": "Tilt",
+        "angleStart": "0deg",
+        "angleEnd": "270deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Tilt fine"
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Auto Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            225
+          ],
+          "type": "Effect",
+          "comment": "Auto program mode"
+        },
+        {
+          "dmxRange": [
+            226,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program mode"
+        }
+      ]
+    },
+    "Auto Speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "comment": "Auto program speed"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            127
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe effect, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            245
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe effect, slow to fast"
+        },
+        {
+          "dmxRange": [
+            246,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Virtual Color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            19
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Temperature 2000K–2700K"
+        },
+        {
+          "dmxRange": [
+            20,
+            39
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White 3200K"
+        },
+        {
+          "dmxRange": [
+            40,
+            59
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White 4200K"
+        },
+        {
+          "dmxRange": [
+            60,
+            79
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White 5600K"
+        },
+        {
+          "dmxRange": [
+            80,
+            99
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White 8000K"
+        },
+        {
+          "dmxRange": [
+            100,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Rainbow color macro effect"
+        }
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Reset all"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Pan and tilt blackout On"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Pan and tilt blackout Off"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Sound active pan and tilt On"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Sound active pan and tilt Off"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Sound active color On"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Sound active color Off"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Display off"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Display on"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Auto fan speed"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Full fan speed"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode slow"
+        },
+        {
+          "dmxRange": [
+            112,
+            119
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode medium"
+        },
+        {
+          "dmxRange": [
+            120,
+            127
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "10CH",
+      "shortName": "10CH",
+      "channels": [
+        "Pan",
+        "Tilt",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Auto Program",
+        "Auto Speed",
+        "Strobe",
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "14CH",
+      "shortName": "14CH",
+      "channels": [
+        "Pan",
+        "Pan fine",
+        "Tilt",
+        "Tilt fine",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Auto Program",
+        "Auto Speed",
+        "Strobe",
+        "Dimmer",
+        "Virtual Color",
+        "Control"
+      ]
+    }
+  ]
+}

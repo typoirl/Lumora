@@ -1,0 +1,593 @@
+{
+  "name": "STRIKE Array 1",
+  "shortName": "STRIKE Array 1",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      8,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Reset dimmer"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift off"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Address pods in order"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Address pods in reverse order"
+        },
+        {
+          "dmxRange": [
+            112,
+            119
+          ],
+          "type": "Maintenance",
+          "comment": "Re-address pods"
+        },
+        {
+          "dmxRange": [
+            120,
+            243
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            244,
+            249
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode override"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Master strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            132
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            133,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Automatic program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            81,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            121,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 4"
+        },
+        {
+          "dmxRange": [
+            161,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 5"
+        },
+        {
+          "dmxRange": [
+            201,
+            240
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 6"
+        },
+        {
+          "dmxRange": [
+            241,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    }
+  },
+  "templateChannels": {
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine $pixelKey"
+      ]
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      },
+      "fineChannelAliases": [
+        "Amber fine $pixelKey"
+      ]
+    },
+    "Strobe $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1 Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "2 Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Dimmer",
+        "Control"
+      ]
+    },
+    {
+      "name": "5 Ch",
+      "shortName": "5Ch",
+      "channels": [
+        "Dimmer",
+        "Master strobe",
+        "Automatic program",
+        "Program speed",
+        "Control"
+      ]
+    },
+    {
+      "name": "4P-4Ch",
+      "shortName": "4P-4Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3",
+            "5",
+            "7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4P-5Ch",
+      "shortName": "4P-5Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3",
+            "5",
+            "7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4P-14Ch",
+      "shortName": "4P-14Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3",
+            "5",
+            "7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "Amber $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4P-23Ch",
+      "shortName": "4P-23Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3",
+            "5",
+            "7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Amber $pixelKey",
+            "Amber fine $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4P-26Ch",
+      "shortName": "4P-26Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Master strobe",
+        "Automatic program",
+        "Program speed",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3",
+            "5",
+            "7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Amber $pixelKey",
+            "Amber fine $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "8P-8Ch",
+      "shortName": "8P-8Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "8P-9Ch",
+      "shortName": "8P-9Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "8P-26Ch",
+      "shortName": "8P-26Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "Amber $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "8P-43Ch",
+      "shortName": "8P-43Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Amber $pixelKey",
+            "Amber fine $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "8P-46Ch",
+      "shortName": "8P-46Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Master strobe",
+        "Automatic program",
+        "Program speed",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Amber $pixelKey",
+            "Amber fine $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    }
+  ]
+}

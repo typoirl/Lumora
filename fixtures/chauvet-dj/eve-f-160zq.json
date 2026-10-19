@@ -1,0 +1,633 @@
+{
+  "name": "EVE F-160ZQ",
+  "shortName": "EVE F-160ZQ",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            13
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Md yellow"
+        },
+        {
+          "dmxRange": [
+            14,
+            21
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Lt yellow"
+        },
+        {
+          "dmxRange": [
+            22,
+            29
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Amb yellow"
+        },
+        {
+          "dmxRange": [
+            30,
+            37
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Vlt amber"
+        },
+        {
+          "dmxRange": [
+            38,
+            45
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Lt amber"
+        },
+        {
+          "dmxRange": [
+            46,
+            53
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Md amber"
+        },
+        {
+          "dmxRange": [
+            54,
+            61
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Dk amber"
+        },
+        {
+          "dmxRange": [
+            62,
+            69
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Lt red"
+        },
+        {
+          "dmxRange": [
+            70,
+            77
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Md red"
+        },
+        {
+          "dmxRange": [
+            78,
+            85
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "NC pink"
+        },
+        {
+          "dmxRange": [
+            86,
+            93
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "Md pink"
+        },
+        {
+          "dmxRange": [
+            94,
+            101
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "Dk pink"
+        },
+        {
+          "dmxRange": [
+            102,
+            109
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffbf00"
+          ],
+          "comment": "Md red amber"
+        },
+        {
+          "dmxRange": [
+            110,
+            117
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffbf00"
+          ],
+          "comment": "Dk red amber"
+        },
+        {
+          "dmxRange": [
+            118,
+            125
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "Magenta"
+        },
+        {
+          "dmxRange": [
+            126,
+            133
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "Dk magenta"
+        },
+        {
+          "dmxRange": [
+            134,
+            141
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#c0a0ff"
+          ],
+          "comment": "Lt lavender"
+        },
+        {
+          "dmxRange": [
+            142,
+            149
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Lt blue"
+        },
+        {
+          "dmxRange": [
+            150,
+            157
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Vlt blue"
+        },
+        {
+          "dmxRange": [
+            158,
+            165
+          ],
+          "type": "ColorPreset",
+          "comment": "Lt blue2"
+        },
+        {
+          "dmxRange": [
+            166,
+            173
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            174,
+            181
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Md blue"
+        },
+        {
+          "dmxRange": [
+            182,
+            189
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Dk blue"
+        },
+        {
+          "dmxRange": [
+            190,
+            197
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#4b0082"
+          ],
+          "comment": "Indigo"
+        },
+        {
+          "dmxRange": [
+            198,
+            205
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Vdk blue"
+        },
+        {
+          "dmxRange": [
+            206,
+            213
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Vdk blue 2"
+        },
+        {
+          "dmxRange": [
+            214,
+            221
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Yel green"
+        },
+        {
+          "dmxRange": [
+            222,
+            229
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            230,
+            237
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#40e0d0"
+          ],
+          "comment": "Turquoise"
+        },
+        {
+          "dmxRange": [
+            238,
+            245
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ffff"
+          ],
+          "comment": "Aqua"
+        },
+        {
+          "dmxRange": [
+            246,
+            250
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Blue green"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Color Temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800K-8000K"
+        }
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            61,
+            110
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            111,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            161,
+            210
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            211,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        }
+      ]
+    },
+    "Auto program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Auto program speed, slow to fast"
+      }
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer reset"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Fan auto"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Fan on"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Fan off"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Fan silent"
+        },
+        {
+          "dmxRange": [
+            80,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "3 Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Color macro",
+        "Color Temperature"
+      ]
+    },
+    {
+      "name": "4 Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "11Ch",
+      "shortName": "11Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe",
+        "Color macro",
+        "Color Temperature",
+        "Auto program",
+        "Auto program speed",
+        "Control"
+      ]
+    }
+  ]
+}

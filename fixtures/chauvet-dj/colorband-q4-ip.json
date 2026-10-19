@@ -1,0 +1,363 @@
+{
+  "name": "COLORband Q4 IP",
+  "shortName": "COLORband Q4 IP",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      4,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer speed mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Preset dimmer speed from display menu"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2 (medium)"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3 (slow)"
+        }
+      ]
+    },
+    "Color macros": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macros"
+        }
+      ]
+    },
+    "Automatic programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            28
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1 (4-color snap)"
+        },
+        {
+          "dmxRange": [
+            29,
+            51
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2 (4-color fade)"
+        },
+        {
+          "dmxRange": [
+            52,
+            74
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3 (11-color snap)"
+        },
+        {
+          "dmxRange": [
+            75,
+            97
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 4 (11-color fade)"
+        },
+        {
+          "dmxRange": [
+            98,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 5 (4-color 4-zone step)"
+        },
+        {
+          "dmxRange": [
+            121,
+            143
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 6 (11-color in-out snap)"
+        },
+        {
+          "dmxRange": [
+            144,
+            166
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 7 (11-color in-out fade)"
+        },
+        {
+          "dmxRange": [
+            167,
+            189
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 8 (rainbow fade)"
+        },
+        {
+          "dmxRange": [
+            190,
+            212
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 9 (police)"
+        },
+        {
+          "dmxRange": [
+            213,
+            235
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 10 (police 2)"
+        },
+        {
+          "dmxRange": [
+            236,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 11 (4-zone rainbow fade)"
+        }
+      ]
+    },
+    "Program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Automatic program speed, slow to fast"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "4CH",
+      "shortName": "4CH",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber"
+      ]
+    },
+    {
+      "name": "7CH",
+      "shortName": "7CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "Strobe",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "10CH",
+      "shortName": "10CH",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "Color macros",
+        "Strobe",
+        "Automatic programs",
+        "Program speed",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "16CH",
+      "shortName": "16CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "22CH",
+      "shortName": "22CH",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey"
+          ]
+        },
+        "Color macros",
+        "Strobe",
+        "Automatic programs",
+        "Program speed",
+        "Dimmer speed mode"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1809 @@
+{
+  "name": "STRIKE V",
+  "shortName": "STRIKE V",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Moving Head",
+    "Effect",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "Dot 1",
+          "Dot 2",
+          "Dot 3",
+          "Dot 4",
+          "Dot 5",
+          "Dot 6",
+          "Dot 7",
+          "Dot 8",
+          "Dot 9",
+          "Dot 10",
+          "Dot 11",
+          "Dot 12",
+          "Dot 13",
+          "Dot 14",
+          "Dot 15",
+          "Dot 16",
+          "Dot 17",
+          "Dot 18",
+          "Dot 19",
+          "Dot 20",
+          "Dot 21",
+          "Dot 22",
+          "Dot 23",
+          "Dot 24",
+          "Cell 1",
+          "Cell 2",
+          "Cell 3",
+          "Cell 4",
+          "Cell 5",
+          "Cell 6",
+          "Cell 7",
+          "Cell 8",
+          "Cell 9",
+          "Cell 10",
+          "Cell 11",
+          "Cell 12",
+          "Cell 13",
+          "Cell 14",
+          "Cell 15",
+          "Cell 16",
+          "Cell 17",
+          "Cell 18",
+          "Cell 19",
+          "Cell 20",
+          "Cell 21",
+          "Cell 22",
+          "Cell 23",
+          "Cell 24"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Tilt": {
+      "capability": {
+        "type": "Tilt",
+        "angleStart": "0deg",
+        "angleEnd": "270deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Tilt fine"
+      ]
+    },
+    "E-frost": {
+      "capability": {
+        "type": "Frost"
+      }
+    },
+    "Dot dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dot dimmer fine"
+      ]
+    },
+    "Cell dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Cell dimmer fine"
+      ]
+    },
+    "Dot strobe duration": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "Classic strobe mode"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Duration short to long (7-650 ms)"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Open (100% on)"
+        }
+      ]
+    },
+    "Dot strobe rate": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "Open (100% on)"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Rate slow to fast (0.289-16.67 Hz)"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Open (100% on)"
+        }
+      ]
+    },
+    "Cell strobe duration": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "Classic strobe mode"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Duration short to long (7-650 ms)"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Open (100% on)"
+        }
+      ]
+    },
+    "Cell strobe rate": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "Open (100% on)"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Rate slow to fast (0.289-16.67 Hz)"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Open (100% on)"
+        }
+      ]
+    },
+    "Dot strobe effect": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            42
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Fade up, slow to fast"
+        },
+        {
+          "dmxRange": [
+            43,
+            85
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Fade down, slow to fast"
+        },
+        {
+          "dmxRange": [
+            86,
+            128
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Fade up and down"
+        },
+        {
+          "dmxRange": [
+            129,
+            171
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe"
+        },
+        {
+          "dmxRange": [
+            172,
+            214
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning strobe"
+        },
+        {
+          "dmxRange": [
+            215,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Spike strobe"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Cell strobe effect": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            42
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Fade up, slow to fast"
+        },
+        {
+          "dmxRange": [
+            43,
+            85
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Fade down, slow to fast"
+        },
+        {
+          "dmxRange": [
+            86,
+            128
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Fade up and down"
+        },
+        {
+          "dmxRange": [
+            129,
+            171
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe"
+        },
+        {
+          "dmxRange": [
+            172,
+            214
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning strobe"
+        },
+        {
+          "dmxRange": [
+            215,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Spike strobe"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Color temperature": {
+      "capability": {
+        "type": "ColorTemperature"
+      }
+    },
+    "Dot FX macro": {
+      "capability": {
+        "type": "Effect",
+        "comment": "FX macros"
+      }
+    },
+    "Dot FX macro speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "EffectSpeed",
+          "comment": "Hold at start"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "EffectSpeed",
+          "comment": "Hold at start"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Hold at start"
+        }
+      ]
+    },
+    "Dot FX macro delay": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade, short to long"
+        }
+      ]
+    },
+    "Cell FX macro": {
+      "capability": {
+        "type": "Effect",
+        "comment": "FX macros"
+      }
+    },
+    "Cell FX macro speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "EffectSpeed",
+          "comment": "Hold at start"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "EffectSpeed",
+          "comment": "Hold at start"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Hold at start"
+        }
+      ]
+    },
+    "Cell FX macro delay": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade, short to long"
+        }
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            10
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            11,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            16,
+            20
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            21,
+            25
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            26,
+            30
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 1000 Hz"
+        },
+        {
+          "dmxRange": [
+            31,
+            35
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 2000 Hz"
+        },
+        {
+          "dmxRange": [
+            36,
+            40
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 4000 Hz"
+        },
+        {
+          "dmxRange": [
+            41,
+            45
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 6000 Hz"
+        },
+        {
+          "dmxRange": [
+            46,
+            50
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 25 kHz"
+        },
+        {
+          "dmxRange": [
+            51,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 64 kHz"
+        },
+        {
+          "dmxRange": [
+            56,
+            60
+          ],
+          "type": "Maintenance",
+          "comment": "Fan auto"
+        },
+        {
+          "dmxRange": [
+            61,
+            65
+          ],
+          "type": "Maintenance",
+          "comment": "Fan on"
+        },
+        {
+          "dmxRange": [
+            66,
+            70
+          ],
+          "type": "Maintenance",
+          "comment": "Fan silent"
+        },
+        {
+          "dmxRange": [
+            71,
+            75
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            76,
+            80
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer"
+        },
+        {
+          "dmxRange": [
+            81,
+            85
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer"
+        },
+        {
+          "dmxRange": [
+            86,
+            90
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            91,
+            95
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            96,
+            100
+          ],
+          "type": "Maintenance",
+          "comment": "Invert dot off"
+        },
+        {
+          "dmxRange": [
+            101,
+            105
+          ],
+          "type": "Maintenance",
+          "comment": "Invert dot on"
+        },
+        {
+          "dmxRange": [
+            106,
+            110
+          ],
+          "type": "Maintenance",
+          "comment": "Invert cell off"
+        },
+        {
+          "dmxRange": [
+            111,
+            115
+          ],
+          "type": "Maintenance",
+          "comment": "Invert cell on"
+        },
+        {
+          "dmxRange": [
+            116,
+            120
+          ],
+          "type": "Maintenance",
+          "comment": "Color STRIKE M tilt speed"
+        },
+        {
+          "dmxRange": [
+            121,
+            125
+          ],
+          "type": "Maintenance",
+          "comment": "Normal tilt speed"
+        },
+        {
+          "dmxRange": [
+            126,
+            130
+          ],
+          "type": "Maintenance",
+          "comment": "Hold last on DMX loss"
+        },
+        {
+          "dmxRange": [
+            131,
+            135
+          ],
+          "type": "Maintenance",
+          "comment": "Blackout on DMX loss"
+        },
+        {
+          "dmxRange": [
+            136,
+            145
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            146,
+            150
+          ],
+          "type": "Maintenance",
+          "comment": "Color calibration off"
+        },
+        {
+          "dmxRange": [
+            151,
+            155
+          ],
+          "type": "Maintenance",
+          "comment": "User color calibration"
+        },
+        {
+          "dmxRange": [
+            156,
+            160
+          ],
+          "type": "Maintenance",
+          "comment": "Factory color calibration"
+        },
+        {
+          "dmxRange": [
+            161,
+            243
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            244,
+            249
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode override"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Dot Red": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Dot Green": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Dot Blue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Dot White": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Cell Red": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Cell Green": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Cell Blue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Cell White": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Tilt speed": {
+      "capability": {
+        "type": "PanTiltSpeed",
+        "speedStart": "fast",
+        "speedEnd": "slow",
+        "comment": "Fast to slow"
+      }
+    },
+    "Dot foreground dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Dot foreground color": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Color macros"
+      }
+    },
+    "Dot background dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Dot background color": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Color macros"
+      }
+    },
+    "Cell foreground dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Cell foreground color": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Color macros"
+      }
+    },
+    "Cell background dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Cell background color": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Color macros"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine $pixelKey"
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "29CH",
+      "shortName": "29CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "E-frost",
+        "Dot dimmer",
+        "Dot dimmer fine",
+        "Cell dimmer",
+        "Cell dimmer fine",
+        "Dot strobe duration",
+        "Dot strobe rate",
+        "Cell strobe duration",
+        "Cell strobe rate",
+        "Dot strobe effect",
+        "Cell strobe effect",
+        "Color temperature",
+        "Dot FX macro",
+        "Dot FX macro speed",
+        "Dot FX macro delay",
+        "Cell FX macro",
+        "Cell FX macro speed",
+        "Cell FX macro delay",
+        "Control",
+        "Dot Red",
+        "Dot Green",
+        "Dot Blue",
+        "Dot White",
+        "Cell Red",
+        "Cell Green",
+        "Cell Blue",
+        "Cell White"
+      ]
+    },
+    {
+      "name": "222CH",
+      "shortName": "222CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Tilt speed",
+        "E-frost",
+        "Dot dimmer",
+        "Dot dimmer fine",
+        "Cell dimmer",
+        "Cell dimmer fine",
+        "Dot strobe duration",
+        "Dot strobe rate",
+        "Cell strobe duration",
+        "Cell strobe rate",
+        "Dot strobe effect",
+        "Cell strobe effect",
+        "Color temperature",
+        "Dot foreground dimmer",
+        "Dot foreground color",
+        "Dot background dimmer",
+        "Dot background color",
+        "Dot FX macro",
+        "Dot FX macro speed",
+        "Dot FX macro delay",
+        "Cell foreground dimmer",
+        "Cell foreground color",
+        "Cell background dimmer",
+        "Cell background color",
+        "Cell FX macro",
+        "Cell FX macro speed",
+        "Cell FX macro delay",
+        "Control",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24",
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "314CH",
+      "shortName": "314CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Tilt speed",
+        "E-frost",
+        "Dot strobe duration",
+        "Dot strobe rate",
+        "Cell strobe duration",
+        "Cell strobe rate",
+        "Dot strobe effect",
+        "Cell strobe effect",
+        "Color temperature",
+        "Dot foreground dimmer",
+        "Dot foreground color",
+        "Dot background dimmer",
+        "Dot background color",
+        "Dot FX macro",
+        "Dot FX macro speed",
+        "Dot FX macro delay",
+        "Cell foreground dimmer",
+        "Cell foreground color",
+        "Cell background dimmer",
+        "Cell background color",
+        "Cell FX macro",
+        "Cell FX macro speed",
+        "Cell FX macro delay",
+        "Control",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24",
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Movement 30CH",
+      "shortName": "Movement30CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Tilt speed",
+        "E-frost",
+        "Dot dimmer",
+        "Dot dimmer fine",
+        "Cell dimmer",
+        "Cell dimmer fine",
+        "Dot strobe duration",
+        "Dot strobe rate",
+        "Cell strobe duration",
+        "Cell strobe rate",
+        "Dot strobe effect",
+        "Cell strobe effect",
+        "Color temperature",
+        "Dot foreground dimmer",
+        "Dot foreground color",
+        "Dot background dimmer",
+        "Dot background color",
+        "Dot FX macro",
+        "Dot FX macro speed",
+        "Dot FX macro delay",
+        "Cell foreground dimmer",
+        "Cell foreground color",
+        "Cell background dimmer",
+        "Cell background color",
+        "Cell FX macro",
+        "Cell FX macro speed",
+        "Cell FX macro delay",
+        "Control"
+      ]
+    },
+    {
+      "name": "Dual Pixels 144CH",
+      "shortName": "DualPixels144CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24",
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dual Pixels 192CH",
+      "shortName": "DualPixels192CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24",
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dual Pixels 240CH",
+      "shortName": "DualPixels240CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24",
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Dual Pixels 288CH",
+      "shortName": "DualPixels288CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24",
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Dot 72CH",
+      "shortName": "Multi-LayerDot72CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Cell 72CH",
+      "shortName": "Multi-LayerCell72CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Dot 96CH",
+      "shortName": "Multi-LayerDot96CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Cell 96CH",
+      "shortName": "Multi-LayerCell96CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Dot 120CH",
+      "shortName": "Multi-LayerDot120CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Cell 120CH",
+      "shortName": "Multi-LayerCell120CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Dot 144CH",
+      "shortName": "Multi-LayerDot144CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Dot 1",
+            "Dot 2",
+            "Dot 3",
+            "Dot 4",
+            "Dot 5",
+            "Dot 6",
+            "Dot 7",
+            "Dot 8",
+            "Dot 9",
+            "Dot 10",
+            "Dot 11",
+            "Dot 12",
+            "Dot 13",
+            "Dot 14",
+            "Dot 15",
+            "Dot 16",
+            "Dot 17",
+            "Dot 18",
+            "Dot 19",
+            "Dot 20",
+            "Dot 21",
+            "Dot 22",
+            "Dot 23",
+            "Dot 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Multi-Layer Cell 144CH",
+      "shortName": "Multi-LayerCell144CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4",
+            "Cell 5",
+            "Cell 6",
+            "Cell 7",
+            "Cell 8",
+            "Cell 9",
+            "Cell 10",
+            "Cell 11",
+            "Cell 12",
+            "Cell 13",
+            "Cell 14",
+            "Cell 15",
+            "Cell 16",
+            "Cell 17",
+            "Cell 18",
+            "Cell 19",
+            "Cell 20",
+            "Cell 21",
+            "Cell 22",
+            "Cell 23",
+            "Cell 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

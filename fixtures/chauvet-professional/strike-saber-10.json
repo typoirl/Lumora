@@ -1,0 +1,601 @@
+{
+  "name": "STRIKE Saber 10",
+  "shortName": "STRIKE Saber 10",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      10,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Master dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Master dimmer fine"
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            125
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            126,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            28
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            29,
+            29
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift off"
+        },
+        {
+          "dmxRange": [
+            30,
+            30
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            31,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            32,
+            75
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            76,
+            76
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            77,
+            77
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer"
+        },
+        {
+          "dmxRange": [
+            78,
+            78
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer"
+        },
+        {
+          "dmxRange": [
+            79,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            80,
+            85
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            86,
+            86
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            87,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            88,
+            88
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            89,
+            89
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            90,
+            90
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode override"
+        },
+        {
+          "dmxRange": [
+            91,
+            91
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer STRIKE mode"
+        },
+        {
+          "dmxRange": [
+            92,
+            92
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer traditional mode"
+        },
+        {
+          "dmxRange": [
+            93,
+            129
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            130,
+            130
+          ],
+          "type": "Maintenance",
+          "comment": "Do not invert display"
+        },
+        {
+          "dmxRange": [
+            131,
+            131
+          ],
+          "type": "Maintenance",
+          "comment": "Invert display"
+        },
+        {
+          "dmxRange": [
+            132,
+            169
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            170,
+            170
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 1000 Hz"
+        },
+        {
+          "dmxRange": [
+            171,
+            173
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            174,
+            174
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 2000 Hz"
+        },
+        {
+          "dmxRange": [
+            175,
+            175
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            176,
+            176
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 4000 Hz"
+        },
+        {
+          "dmxRange": [
+            177,
+            177
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            178,
+            178
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 6000 Hz"
+        },
+        {
+          "dmxRange": [
+            179,
+            183
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            184,
+            184
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 25000 Hz"
+        },
+        {
+          "dmxRange": [
+            185,
+            192
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            193,
+            193
+          ],
+          "type": "Maintenance",
+          "comment": "Reset dimmer"
+        },
+        {
+          "dmxRange": [
+            194,
+            249
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            32
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            33,
+            76
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            77,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            121,
+            164
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 4"
+        },
+        {
+          "dmxRange": [
+            165,
+            208
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 5"
+        },
+        {
+          "dmxRange": [
+            209,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 6"
+        }
+      ]
+    },
+    "Auto speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    }
+  },
+  "templateChannels": {
+    "Dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine $pixelKey"
+      ]
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Master dimmer"
+      ]
+    },
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Master dimmer",
+        "Strobe",
+        "Control"
+      ]
+    },
+    {
+      "name": "6Ch",
+      "shortName": "6Ch",
+      "channels": [
+        "Master dimmer",
+        "Master dimmer fine",
+        "Strobe",
+        "Auto programs",
+        "Auto speed",
+        "Control"
+      ]
+    },
+    {
+      "name": "10Ch",
+      "shortName": "10Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "13Ch",
+      "shortName": "13Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey"
+          ]
+        },
+        "Master dimmer",
+        "Master dimmer fine",
+        "Control"
+      ]
+    },
+    {
+      "name": "22Ch",
+      "shortName": "22Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey"
+          ]
+        },
+        "Master dimmer",
+        "Master dimmer fine"
+      ]
+    },
+    {
+      "name": "26Ch1",
+      "shortName": "26Ch1",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "Amber $pixelKey"
+          ]
+        },
+        "Master dimmer",
+        "Master dimmer fine",
+        "Strobe",
+        "Auto programs",
+        "Auto speed",
+        "Control"
+      ]
+    },
+    {
+      "name": "26Ch2",
+      "shortName": "26Ch2",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey"
+          ]
+        },
+        "Master dimmer",
+        "Master dimmer fine",
+        "Strobe",
+        "Auto programs",
+        "Auto speed",
+        "Control"
+      ]
+    }
+  ]
+}

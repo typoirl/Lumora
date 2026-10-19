@@ -1,0 +1,277 @@
+{
+  "name": "Rotosphere HP",
+  "shortName": "Rotosphere HP",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      3,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            250
+          ],
+          "type": "Effect",
+          "comment": "Automatic program"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program"
+        }
+      ]
+    },
+    "Program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Automatic program speed, slow to fast"
+      }
+    },
+    "Motor rotation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Motor indexing"
+        },
+        {
+          "dmxRange": [
+            128,
+            189
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Motor rotation, fast to slow"
+        },
+        {
+          "dmxRange": [
+            190,
+            193
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            194,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Reverse motor rotation, slow to fast"
+        }
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Cyan": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Cyan"
+      }
+    },
+    "Magenta": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Magenta"
+      }
+    },
+    "Yellow": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Yellow"
+      }
+    },
+    "Orange": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0–100%"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Cyan $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Cyan"
+      }
+    },
+    "Magenta $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Magenta"
+      }
+    },
+    "Yellow $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Yellow"
+      }
+    },
+    "Orange $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Program",
+        "Program speed",
+        "Motor rotation"
+      ]
+    },
+    {
+      "name": "12Ch",
+      "shortName": "12Ch",
+      "channels": [
+        "Program",
+        "Program speed",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Cyan",
+        "Magenta",
+        "Yellow",
+        "Orange",
+        "Strobe",
+        "Motor rotation"
+      ]
+    },
+    {
+      "name": "28Ch",
+      "shortName": "28Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Cyan $pixelKey",
+            "Magenta $pixelKey",
+            "Yellow $pixelKey",
+            "Orange $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Program",
+        "Program speed",
+        "Motor rotation"
+      ]
+    }
+  ]
+}

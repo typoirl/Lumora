@@ -1,0 +1,81 @@
+{
+  "name": "Cloud 9X IP",
+  "shortName": "Cloud 9X IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Smoke"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fan speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%, slow to fast"
+        }
+      ]
+    },
+    "Fog output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%, thin to heavy"
+        }
+      ]
+    },
+    "Atomizer": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%, thin to heavy"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Fan speed",
+        "Fog output",
+        "Atomizer"
+      ]
+    }
+  ]
+}

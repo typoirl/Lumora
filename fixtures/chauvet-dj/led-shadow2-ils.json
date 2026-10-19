@@ -1,0 +1,141 @@
+{
+  "name": "LED Shadow 2 ILS",
+  "shortName": "LED Shadow 2 ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            5,
+            39
+          ],
+          "type": "Effect",
+          "comment": "3-zone chase 1"
+        },
+        {
+          "dmxRange": [
+            40,
+            79
+          ],
+          "type": "Effect",
+          "comment": "3-zone chase 2"
+        },
+        {
+          "dmxRange": [
+            80,
+            119
+          ],
+          "type": "Effect",
+          "comment": "3-zone fade"
+        },
+        {
+          "dmxRange": [
+            120,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Pulse effect 0-100%"
+        },
+        {
+          "dmxRange": [
+            160,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Pulse effect 0-100-0%"
+        },
+        {
+          "dmxRange": [
+            200,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Strobe"
+        },
+        {
+          "dmxRange": [
+            240,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active"
+        }
+      ]
+    },
+    "Program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Program speed, slow to fast"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            1,
+            250
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Sound-active strobe"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Program",
+        "Program speed",
+        "Strobe",
+        "Dimmer"
+      ]
+    }
+  ]
+}

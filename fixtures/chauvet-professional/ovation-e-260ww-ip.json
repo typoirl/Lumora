@@ -1,0 +1,306 @@
+{
+  "name": "Ovation E-260WW IP",
+  "shortName": "Ovation E-260WW IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Gobo rotator": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "WheelSlotRotation",
+          "wheel": "Gobo Wheel",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            128,
+            190
+          ],
+          "type": "WheelSlotRotation",
+          "wheel": "Gobo Wheel",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Clockwise, fast to slow"
+        },
+        {
+          "dmxRange": [
+            191,
+            192
+          ],
+          "type": "WheelSlotRotation",
+          "wheel": "Gobo Wheel",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            193,
+            255
+          ],
+          "type": "WheelSlotRotation",
+          "wheel": "Gobo Wheel",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Counterclockwise, slow to fast"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            70
+          ],
+          "type": "Effect",
+          "comment": "Auto 1"
+        },
+        {
+          "dmxRange": [
+            71,
+            130
+          ],
+          "type": "Effect",
+          "comment": "Auto 2"
+        },
+        {
+          "dmxRange": [
+            131,
+            190
+          ],
+          "type": "Effect",
+          "comment": "Auto 3"
+        },
+        {
+          "dmxRange": [
+            191,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto 4"
+        }
+      ]
+    },
+    "Auto speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Dimmer speed mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer reset"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer curve"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer curve"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed off"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 2"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 3 (slowest)"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Fan auto"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Fan on"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Fan off"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Fan silent"
+        },
+        {
+          "dmxRange": [
+            112,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "2 Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Dimmer",
+        "Gobo rotator"
+      ]
+    },
+    {
+      "name": "3 Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Gobo rotator"
+      ]
+    },
+    {
+      "name": "4 Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Strobe",
+        "Gobo rotator"
+      ]
+    },
+    {
+      "name": "7 Ch",
+      "shortName": "7Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Strobe",
+        "Auto programs",
+        "Auto speed",
+        "Dimmer speed mode",
+        "Gobo rotator"
+      ]
+    }
+  ]
+}

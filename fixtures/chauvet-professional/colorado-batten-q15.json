@@ -1,0 +1,705 @@
+{
+  "name": "COLORado Batten Q15",
+  "shortName": "COLORado Batten Q15",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      15,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            34
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red full, green increases"
+        },
+        {
+          "dmxRange": [
+            35,
+            59
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red decreases, green full"
+        },
+        {
+          "dmxRange": [
+            60,
+            84
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green full, blue increases"
+        },
+        {
+          "dmxRange": [
+            85,
+            109
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green decreases, blue full"
+        },
+        {
+          "dmxRange": [
+            110,
+            134
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red increases, blue full"
+        },
+        {
+          "dmxRange": [
+            135,
+            159
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red full, blue decreases"
+        },
+        {
+          "dmxRange": [
+            160,
+            184
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red full, green and blue increase"
+        },
+        {
+          "dmxRange": [
+            185,
+            209
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red and green decrease, blue full"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "RGBW full"
+        }
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            28
+          ],
+          "type": "ColorTemperature",
+          "comment": "1800K"
+        },
+        {
+          "dmxRange": [
+            29,
+            46
+          ],
+          "type": "ColorTemperature",
+          "comment": "2200K"
+        },
+        {
+          "dmxRange": [
+            47,
+            64
+          ],
+          "type": "ColorTemperature",
+          "comment": "2700K"
+        },
+        {
+          "dmxRange": [
+            65,
+            82
+          ],
+          "type": "ColorTemperature",
+          "comment": "3000K"
+        },
+        {
+          "dmxRange": [
+            83,
+            100
+          ],
+          "type": "ColorTemperature",
+          "comment": "3200K"
+        },
+        {
+          "dmxRange": [
+            101,
+            118
+          ],
+          "type": "ColorTemperature",
+          "comment": "3500K"
+        },
+        {
+          "dmxRange": [
+            119,
+            136
+          ],
+          "type": "ColorTemperature",
+          "comment": "4000K"
+        },
+        {
+          "dmxRange": [
+            137,
+            154
+          ],
+          "type": "ColorTemperature",
+          "comment": "4200K"
+        },
+        {
+          "dmxRange": [
+            155,
+            172
+          ],
+          "type": "ColorTemperature",
+          "comment": "4500K"
+        },
+        {
+          "dmxRange": [
+            173,
+            190
+          ],
+          "type": "ColorTemperature",
+          "comment": "5600K"
+        },
+        {
+          "dmxRange": [
+            191,
+            208
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            209,
+            226
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            227,
+            244
+          ],
+          "type": "ColorTemperature",
+          "comment": "7200K"
+        },
+        {
+          "dmxRange": [
+            245,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "8000K"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            99
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            110,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning effect, slow to fast"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed set through display menu"
+        },
+        {
+          "dmxRange": [
+            10,
+            29
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            30,
+            69
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            70,
+            129
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2"
+        },
+        {
+          "dmxRange": [
+            130,
+            189
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 4 (slowest)"
+        }
+      ]
+    },
+    "Hue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-360°"
+      },
+      "fineChannelAliases": [
+        "Hue fine"
+      ]
+    },
+    "Saturation": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Hue $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      },
+      "fineChannelAliases": [
+        "Hue fine $pixelKey"
+      ]
+    },
+    "Saturation $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Strobe $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1 Advanced",
+      "shortName": "1Advanced",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Color macro",
+        "Color temperature",
+        "Strobe",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "1 Simple",
+      "shortName": "1Simple",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "1 Basic",
+      "shortName": "1Basic",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Color macro",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "1 HSIC",
+      "shortName": "1HSIC",
+      "channels": [
+        "Dimmer",
+        "Hue",
+        "Hue fine",
+        "Saturation",
+        "Strobe",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "15 Pixel",
+      "shortName": "15Pixel",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "15 Simple",
+      "shortName": "15Simple",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "15 Basic",
+      "shortName": "15Basic",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        },
+        "Color macro",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "15 Advanced",
+      "shortName": "15Advanced",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        },
+        "Color macro",
+        "Color temperature",
+        "Strobe",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "15 HSIC",
+      "shortName": "15HSIC",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9",
+            "10",
+            "11",
+            "12",
+            "13",
+            "14",
+            "15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Hue $pixelKey",
+            "Hue fine $pixelKey",
+            "Saturation $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Dimmer speed"
+      ]
+    }
+  ]
+}

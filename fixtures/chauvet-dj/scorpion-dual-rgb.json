@@ -1,0 +1,514 @@
+{
+  "name": "Scorpion Dual RGB",
+  "shortName": "Scorpion Dual RGB",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Control mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            17
+          ],
+          "type": "Maintenance",
+          "comment": "Manual control mode"
+        },
+        {
+          "dmxRange": [
+            18,
+            34
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (multi-color)"
+        },
+        {
+          "dmxRange": [
+            35,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (red)"
+        },
+        {
+          "dmxRange": [
+            52,
+            68
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (green)"
+        },
+        {
+          "dmxRange": [
+            69,
+            85
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (blue)"
+        },
+        {
+          "dmxRange": [
+            86,
+            102
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (yellow)"
+        },
+        {
+          "dmxRange": [
+            103,
+            119
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (magenta)"
+        },
+        {
+          "dmxRange": [
+            120,
+            136
+          ],
+          "type": "Maintenance",
+          "comment": "Automatic mode (cyan)"
+        },
+        {
+          "dmxRange": [
+            137,
+            153
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (multi-color)"
+        },
+        {
+          "dmxRange": [
+            154,
+            170
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (red)"
+        },
+        {
+          "dmxRange": [
+            171,
+            187
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (green)"
+        },
+        {
+          "dmxRange": [
+            188,
+            204
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (blue)"
+        },
+        {
+          "dmxRange": [
+            205,
+            221
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (yellow)"
+        },
+        {
+          "dmxRange": [
+            222,
+            238
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (magenta)"
+        },
+        {
+          "dmxRange": [
+            239,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-active mode (cyan)"
+        }
+      ]
+    },
+    "Laser pattern": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Patterns"
+      }
+    },
+    "Laser color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            14
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            15,
+            30
+          ],
+          "type": "ColorPreset",
+          "comment": "Multi-color"
+        },
+        {
+          "dmxRange": [
+            31,
+            46
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            47,
+            62
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            63,
+            78
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            79,
+            94
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Yellow"
+        },
+        {
+          "dmxRange": [
+            95,
+            110
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "Magenta"
+        },
+        {
+          "dmxRange": [
+            111,
+            126
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ffff"
+          ],
+          "comment": "Cyan"
+        },
+        {
+          "dmxRange": [
+            127,
+            149
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red and green program"
+        },
+        {
+          "dmxRange": [
+            150,
+            174
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green and blue program"
+        },
+        {
+          "dmxRange": [
+            175,
+            199
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red and blue program"
+        },
+        {
+          "dmxRange": [
+            200,
+            224
+          ],
+          "type": "ColorPreset",
+          "comment": "All colors program"
+        },
+        {
+          "dmxRange": [
+            225,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Multi-color program"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            5,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Pattern size": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Manual zoom, 100–5%"
+        },
+        {
+          "dmxRange": [
+            128,
+            169
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto zoom, 100–5%, slow to fast"
+        },
+        {
+          "dmxRange": [
+            170,
+            209
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto zoom, 5–100%, slow to fast"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto zoom, 100–5–100%, slow to fast"
+        }
+      ]
+    },
+    "Pattern X position": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Manual pan (128 horizontal points)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto pan, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Reverse auto pan, fast to slow"
+        }
+      ]
+    },
+    "Pattern Y position": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Manual tilt (128 vertical points)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto tilt, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Reverse auto tilt, fast to slow"
+        }
+      ]
+    },
+    "X-Axis Rolling": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Manual x-axis rolling (0–359°)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Generic",
+          "comment": "Auto rolling, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Reverse auto rolling, fast to slow"
+        }
+      ]
+    },
+    "Y-Axis Rolling": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Manual y-axis rolling (0–359°)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Generic",
+          "comment": "Auto rolling, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Reverse auto rolling, fast to slow"
+        }
+      ]
+    },
+    "Z-Axis Rolling": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Manual z-axis rolling (0–359°)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Generic",
+          "comment": "Auto rolling, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Reverse auto rolling, fast to slow"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "10-Channel",
+      "shortName": "10-Channel",
+      "channels": [
+        "Control mode",
+        "Laser pattern",
+        "Laser color",
+        "Strobe",
+        "Pattern size",
+        "Pattern X position",
+        "Pattern Y position",
+        "X-Axis Rolling",
+        "Y-Axis Rolling",
+        "Z-Axis Rolling"
+      ]
+    }
+  ]
+}

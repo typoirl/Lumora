@@ -1,0 +1,13 @@
+{
+  "name": "Dimmer",
+  "shortName": "Dim",
+  "manufacturer": "Generic",
+  "categories": ["Dimmer"],
+  "availableChannels": {
+    "Dimmer": { "fineChannelAliases": ["Dimmer fine"], "capability": { "type": "Intensity" } }
+  },
+  "modes": [
+    { "name": "8-bit", "shortName": "1ch", "channels": ["Dimmer"] },
+    { "name": "16-bit", "shortName": "2ch", "channels": ["Dimmer", "Dimmer fine"] }
+  ]
+}

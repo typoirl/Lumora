@@ -1,0 +1,341 @@
+{
+  "name": "Arena Composition",
+  "shortName": "Arena comp",
+  "manufacturer": "Resolume",
+  "categories": [
+    "Other"
+  ],
+  "meta": {
+    "source": "Resolume Arena DMX Auto Map: composition, channels 1-27"
+  },
+  "availableChannels": {
+    "Master": {
+      "defaultValue": 255,
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Bypass": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Bypass on"
+        }
+      ]
+    },
+    "Clear": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Clear"
+        }
+      ]
+    },
+    "Crossfader": {
+      "capability": {
+        "type": "Generic",
+        "comment": "A to B"
+      },
+      "defaultValue": 128
+    },
+    "Trigger column": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Columns 1 to 256"
+      },
+      "defaultValue": 0
+    },
+    "Select deck": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Deck 1 to 255"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Dashboard dial 1": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 2": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 3": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 4": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 5": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 6": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 7": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 8": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "BPM": {
+      "capability": {
+        "type": "Generic",
+        "comment": "2 to 500 BPM (60 = 120 BPM)"
+      },
+      "defaultValue": 60
+    },
+    "Tap": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Tap"
+        }
+      ]
+    },
+    "Resync": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Resync"
+        }
+      ]
+    },
+    "Pause": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Pause on"
+        }
+      ]
+    },
+    "Master speed": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 10 (25 = 1)"
+      },
+      "defaultValue": 25
+    },
+    "Master direction": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Backwards"
+        },
+        {
+          "dmxRange": [
+            1,
+            1
+          ],
+          "type": "Generic",
+          "comment": "Forwards"
+        },
+        {
+          "dmxRange": [
+            2,
+            2
+          ],
+          "type": "Generic",
+          "comment": "Paused"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Random"
+        }
+      ],
+      "defaultValue": 1
+    },
+    "Volume": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-40 dB to +12 dB (196 = 0 dB)"
+      },
+      "defaultValue": 196
+    },
+    "Pan": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Left to right (128 = center)"
+      },
+      "defaultValue": 128
+    },
+    "Fade out": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 255
+    },
+    "Scale": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1000% (26 = 100%)"
+      },
+      "defaultValue": 26
+    },
+    "Rotate X": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-180 to 180 degrees"
+      },
+      "defaultValue": 127
+    },
+    "Rotate Y": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-180 to 180 degrees"
+      },
+      "defaultValue": 127
+    },
+    "Rotate Z": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-180 to 180 degrees"
+      },
+      "defaultValue": 127
+    }
+  },
+  "modes": [
+    {
+      "name": "Auto map",
+      "shortName": "27ch",
+      "channels": [
+        "Master",
+        "Bypass",
+        "Clear",
+        "Crossfader",
+        "Trigger column",
+        "Select deck",
+        "Dashboard dial 1",
+        "Dashboard dial 2",
+        "Dashboard dial 3",
+        "Dashboard dial 4",
+        "Dashboard dial 5",
+        "Dashboard dial 6",
+        "Dashboard dial 7",
+        "Dashboard dial 8",
+        "BPM",
+        "Tap",
+        "Resync",
+        "Pause",
+        "Master speed",
+        "Master direction",
+        "Volume",
+        "Pan",
+        "Fade out",
+        "Scale",
+        "Rotate X",
+        "Rotate Y",
+        "Rotate Z"
+      ]
+    }
+  ]
+}

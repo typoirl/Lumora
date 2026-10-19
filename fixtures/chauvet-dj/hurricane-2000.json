@@ -1,0 +1,41 @@
+{
+  "name": "Hurricane 2000",
+  "shortName": "Hurricane 2000",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Smoke"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fog output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Fog volume, low to high"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Fog output"
+      ]
+    }
+  ]
+}

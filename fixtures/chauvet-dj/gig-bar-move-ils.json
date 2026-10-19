@@ -1,0 +1,1712 @@
+{
+  "name": "GigBAR Move ILS",
+  "shortName": "GigBAR Move ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "Par 1",
+          "Par 2",
+          "Derby 1",
+          "Derby 2",
+          "Flash",
+          "Flash 1",
+          "Flash 2",
+          "Flash 3",
+          "Flash 4",
+          "Laser",
+          "Spot 1",
+          "Spot 2"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Operation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "Generic",
+          "comment": "Blackout"
+        },
+        {
+          "dmxRange": [
+            6,
+            13
+          ],
+          "type": "Generic",
+          "comment": "Mix 1"
+        },
+        {
+          "dmxRange": [
+            14,
+            22
+          ],
+          "type": "Generic",
+          "comment": "Mix 2"
+        },
+        {
+          "dmxRange": [
+            23,
+            31
+          ],
+          "type": "Generic",
+          "comment": "Mix 3"
+        },
+        {
+          "dmxRange": [
+            32,
+            40
+          ],
+          "type": "Generic",
+          "comment": "Mix 4"
+        },
+        {
+          "dmxRange": [
+            41,
+            49
+          ],
+          "type": "Generic",
+          "comment": "Pars + Derby Lights + Laser + Strobes"
+        },
+        {
+          "dmxRange": [
+            50,
+            58
+          ],
+          "type": "Generic",
+          "comment": "Pars + Derby Lights + Laser + Spots"
+        },
+        {
+          "dmxRange": [
+            59,
+            67
+          ],
+          "type": "Generic",
+          "comment": "Pars + Derby Lights + Strobes + Spots"
+        },
+        {
+          "dmxRange": [
+            68,
+            76
+          ],
+          "type": "Generic",
+          "comment": "Pars + Laser + Strobes + Spots"
+        },
+        {
+          "dmxRange": [
+            77,
+            85
+          ],
+          "type": "Generic",
+          "comment": "Derby Lights + Laser + Strobes + Spots"
+        },
+        {
+          "dmxRange": [
+            86,
+            94
+          ],
+          "type": "Generic",
+          "comment": "Pars + Derby Lights + Laser"
+        },
+        {
+          "dmxRange": [
+            95,
+            103
+          ],
+          "type": "Generic",
+          "comment": "Pars + Derby Lights + Strobes"
+        },
+        {
+          "dmxRange": [
+            104,
+            112
+          ],
+          "type": "Generic",
+          "comment": "Pars + Derby Lights + Spots"
+        },
+        {
+          "dmxRange": [
+            113,
+            121
+          ],
+          "type": "Generic",
+          "comment": "Pars + Laser + Strobes"
+        },
+        {
+          "dmxRange": [
+            122,
+            130
+          ],
+          "type": "Generic",
+          "comment": "Pars + Laser + Spots"
+        },
+        {
+          "dmxRange": [
+            131,
+            139
+          ],
+          "type": "Generic",
+          "comment": "Pars + Strobes + Spots"
+        },
+        {
+          "dmxRange": [
+            140,
+            147
+          ],
+          "type": "Generic",
+          "comment": "Pars and Derby Lights"
+        },
+        {
+          "dmxRange": [
+            148,
+            155
+          ],
+          "type": "Generic",
+          "comment": "Pars and Laser"
+        },
+        {
+          "dmxRange": [
+            156,
+            163
+          ],
+          "type": "Generic",
+          "comment": "Pars and Strobes"
+        },
+        {
+          "dmxRange": [
+            164,
+            171
+          ],
+          "type": "Generic",
+          "comment": "Pars and Spots"
+        },
+        {
+          "dmxRange": [
+            172,
+            179
+          ],
+          "type": "Generic",
+          "comment": "Derby Lights and Laser"
+        },
+        {
+          "dmxRange": [
+            180,
+            187
+          ],
+          "type": "Generic",
+          "comment": "Derby Lights and Strobes"
+        },
+        {
+          "dmxRange": [
+            188,
+            195
+          ],
+          "type": "Generic",
+          "comment": "Derby Lights and Spots"
+        },
+        {
+          "dmxRange": [
+            196,
+            203
+          ],
+          "type": "Generic",
+          "comment": "Laser and Strobes"
+        },
+        {
+          "dmxRange": [
+            204,
+            211
+          ],
+          "type": "Generic",
+          "comment": "Laser and Spots"
+        },
+        {
+          "dmxRange": [
+            212,
+            219
+          ],
+          "type": "Generic",
+          "comment": "Strobes and Spots"
+        },
+        {
+          "dmxRange": [
+            220,
+            227
+          ],
+          "type": "Generic",
+          "comment": "Pars on only"
+        },
+        {
+          "dmxRange": [
+            228,
+            235
+          ],
+          "type": "Generic",
+          "comment": "Derby Lights on only"
+        },
+        {
+          "dmxRange": [
+            236,
+            243
+          ],
+          "type": "Generic",
+          "comment": "Laser on only"
+        },
+        {
+          "dmxRange": [
+            244,
+            251
+          ],
+          "type": "Generic",
+          "comment": "Strobes on only"
+        },
+        {
+          "dmxRange": [
+            252,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Spots on only"
+        }
+      ]
+    },
+    "Program speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Sound sensitivity"
+        }
+      ]
+    },
+    "Spot movement speed": {
+      "capability": {
+        "type": "PanTiltSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Spots XY speed, slow to fast"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "UV $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Strobe $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            11
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            12,
+            250
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Strobe to sound"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Rotation $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            1,
+            127
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate clockwise, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            128
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            129,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate counterclockwise, slow to fast"
+        }
+      ]
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Laser color $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ColorPreset",
+          "comment": "Blackout"
+        },
+        {
+          "dmxRange": [
+            6,
+            88
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            89,
+            171
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            172,
+            255
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red + green"
+        }
+      ]
+    },
+    "Pan $pixelKey": {
+      "capability": {
+        "type": "Pan",
+        "angleStart": "0deg",
+        "angleEnd": "540deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Pan fine $pixelKey"
+      ]
+    },
+    "Tilt $pixelKey": {
+      "capability": {
+        "type": "Tilt",
+        "angleStart": "0deg",
+        "angleEnd": "180deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Tilt fine $pixelKey"
+      ]
+    },
+    "Pan/tilt speed $pixelKey": {
+      "capability": {
+        "type": "PanTiltSpeed"
+      }
+    },
+    "Color wheel $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            6
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 1
+        },
+        {
+          "dmxRange": [
+            7,
+            13
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 2
+        },
+        {
+          "dmxRange": [
+            14,
+            20
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 3
+        },
+        {
+          "dmxRange": [
+            21,
+            27
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 4
+        },
+        {
+          "dmxRange": [
+            28,
+            34
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 5
+        },
+        {
+          "dmxRange": [
+            35,
+            48
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 6
+        },
+        {
+          "dmxRange": [
+            49,
+            55
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 7
+        },
+        {
+          "dmxRange": [
+            56,
+            64
+          ],
+          "type": "WheelSlot",
+          "wheel": "Color Wheel",
+          "slotNumber": 8
+        },
+        {
+          "dmxRange": [
+            65,
+            189
+          ],
+          "type": "WheelRotation",
+          "wheel": "Color Wheel",
+          "comment": "Color index"
+        },
+        {
+          "dmxRange": [
+            190,
+            221
+          ],
+          "type": "WheelRotation",
+          "wheel": "Color Wheel",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Color scroll clockwise, fast to slow"
+        },
+        {
+          "dmxRange": [
+            222,
+            223
+          ],
+          "type": "WheelRotation",
+          "wheel": "Color Wheel",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            224,
+            255
+          ],
+          "type": "WheelRotation",
+          "wheel": "Color Wheel",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Color scroll counterclockwise, slow to fast"
+        }
+      ]
+    },
+    "Gobo wheel $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 1
+        },
+        {
+          "dmxRange": [
+            6,
+            11
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 2
+        },
+        {
+          "dmxRange": [
+            12,
+            17
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 3
+        },
+        {
+          "dmxRange": [
+            18,
+            23
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 4
+        },
+        {
+          "dmxRange": [
+            24,
+            29
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 5
+        },
+        {
+          "dmxRange": [
+            30,
+            35
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 6
+        },
+        {
+          "dmxRange": [
+            36,
+            41
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 7
+        },
+        {
+          "dmxRange": [
+            42,
+            63
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 8
+        },
+        {
+          "dmxRange": [
+            64,
+            69
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 8,
+          "comment": "Gobo 7 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            70,
+            75
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 7,
+          "comment": "Gobo 6 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            76,
+            81
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 6,
+          "comment": "Gobo 5 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            82,
+            87
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 5,
+          "comment": "Gobo 4 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            88,
+            93
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 4,
+          "comment": "Gobo 3 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            94,
+            99
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 3,
+          "comment": "Gobo 2 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            100,
+            117
+          ],
+          "type": "WheelShake",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 2,
+          "comment": "Gobo 1 shake, slow to fast"
+        },
+        {
+          "dmxRange": [
+            118,
+            127
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "slotNumber": 1
+        },
+        {
+          "dmxRange": [
+            128,
+            189
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "comment": "Scroll clockwise, slow to fast"
+        },
+        {
+          "dmxRange": [
+            190,
+            193
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            194,
+            255
+          ],
+          "type": "WheelSlot",
+          "wheel": "Gobo Wheel",
+          "comment": "Scroll counterclockwise, slow to fast"
+        }
+      ]
+    },
+    "Dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe 2 $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            3
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Closed",
+          "comment": "Closed"
+        },
+        {
+          "dmxRange": [
+            4,
+            7
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            8,
+            76
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            77,
+            145
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Pulse strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            146,
+            215
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            216,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        }
+      ],
+      "defaultValue": 4,
+      "highlightValue": 4
+    }
+  },
+  "wheels": {
+    "Color Wheel": {
+      "slots": [
+        {
+          "type": "Open"
+        },
+        {
+          "type": "Color",
+          "name": "Red",
+          "colors": [
+            "#ff0000"
+          ]
+        },
+        {
+          "type": "Color",
+          "name": "Orange",
+          "colors": [
+            "#ff8000"
+          ]
+        },
+        {
+          "type": "Color",
+          "name": "Yellow",
+          "colors": [
+            "#ffff00"
+          ]
+        },
+        {
+          "type": "Color",
+          "name": "Green",
+          "colors": [
+            "#00ff00"
+          ]
+        },
+        {
+          "type": "Color",
+          "name": "Blue",
+          "colors": [
+            "#0000ff"
+          ]
+        },
+        {
+          "type": "Color",
+          "name": "Cyan",
+          "colors": [
+            "#00ffff"
+          ]
+        },
+        {
+          "type": "Color",
+          "name": "Magenta",
+          "colors": [
+            "#ff00ff"
+          ]
+        }
+      ]
+    },
+    "Gobo Wheel": {
+      "slots": [
+        {
+          "type": "Open"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 1"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 2"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 3"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 4"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 5"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 6"
+        },
+        {
+          "type": "Gobo",
+          "name": "Gobo 7"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "46CH",
+      "shortName": "46CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "UV $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "UV $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Laser color $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan fine $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Tilt $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Tilt fine $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan/tilt speed $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Color wheel $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Gobo wheel $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe 2 $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan fine $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Tilt $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Tilt fine $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan/tilt speed $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Color wheel $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Gobo wheel $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe 2 $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "27CH",
+      "shortName": "27CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "UV $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Flash"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Laser color $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan fine $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Tilt $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Tilt fine $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pan/tilt speed $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Color wheel $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Gobo wheel $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Spot 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe 2 $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3CH",
+      "shortName": "3CH",
+      "channels": [
+        "Operation",
+        "Program speed",
+        "Spot movement speed"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+{
+  "name": "Amhaze Stadium 2X IP",
+  "shortName": "Amhaze Stadium 2X IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Hazer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fan speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%, slow to fast"
+        }
+      ]
+    },
+    "Haze output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%, thin to heavy"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "2Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Fan speed",
+        "Haze output"
+      ]
+    }
+  ]
+}

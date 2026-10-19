@@ -1,0 +1,304 @@
+{
+  "name": "Mini Kinta ILS",
+  "shortName": "Mini Kinta ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Kinta color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            20
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            21,
+            35
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            36,
+            50
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            51,
+            65
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            66,
+            80
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red and green"
+        },
+        {
+          "dmxRange": [
+            81,
+            95
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red and blue"
+        },
+        {
+          "dmxRange": [
+            96,
+            110
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffffff"
+          ],
+          "comment": "Red and white"
+        },
+        {
+          "dmxRange": [
+            111,
+            125
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green and blue"
+        },
+        {
+          "dmxRange": [
+            126,
+            140
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#ffffff"
+          ],
+          "comment": "Green and white"
+        },
+        {
+          "dmxRange": [
+            141,
+            155
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff",
+            "#ffffff"
+          ],
+          "comment": "Blue and white"
+        },
+        {
+          "dmxRange": [
+            156,
+            170
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red, green, and blue"
+        },
+        {
+          "dmxRange": [
+            171,
+            185
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#ffffff"
+          ],
+          "comment": "Red, green, and white"
+        },
+        {
+          "dmxRange": [
+            186,
+            200
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff",
+            "#ffffff"
+          ],
+          "comment": "Green, blue, and white"
+        },
+        {
+          "dmxRange": [
+            201,
+            215
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red, green, blue, and white"
+        },
+        {
+          "dmxRange": [
+            216,
+            230
+          ],
+          "type": "ColorPreset",
+          "comment": "Automatic 4-color chase"
+        },
+        {
+          "dmxRange": [
+            231,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Automatic 7-color chase"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Motor rotation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Motor indexing"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Motor speed, slow to fast"
+        }
+      ]
+    },
+    "Automatic program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            5,
+            200
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Automatic program, slow to fast"
+        },
+        {
+          "dmxRange": [
+            201,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Kinta color",
+        "Strobe",
+        "Motor rotation",
+        "Automatic program"
+      ]
+    }
+  ]
+}

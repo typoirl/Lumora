@@ -1,0 +1,5213 @@
+{
+  "name": "Color STRIKE M",
+  "shortName": "Color STRIKE M",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Moving Head",
+    "Effect",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "Plate 1",
+          "Plate 2",
+          "Plate 3",
+          "Plate 4",
+          "Plate 5",
+          "Plate 6",
+          "Plate 7",
+          "Plate 8",
+          "Plate 9",
+          "Plate 10",
+          "Plate 11",
+          "Plate 12",
+          "Plate 13",
+          "Plate 14",
+          "Beam 1",
+          "Beam 2",
+          "Beam 3",
+          "Beam 4",
+          "Beam 5",
+          "Beam 6",
+          "Beam 7",
+          "Beam 8",
+          "Beam 9",
+          "Beam 10",
+          "Beam 11",
+          "Beam 12",
+          "Beam 13",
+          "Beam 14",
+          "Beam 15",
+          "Beam 16",
+          "Beam 17",
+          "Beam 18",
+          "Beam 19",
+          "Beam 20",
+          "Beam 21",
+          "Beam 22",
+          "Beam 23",
+          "Beam 24",
+          "Beam 25",
+          "Beam 26",
+          "Beam 27",
+          "Beam 28",
+          "Plate group 1",
+          "Plate group 2",
+          "Plate group 3",
+          "Plate group 4",
+          "Plate group 5",
+          "Plate group 6",
+          "Plate group 7",
+          "Plate group 8",
+          "Plate group 9",
+          "Plate group 10",
+          "Plate group 11",
+          "Plate group 12",
+          "Beam group 1",
+          "Beam group 2",
+          "Beam group 3",
+          "Beam group 4",
+          "Beam group 5",
+          "Beam group 6",
+          "Beam group 7",
+          "Beam group 8",
+          "Beam group 9",
+          "Beam group 10",
+          "Beam group 11",
+          "Beam group 12",
+          "Plate pair 1",
+          "Plate pair 2",
+          "Plate pair 3",
+          "Plate pair 4",
+          "Plate pair 5",
+          "Plate pair 6",
+          "Plate pair 7",
+          "Beam pair 1",
+          "Beam pair 2",
+          "Beam pair 3",
+          "Beam pair 4",
+          "Beam pair 5",
+          "Beam pair 6",
+          "Beam pair 7",
+          "Beam pair 8",
+          "Beam pair 9",
+          "Beam pair 10",
+          "Beam pair 11",
+          "Beam pair 12",
+          "Beam pair 13",
+          "Beam pair 14"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Tilt": {
+      "capability": {
+        "type": "Tilt",
+        "angleStart": "0deg",
+        "angleEnd": "180deg"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Tilt fine"
+      ]
+    },
+    "Master dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Plate dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Beam dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Plate flash duration": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "Classic shutter mode"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Flash duration, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% on"
+        }
+      ]
+    },
+    "Plate flash rate": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "100%"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Flash rate, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% on"
+        }
+      ]
+    },
+    "Beam flash duration": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "Classic shutter mode"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Flash duration, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% on"
+        }
+      ]
+    },
+    "Beam flash rate": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Generic",
+          "comment": "100%"
+        },
+        {
+          "dmxRange": [
+            10,
+            250
+          ],
+          "type": "Generic",
+          "comment": "Flash rate, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% on"
+        }
+      ]
+    },
+    "Beam FX": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            42
+          ],
+          "type": "Effect",
+          "comment": "Ramp up"
+        },
+        {
+          "dmxRange": [
+            43,
+            85
+          ],
+          "type": "Effect",
+          "comment": "Ramp down"
+        },
+        {
+          "dmxRange": [
+            86,
+            128
+          ],
+          "type": "Effect",
+          "comment": "Ramp up-down"
+        },
+        {
+          "dmxRange": [
+            129,
+            171
+          ],
+          "type": "Effect",
+          "comment": "Random"
+        },
+        {
+          "dmxRange": [
+            172,
+            214
+          ],
+          "type": "Effect",
+          "comment": "Lightning"
+        },
+        {
+          "dmxRange": [
+            215,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Spikes"
+        }
+      ]
+    },
+    "Plates foreground": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            2
+          ],
+          "type": "Effect",
+          "comment": "White 2700K"
+        },
+        {
+          "dmxRange": [
+            3,
+            4
+          ],
+          "type": "Effect",
+          "comment": "White 3200K"
+        },
+        {
+          "dmxRange": [
+            5,
+            6
+          ],
+          "type": "Effect",
+          "comment": "White 4200K"
+        },
+        {
+          "dmxRange": [
+            7,
+            8
+          ],
+          "type": "Effect",
+          "comment": "White 5600K"
+        },
+        {
+          "dmxRange": [
+            9,
+            10
+          ],
+          "type": "Effect",
+          "comment": "White 8000K"
+        },
+        {
+          "dmxRange": [
+            11,
+            11
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            12,
+            48
+          ],
+          "type": "Effect",
+          "comment": "Green+ / Blue"
+        },
+        {
+          "dmxRange": [
+            49,
+            49
+          ],
+          "type": "Effect",
+          "comment": "Cyan"
+        },
+        {
+          "dmxRange": [
+            50,
+            86
+          ],
+          "type": "Effect",
+          "comment": "Green / Blue-"
+        },
+        {
+          "dmxRange": [
+            87,
+            87
+          ],
+          "type": "Effect",
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            88,
+            124
+          ],
+          "type": "Effect",
+          "comment": "Red+ / Green"
+        },
+        {
+          "dmxRange": [
+            125,
+            125
+          ],
+          "type": "Effect",
+          "comment": "Yellow"
+        },
+        {
+          "dmxRange": [
+            126,
+            162
+          ],
+          "type": "Effect",
+          "comment": "Red / Green-"
+        },
+        {
+          "dmxRange": [
+            163,
+            163
+          ],
+          "type": "Effect",
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            164,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Red / Blue+"
+        },
+        {
+          "dmxRange": [
+            201,
+            201
+          ],
+          "type": "Effect",
+          "comment": "Magenta"
+        },
+        {
+          "dmxRange": [
+            202,
+            238
+          ],
+          "type": "Effect",
+          "comment": "Red- / Blue"
+        },
+        {
+          "dmxRange": [
+            239,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            240,
+            247
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Color index, fast to slow"
+        },
+        {
+          "dmxRange": [
+            248,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Color snap, fast to slow"
+        }
+      ]
+    },
+    "Plates foreground dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Plates background": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            2
+          ],
+          "type": "Effect",
+          "comment": "White 2700K"
+        },
+        {
+          "dmxRange": [
+            3,
+            4
+          ],
+          "type": "Effect",
+          "comment": "White 3200K"
+        },
+        {
+          "dmxRange": [
+            5,
+            6
+          ],
+          "type": "Effect",
+          "comment": "White 4200K"
+        },
+        {
+          "dmxRange": [
+            7,
+            8
+          ],
+          "type": "Effect",
+          "comment": "White 5600K"
+        },
+        {
+          "dmxRange": [
+            9,
+            10
+          ],
+          "type": "Effect",
+          "comment": "White 8000K"
+        },
+        {
+          "dmxRange": [
+            11,
+            11
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            12,
+            48
+          ],
+          "type": "Effect",
+          "comment": "Green+ / Blue"
+        },
+        {
+          "dmxRange": [
+            49,
+            49
+          ],
+          "type": "Effect",
+          "comment": "Cyan"
+        },
+        {
+          "dmxRange": [
+            50,
+            86
+          ],
+          "type": "Effect",
+          "comment": "Green / Blue-"
+        },
+        {
+          "dmxRange": [
+            87,
+            87
+          ],
+          "type": "Effect",
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            88,
+            124
+          ],
+          "type": "Effect",
+          "comment": "Red+ / Green"
+        },
+        {
+          "dmxRange": [
+            125,
+            125
+          ],
+          "type": "Effect",
+          "comment": "Yellow"
+        },
+        {
+          "dmxRange": [
+            126,
+            162
+          ],
+          "type": "Effect",
+          "comment": "Red / Green-"
+        },
+        {
+          "dmxRange": [
+            163,
+            163
+          ],
+          "type": "Effect",
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            164,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Red / Blue+"
+        },
+        {
+          "dmxRange": [
+            201,
+            201
+          ],
+          "type": "Effect",
+          "comment": "Magenta"
+        },
+        {
+          "dmxRange": [
+            202,
+            238
+          ],
+          "type": "Effect",
+          "comment": "Red- / Blue"
+        },
+        {
+          "dmxRange": [
+            239,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            240,
+            247
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Color index, fast to slow"
+        },
+        {
+          "dmxRange": [
+            248,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Color snap, fast to slow"
+        }
+      ]
+    },
+    "Plates background dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Plate 1 FX select": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "FX all select (all on)"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "FX patterns"
+        }
+      ]
+    },
+    "Plate 1 FX movement": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Plate 1 FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "Plate 2 FX select": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "FX all select (all on)"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "FX patterns"
+        }
+      ]
+    },
+    "Plate 2 FX movement": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Plate 2 FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "Beam 1 FX select": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "FX all select (all on)"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "FX patterns"
+        }
+      ]
+    },
+    "Beam 1 FX movement": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Beam 1 FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "Beam 2 FX select": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "FX all select (all on)"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "FX patterns"
+        }
+      ]
+    },
+    "Beam 2 FX movement": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Beam 2 FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            10
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            11,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer 1"
+        },
+        {
+          "dmxRange": [
+            16,
+            20
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer 2"
+        },
+        {
+          "dmxRange": [
+            21,
+            25
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer 3"
+        },
+        {
+          "dmxRange": [
+            26,
+            30
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 600 Hz"
+        },
+        {
+          "dmxRange": [
+            31,
+            35
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 1200 Hz"
+        },
+        {
+          "dmxRange": [
+            36,
+            40
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 2000 Hz"
+        },
+        {
+          "dmxRange": [
+            41,
+            45
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 4000 Hz"
+        },
+        {
+          "dmxRange": [
+            46,
+            50
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 6000 Hz"
+        },
+        {
+          "dmxRange": [
+            51,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "PWM 25 kHz"
+        },
+        {
+          "dmxRange": [
+            56,
+            60
+          ],
+          "type": "Maintenance",
+          "comment": "Fan auto"
+        },
+        {
+          "dmxRange": [
+            61,
+            65
+          ],
+          "type": "Maintenance",
+          "comment": "Fan on"
+        },
+        {
+          "dmxRange": [
+            66,
+            70
+          ],
+          "type": "Maintenance",
+          "comment": "Tilt reset"
+        },
+        {
+          "dmxRange": [
+            71,
+            75
+          ],
+          "type": "Maintenance",
+          "comment": "Plate 1 invert off"
+        },
+        {
+          "dmxRange": [
+            76,
+            80
+          ],
+          "type": "Maintenance",
+          "comment": "Plate 1 invert on"
+        },
+        {
+          "dmxRange": [
+            81,
+            85
+          ],
+          "type": "Maintenance",
+          "comment": "Plate 2 invert off"
+        },
+        {
+          "dmxRange": [
+            86,
+            90
+          ],
+          "type": "Maintenance",
+          "comment": "Plate 2 invert on"
+        },
+        {
+          "dmxRange": [
+            91,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Beam 1 invert off"
+        },
+        {
+          "dmxRange": [
+            96,
+            100
+          ],
+          "type": "Maintenance",
+          "comment": "Beam 1 invert on"
+        },
+        {
+          "dmxRange": [
+            101,
+            105
+          ],
+          "type": "Maintenance",
+          "comment": "Beam 2 invert off"
+        },
+        {
+          "dmxRange": [
+            106,
+            110
+          ],
+          "type": "Maintenance",
+          "comment": "Beam 2 invert on"
+        },
+        {
+          "dmxRange": [
+            111,
+            115
+          ],
+          "type": "Maintenance",
+          "comment": "Plate swap on"
+        },
+        {
+          "dmxRange": [
+            116,
+            120
+          ],
+          "type": "Maintenance",
+          "comment": "Plate swap off"
+        },
+        {
+          "dmxRange": [
+            121,
+            125
+          ],
+          "type": "Maintenance",
+          "comment": "Beam swap on"
+        },
+        {
+          "dmxRange": [
+            126,
+            130
+          ],
+          "type": "Maintenance",
+          "comment": "Beam swap off"
+        },
+        {
+          "dmxRange": [
+            131,
+            140
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            141,
+            150
+          ],
+          "type": "Maintenance",
+          "comment": "FX pattern priority"
+        },
+        {
+          "dmxRange": [
+            151,
+            155
+          ],
+          "type": "Maintenance",
+          "comment": "Color mix HTP on"
+        },
+        {
+          "dmxRange": [
+            156,
+            160
+          ],
+          "type": "Maintenance",
+          "comment": "Color mix HTP off"
+        },
+        {
+          "dmxRange": [
+            161,
+            170
+          ],
+          "type": "Maintenance",
+          "comment": "Color priority"
+        },
+        {
+          "dmxRange": [
+            171,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Plates red": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Plates green": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Plates blue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Plates FX select": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "FX all select (all on)"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "FX patterns"
+        }
+      ]
+    },
+    "Plates FX movement": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Plates FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "Beams FX select": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "FX all select (all on)"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "FX patterns"
+        }
+      ]
+    },
+    "Beams FX movement": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Effect",
+          "speedStart": "fast",
+          "speedEnd": "slow",
+          "comment": "Left to right, fast to slow"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Right to left, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Beams FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "Plate priority": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            128
+          ],
+          "type": "Generic",
+          "comment": "Desk priority"
+        },
+        {
+          "dmxRange": [
+            129,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Pixel priority"
+        }
+      ]
+    },
+    "Beam priority": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            128
+          ],
+          "type": "Generic",
+          "comment": "Desk priority"
+        },
+        {
+          "dmxRange": [
+            129,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Pixel priority"
+        }
+      ]
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        },
+        {
+          "dmxRange": [
+            10,
+            79
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            80,
+            149
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Pulse, slow to fast"
+        },
+        {
+          "dmxRange": [
+            150,
+            219
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            220,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "Open"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Beam shutter": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            36
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No effect"
+        },
+        {
+          "dmxRange": [
+            37,
+            40
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramp up"
+        },
+        {
+          "dmxRange": [
+            41,
+            44
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramp up, random"
+        },
+        {
+          "dmxRange": [
+            45,
+            48
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramp down"
+        },
+        {
+          "dmxRange": [
+            49,
+            52
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramp down, random"
+        },
+        {
+          "dmxRange": [
+            53,
+            56
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramp up and down"
+        },
+        {
+          "dmxRange": [
+            57,
+            60
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramp up and down, random"
+        },
+        {
+          "dmxRange": [
+            61,
+            64
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random white beam"
+        },
+        {
+          "dmxRange": [
+            65,
+            68
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random single pixel"
+        },
+        {
+          "dmxRange": [
+            69,
+            72
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning"
+        },
+        {
+          "dmxRange": [
+            73,
+            76
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Spikes"
+        },
+        {
+          "dmxRange": [
+            77,
+            132
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "White beam chases"
+        },
+        {
+          "dmxRange": [
+            133,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            180,
+            251
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Double, triple and quad flashes"
+        },
+        {
+          "dmxRange": [
+            252,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Control 68": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            36
+          ],
+          "type": "Maintenance",
+          "comment": "Angle settings"
+        },
+        {
+          "dmxRange": [
+            37,
+            44
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer modes"
+        },
+        {
+          "dmxRange": [
+            45,
+            56
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency"
+        },
+        {
+          "dmxRange": [
+            57,
+            67
+          ],
+          "type": "Maintenance",
+          "comment": "Fan"
+        },
+        {
+          "dmxRange": [
+            68,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Tilt settings"
+        },
+        {
+          "dmxRange": [
+            80,
+            125
+          ],
+          "type": "Maintenance",
+          "comment": "Invert and swap"
+        },
+        {
+          "dmxRange": [
+            126,
+            217
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            218,
+            225
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer flash mode"
+        },
+        {
+          "dmxRange": [
+            226,
+            239
+          ],
+          "type": "Maintenance",
+          "comment": "Priority settings"
+        },
+        {
+          "dmxRange": [
+            240,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Plate flash duration 68": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Flash duration 7-650 ms"
+      }
+    },
+    "Plate shutter": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            36
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Shutter angle 0-360°"
+        },
+        {
+          "dmxRange": [
+            37,
+            76
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Ramps, random, lightning and spikes"
+        },
+        {
+          "dmxRange": [
+            77,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            180,
+            251
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Double, triple and quad flashes"
+        },
+        {
+          "dmxRange": [
+            252,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        }
+      ],
+      "defaultValue": 77,
+      "highlightValue": 77
+    },
+    "Plate red main": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Plate green main": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Plate blue main": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Beam and plate FX crossfade": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "Effect",
+          "comment": "Snap from cell to cell"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Fade duration, short to long"
+        }
+      ]
+    },
+    "FX dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Plate invert": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "Generic",
+          "comment": "Normal"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Generic",
+          "comment": "Invert 1 and 2"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "Generic",
+          "comment": "Invert 1"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Generic",
+          "comment": "Invert 2"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Beam invert": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "Generic",
+          "comment": "Normal"
+        },
+        {
+          "dmxRange": [
+            6,
+            124
+          ],
+          "type": "Generic",
+          "comment": "Invert 1 and 2"
+        },
+        {
+          "dmxRange": [
+            125,
+            130
+          ],
+          "type": "Generic",
+          "comment": "Invert 1"
+        },
+        {
+          "dmxRange": [
+            131,
+            249
+          ],
+          "type": "Generic",
+          "comment": "Invert 2"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Beam": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "97CH",
+      "shortName": "97CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Master dimmer",
+        "Plate dimmer",
+        "Beam dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 16"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 17"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 18"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 19"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 20"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 21"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 22"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 23"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 25"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 26"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 27"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 28"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Beam FX",
+        "Plates foreground",
+        "Plates foreground dimmer",
+        "Plates background",
+        "Plates background dimmer",
+        "Plate 1 FX select",
+        "Plate 1 FX movement",
+        "Plate 1 FX crossfade",
+        "Plate 2 FX select",
+        "Plate 2 FX movement",
+        "Plate 2 FX crossfade",
+        "Beam 1 FX select",
+        "Beam 1 FX movement",
+        "Beam 1 FX crossfade",
+        "Beam 2 FX select",
+        "Beam 2 FX movement",
+        "Beam 2 FX crossfade",
+        "Control"
+      ]
+    },
+    {
+      "name": "96CH",
+      "shortName": "96CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Master dimmer",
+        "Plate dimmer",
+        "Beam dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Plates red",
+        "Plates green",
+        "Plates blue",
+        "Beam FX",
+        "Plates foreground",
+        "Plates foreground dimmer",
+        "Plates background",
+        "Plates background dimmer",
+        "Plates FX select",
+        "Plates FX movement",
+        "Plates FX crossfade",
+        "Beams FX select",
+        "Beams FX movement",
+        "Beams FX crossfade",
+        "Control",
+        "Plate priority",
+        "Beam priority",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 16"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 17"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 18"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 19"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 20"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 21"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 22"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 23"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 25"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 26"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 27"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 28"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "74CH",
+      "shortName": "74CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Dimmer",
+        "Strobe",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 15"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 16"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 17"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 18"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 19"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 20"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 21"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 22"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 23"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 24"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 25"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 26"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 27"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam 28"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "68CH",
+      "shortName": "68CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Beam dimmer",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Beam shutter",
+        "Control 68",
+        "Plate dimmer",
+        "Plate flash duration 68",
+        "Beam flash rate",
+        "Plate shutter",
+        "Plate red main",
+        "Plate green main",
+        "Plate blue main",
+        "Beam and plate FX crossfade",
+        "Plates FX movement",
+        "Plates FX select",
+        "Beams FX movement",
+        "Beams FX select",
+        "FX dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate group 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam group 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "47CH",
+      "shortName": "47CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Master dimmer",
+        "Plate dimmer",
+        "Beam dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Plate invert",
+        "Beam invert",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Plate pair 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 9"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 10"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 11"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 12"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 13"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Beam pair 14"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "30CH",
+      "shortName": "30CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Master dimmer",
+        "Plate dimmer",
+        "Beam dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Plates red",
+        "Plates green",
+        "Plates blue",
+        "Beam FX",
+        "Plates foreground",
+        "Plates foreground dimmer",
+        "Plates background",
+        "Plates background dimmer",
+        "Plate 1 FX select",
+        "Plate 1 FX movement",
+        "Plate 1 FX crossfade",
+        "Plate 2 FX select",
+        "Plate 2 FX movement",
+        "Plate 2 FX crossfade",
+        "Beam 1 FX select",
+        "Beam 1 FX movement",
+        "Beam 1 FX crossfade",
+        "Beam 2 FX select",
+        "Beam 2 FX movement",
+        "Beam 2 FX crossfade",
+        "Control"
+      ]
+    },
+    {
+      "name": "24CH",
+      "shortName": "24CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Master dimmer",
+        "Plate dimmer",
+        "Beam dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Plates red",
+        "Plates green",
+        "Plates blue",
+        "Beam FX",
+        "Plates foreground",
+        "Plates foreground dimmer",
+        "Plates background",
+        "Plates background dimmer",
+        "Plates FX select",
+        "Plates FX movement",
+        "Plates FX crossfade",
+        "Beams FX select",
+        "Beams FX movement",
+        "Beams FX crossfade",
+        "Control"
+      ]
+    },
+    {
+      "name": "13CH",
+      "shortName": "13CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Plate dimmer",
+        "Beam dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Plates red",
+        "Plates green",
+        "Plates blue",
+        "Beam FX",
+        "Control"
+      ]
+    },
+    {
+      "name": "11CH",
+      "shortName": "11CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Dimmer",
+        "Plate flash duration",
+        "Plate flash rate",
+        "Beam flash duration",
+        "Beam flash rate",
+        "Plates red",
+        "Plates green",
+        "Plates blue",
+        "Beam"
+      ]
+    },
+    {
+      "name": "8CH",
+      "shortName": "8CH",
+      "channels": [
+        "Tilt",
+        "Tilt fine",
+        "Dimmer",
+        "Strobe",
+        "Red",
+        "Green",
+        "Blue",
+        "Beam"
+      ]
+    }
+  ]
+}

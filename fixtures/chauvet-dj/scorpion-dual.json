@@ -1,0 +1,320 @@
+{
+  "name": "Scorpion Dual",
+  "shortName": "Scorpion Dual",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Control mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            85
+          ],
+          "type": "Maintenance",
+          "comment": "DMX mode"
+        },
+        {
+          "dmxRange": [
+            86,
+            170
+          ],
+          "type": "Maintenance",
+          "comment": "Auto program"
+        },
+        {
+          "dmxRange": [
+            171,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Sound-Active"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            249
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "On"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Laser pattern": {
+      "capability": {
+        "type": "Effect",
+        "comment": "Patterns"
+      }
+    },
+    "Pattern size": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "100%–5%"
+        },
+        {
+          "dmxRange": [
+            128,
+            169
+          ],
+          "type": "Effect",
+          "comment": "Zoom in"
+        },
+        {
+          "dmxRange": [
+            170,
+            209
+          ],
+          "type": "Effect",
+          "comment": "Zoom out"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Zoom in and out"
+        }
+      ]
+    },
+    "Y-Axis Rolling": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Fixed position on y-axis (0 to 359°)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Generic",
+          "comment": "Clockwise rolling, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Counter-clockwise rolling, slow to fast"
+        }
+      ]
+    },
+    "X-Axis Rolling": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Fixed position on x-axis (0 to 359°)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Generic",
+          "comment": "Clockwise rolling, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Counter-clockwise rolling, slow to fast"
+        }
+      ]
+    },
+    "Z-Axis Rolling": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Fixed position on z-axis (0 to 359°)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Generic",
+          "comment": "Clockwise rolling, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Counter-clockwise rolling, slow to fast"
+        }
+      ]
+    },
+    "Pattern X position": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Fixed position (128 horizontal points)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Clockwise movement, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Counter-clockwise movement, slow to fast"
+        }
+      ]
+    },
+    "Pattern Y position": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Fixed position (128 vertical points)"
+        },
+        {
+          "dmxRange": [
+            128,
+            191
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Clockwise movement, slow to fast"
+        },
+        {
+          "dmxRange": [
+            192,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Counter-clockwise movement, slow to fast"
+        }
+      ]
+    },
+    "Scan Speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Fast to slow (manual)"
+        },
+        {
+          "dmxRange": [
+            128,
+            169
+          ],
+          "type": "Generic",
+          "comment": "Slow to fast (automatic)"
+        },
+        {
+          "dmxRange": [
+            170,
+            209
+          ],
+          "type": "Generic",
+          "comment": "Fast to slow (automatic)"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Fast to slow, then slow to fast (automatic repeat)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "10-Channel",
+      "shortName": "10-Channel",
+      "channels": [
+        "Control mode",
+        "Strobe",
+        "Laser pattern",
+        "Pattern size",
+        "Y-Axis Rolling",
+        "X-Axis Rolling",
+        "Z-Axis Rolling",
+        "Pattern X position",
+        "Pattern Y position",
+        "Scan Speed"
+      ]
+    }
+  ]
+}

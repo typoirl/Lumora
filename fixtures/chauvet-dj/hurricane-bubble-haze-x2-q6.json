@@ -1,0 +1,261 @@
+{
+  "name": "Hurricane Bubble Haze X2 Q6",
+  "shortName": "Hurricane Bubble Haze X2 Q6",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Hazer",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Bubble Output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "On"
+        }
+      ]
+    },
+    "Haze Output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Haze volume, low to high"
+        }
+      ]
+    },
+    "Fan Speed": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Blower fan speed, slow to fast"
+      }
+    },
+    "Clean Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Bubble cleaning mode on (bubble pump only)"
+        }
+      ]
+    },
+    "Dimmer": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Intensity",
+          "comment": "0–100%"
+        }
+      ]
+    },
+    "Red": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorIntensity",
+          "color": "Red",
+          "comment": "0–100%"
+        }
+      ]
+    },
+    "Green": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorIntensity",
+          "color": "Green",
+          "comment": "0–100%"
+        }
+      ]
+    },
+    "Blue": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorIntensity",
+          "color": "Blue",
+          "comment": "0–100%"
+        }
+      ]
+    },
+    "UV": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorIntensity",
+          "color": "UV",
+          "comment": "0–100%"
+        }
+      ]
+    },
+    "Color Macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macros"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Color Macro Speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color macro speed, slow to fast"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "12Ch",
+      "shortName": "12Ch",
+      "channels": [
+        "Bubble Output",
+        "Haze Output",
+        "Fan Speed",
+        "Clean Mode",
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "UV",
+        "Color Macro",
+        "Strobe",
+        "Color Macro Speed"
+      ]
+    }
+  ]
+}

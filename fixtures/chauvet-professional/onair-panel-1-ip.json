@@ -1,0 +1,909 @@
+{
+  "name": "onAir Panel 1 IP",
+  "shortName": "onAir Panel 1 IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      2,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            12
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800K"
+        },
+        {
+          "dmxRange": [
+            13,
+            19
+          ],
+          "type": "ColorTemperature",
+          "comment": "2900K"
+        },
+        {
+          "dmxRange": [
+            20,
+            26
+          ],
+          "type": "ColorTemperature",
+          "comment": "3000K"
+        },
+        {
+          "dmxRange": [
+            27,
+            33
+          ],
+          "type": "ColorTemperature",
+          "comment": "3100K"
+        },
+        {
+          "dmxRange": [
+            34,
+            40
+          ],
+          "type": "ColorTemperature",
+          "comment": "3200K"
+        },
+        {
+          "dmxRange": [
+            41,
+            47
+          ],
+          "type": "ColorTemperature",
+          "comment": "3300K"
+        },
+        {
+          "dmxRange": [
+            48,
+            54
+          ],
+          "type": "ColorTemperature",
+          "comment": "3400K"
+        },
+        {
+          "dmxRange": [
+            55,
+            61
+          ],
+          "type": "ColorTemperature",
+          "comment": "3500K"
+        },
+        {
+          "dmxRange": [
+            62,
+            68
+          ],
+          "type": "ColorTemperature",
+          "comment": "3600K"
+        },
+        {
+          "dmxRange": [
+            69,
+            75
+          ],
+          "type": "ColorTemperature",
+          "comment": "3700K"
+        },
+        {
+          "dmxRange": [
+            76,
+            82
+          ],
+          "type": "ColorTemperature",
+          "comment": "3800K"
+        },
+        {
+          "dmxRange": [
+            83,
+            89
+          ],
+          "type": "ColorTemperature",
+          "comment": "3900K"
+        },
+        {
+          "dmxRange": [
+            90,
+            96
+          ],
+          "type": "ColorTemperature",
+          "comment": "4000K"
+        },
+        {
+          "dmxRange": [
+            97,
+            103
+          ],
+          "type": "ColorTemperature",
+          "comment": "4100K"
+        },
+        {
+          "dmxRange": [
+            104,
+            110
+          ],
+          "type": "ColorTemperature",
+          "comment": "4200K"
+        },
+        {
+          "dmxRange": [
+            111,
+            117
+          ],
+          "type": "ColorTemperature",
+          "comment": "4300K"
+        },
+        {
+          "dmxRange": [
+            118,
+            124
+          ],
+          "type": "ColorTemperature",
+          "comment": "4400K"
+        },
+        {
+          "dmxRange": [
+            125,
+            131
+          ],
+          "type": "ColorTemperature",
+          "comment": "4500K"
+        },
+        {
+          "dmxRange": [
+            132,
+            138
+          ],
+          "type": "ColorTemperature",
+          "comment": "4600K"
+        },
+        {
+          "dmxRange": [
+            139,
+            145
+          ],
+          "type": "ColorTemperature",
+          "comment": "4700K"
+        },
+        {
+          "dmxRange": [
+            146,
+            152
+          ],
+          "type": "ColorTemperature",
+          "comment": "4800K"
+        },
+        {
+          "dmxRange": [
+            153,
+            159
+          ],
+          "type": "ColorTemperature",
+          "comment": "4900K"
+        },
+        {
+          "dmxRange": [
+            160,
+            166
+          ],
+          "type": "ColorTemperature",
+          "comment": "5000K"
+        },
+        {
+          "dmxRange": [
+            167,
+            173
+          ],
+          "type": "ColorTemperature",
+          "comment": "5100K"
+        },
+        {
+          "dmxRange": [
+            174,
+            180
+          ],
+          "type": "ColorTemperature",
+          "comment": "5200K"
+        },
+        {
+          "dmxRange": [
+            181,
+            187
+          ],
+          "type": "ColorTemperature",
+          "comment": "5300K"
+        },
+        {
+          "dmxRange": [
+            188,
+            194
+          ],
+          "type": "ColorTemperature",
+          "comment": "5400K"
+        },
+        {
+          "dmxRange": [
+            195,
+            201
+          ],
+          "type": "ColorTemperature",
+          "comment": "5500K"
+        },
+        {
+          "dmxRange": [
+            202,
+            208
+          ],
+          "type": "ColorTemperature",
+          "comment": "5600K"
+        },
+        {
+          "dmxRange": [
+            209,
+            215
+          ],
+          "type": "ColorTemperature",
+          "comment": "5700K"
+        },
+        {
+          "dmxRange": [
+            216,
+            222
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            223,
+            229
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            230,
+            236
+          ],
+          "type": "ColorTemperature",
+          "comment": "7000K"
+        },
+        {
+          "dmxRange": [
+            237,
+            243
+          ],
+          "type": "ColorTemperature",
+          "comment": "7500K"
+        },
+        {
+          "dmxRange": [
+            244,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "8000K"
+        }
+      ]
+    },
+    "Tint": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            1
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            2,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Green/magenta -25 to +25"
+        }
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine"
+      ]
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine"
+      ]
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine"
+      ]
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine"
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Effect macros": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            39
+          ],
+          "type": "Effect",
+          "comment": "Color chase"
+        },
+        {
+          "dmxRange": [
+            40,
+            68
+          ],
+          "type": "Effect",
+          "comment": "Police car"
+        },
+        {
+          "dmxRange": [
+            69,
+            96
+          ],
+          "type": "Effect",
+          "comment": "Firetruck"
+        },
+        {
+          "dmxRange": [
+            97,
+            125
+          ],
+          "type": "Effect",
+          "comment": "Fire"
+        },
+        {
+          "dmxRange": [
+            126,
+            154
+          ],
+          "type": "Effect",
+          "comment": "Clouds"
+        },
+        {
+          "dmxRange": [
+            155,
+            182
+          ],
+          "type": "Effect",
+          "comment": "Fireworks"
+        },
+        {
+          "dmxRange": [
+            183,
+            211
+          ],
+          "type": "Effect",
+          "comment": "Paparazzi"
+        },
+        {
+          "dmxRange": [
+            212,
+            240
+          ],
+          "type": "Effect",
+          "comment": "Lightning"
+        },
+        {
+          "dmxRange": [
+            241,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Effect macro speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Slow to fast"
+      }
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Reset dimmer"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift off"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode auto"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode on"
+        },
+        {
+          "dmxRange": [
+            112,
+            119
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode off"
+        },
+        {
+          "dmxRange": [
+            120,
+            127
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode silent"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "X coordinate": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      },
+      "fineChannelAliases": [
+        "X coordinate fine"
+      ]
+    },
+    "Y coordinate": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      },
+      "fineChannelAliases": [
+        "Y coordinate fine"
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine $pixelKey"
+      ]
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine $pixelKey"
+      ]
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine $pixelKey"
+      ]
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine $pixelKey"
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Color temperature",
+        "Tint"
+      ]
+    },
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "5Ch",
+      "shortName": "5Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Color temperature",
+        "Tint",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "6Ch",
+      "shortName": "6Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "8Ch2",
+      "shortName": "8Ch2",
+      "channels": [
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "White",
+        "White fine"
+      ]
+    },
+    {
+      "name": "11Ch",
+      "shortName": "11Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe",
+        "Color temperature",
+        "Tint",
+        "Effect macros",
+        "Effect macro speed",
+        "Control"
+      ]
+    },
+    {
+      "name": "15Ch1",
+      "shortName": "15Ch1",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "White",
+        "White fine",
+        "Strobe",
+        "Color temperature",
+        "Tint",
+        "Effect macros",
+        "Effect macro speed"
+      ]
+    },
+    {
+      "name": "8Ch1",
+      "shortName": "8Ch1",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "10Ch",
+      "shortName": "10Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        },
+        "Strobe"
+      ]
+    },
+    {
+      "name": "15Ch2",
+      "shortName": "15Ch2",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Color temperature",
+        "Tint",
+        "Effect macros",
+        "Effect macro speed",
+        "Control"
+      ]
+    },
+    {
+      "name": "16Ch",
+      "shortName": "16Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "XYBasic(6)",
+      "shortName": "XYBasic(6)",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "X coordinate",
+        "X coordinate fine",
+        "Y coordinate",
+        "Y coordinate fine"
+      ]
+    },
+    {
+      "name": "XYExtended(10)",
+      "shortName": "XYExtended(10)",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "X coordinate",
+        "X coordinate fine",
+        "Y coordinate",
+        "Y coordinate fine",
+        "Strobe",
+        "Effect macros",
+        "Effect macro speed",
+        "Control"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "name": "Amhaze ECO",
+  "shortName": "Amhaze ECO",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Hazer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fan speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%"
+        }
+      ]
+    },
+    "Haze output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%"
+        }
+      ]
+    },
+    "Remote clean function": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            151
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            152,
+            159
+          ],
+          "type": "Maintenance",
+          "comment": "Remote clean function"
+        },
+        {
+          "dmxRange": [
+            160,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Standby mode"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "3Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Fan speed",
+        "Haze output",
+        "Remote clean function"
+      ]
+    }
+  ]
+}

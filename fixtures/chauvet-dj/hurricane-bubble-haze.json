@@ -1,0 +1,119 @@
+{
+  "name": "Hurricane Bubble Haze",
+  "shortName": "Hurricane Bubble Haze",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Hazer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Bubble output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "On"
+        }
+      ]
+    },
+    "Haze volume": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Haze volume, low to high"
+        }
+      ]
+    },
+    "Blower speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "Generic",
+          "comment": "Blower fan off"
+        },
+        {
+          "dmxRange": [
+            11,
+            100
+          ],
+          "type": "Generic",
+          "comment": "Blower fan speed low"
+        },
+        {
+          "dmxRange": [
+            101,
+            200
+          ],
+          "type": "Generic",
+          "comment": "Blower fan speed medium"
+        },
+        {
+          "dmxRange": [
+            201,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Blower fan speed high"
+        }
+      ]
+    },
+    "Bubble Cleaning Mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Bubble Cleaning Mode on (bubble pump only)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Bubble output",
+        "Haze volume",
+        "Blower speed",
+        "Bubble Cleaning Mode"
+      ]
+    }
+  ]
+}

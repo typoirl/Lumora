@@ -1,0 +1,166 @@
+{
+  "name": "EVE P-100 WW",
+  "shortName": "EVE P-100 WW",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            31
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            32,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Pulse 0-100%"
+        },
+        {
+          "dmxRange": [
+            96,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Pulse 100-0%"
+        },
+        {
+          "dmxRange": [
+            160,
+            223
+          ],
+          "type": "Effect",
+          "comment": "Pulse 100-0-100%"
+        },
+        {
+          "dmxRange": [
+            224,
+            240
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program 1"
+        },
+        {
+          "dmxRange": [
+            241,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active program 2"
+        }
+      ]
+    },
+    "Dimmer speed mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed set from the display"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer speed (off)"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2 (medium)"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3 (slow)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1-CH",
+      "shortName": "1-CH",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "2-CH",
+      "shortName": "2-CH",
+      "channels": [
+        "Dimmer",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "4-CH",
+      "shortName": "4-CH",
+      "channels": [
+        "Dimmer",
+        "Strobe",
+        "Programs",
+        "Dimmer speed mode"
+      ]
+    }
+  ]
+}

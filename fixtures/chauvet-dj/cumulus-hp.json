@@ -1,0 +1,48 @@
+{
+  "name": "Cumulus HP",
+  "shortName": "Cumulus HP",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Smoke"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fan speed": {
+      "capability": {
+        "type": "Generic",
+        "comment": "1-100%"
+      }
+    },
+    "Fog output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "1-100%"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "2Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Fan speed",
+        "Fog output"
+      ]
+    }
+  ]
+}

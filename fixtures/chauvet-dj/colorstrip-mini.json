@@ -1,0 +1,303 @@
+{
+  "name": "COLORstrip Mini",
+  "shortName": "COLORstrip Mini",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Static Colors": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            19
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            20,
+            29
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            30,
+            39
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            40,
+            49
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Yellow"
+        },
+        {
+          "dmxRange": [
+            50,
+            59
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "Magenta"
+        },
+        {
+          "dmxRange": [
+            60,
+            69
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ffff"
+          ],
+          "comment": "Cyan"
+        },
+        {
+          "dmxRange": [
+            70,
+            79
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            80,
+            89
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 1"
+        },
+        {
+          "dmxRange": [
+            90,
+            99
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 2"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 3"
+        },
+        {
+          "dmxRange": [
+            110,
+            119
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 4"
+        },
+        {
+          "dmxRange": [
+            120,
+            129
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 5"
+        },
+        {
+          "dmxRange": [
+            130,
+            139
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 6"
+        },
+        {
+          "dmxRange": [
+            140,
+            149
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 7"
+        },
+        {
+          "dmxRange": [
+            150,
+            159
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 8"
+        },
+        {
+          "dmxRange": [
+            160,
+            169
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 9"
+        },
+        {
+          "dmxRange": [
+            170,
+            179
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 10"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 11"
+        },
+        {
+          "dmxRange": [
+            190,
+            199
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 12"
+        },
+        {
+          "dmxRange": [
+            200,
+            209
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Chase 13"
+        },
+        {
+          "dmxRange": [
+            210,
+            219
+          ],
+          "type": "ColorPreset",
+          "comment": "RGB Color Mixing Channels 2-4"
+        },
+        {
+          "dmxRange": [
+            220,
+            229
+          ],
+          "type": "ColorPreset",
+          "comment": "Color Fade"
+        },
+        {
+          "dmxRange": [
+            230,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Sound-Active"
+        }
+      ]
+    },
+    "Run Speed / Red": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Slow to fast (chases)"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Sound-Active"
+        }
+      ]
+    },
+    "Strobe / Green": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            2
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            3,
+            249
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Sound-Active"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "4-CH",
+      "shortName": "4-CH",
+      "channels": [
+        "Static Colors",
+        "Run Speed / Red",
+        "Strobe / Green",
+        "Blue"
+      ]
+    }
+  ]
+}

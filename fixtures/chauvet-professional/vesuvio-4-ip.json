@@ -1,0 +1,237 @@
+{
+  "name": "Vesuvio 4 IP",
+  "shortName": "Vesuvio 4 IP",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Smoke",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fog volume": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Fog 1-100%, thin to heavy"
+        }
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color indexing"
+        }
+      ]
+    },
+    "Automatic program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Automatic program, slow to fast"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "Intensity",
+          "comment": "Dim to bright"
+        }
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            35
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            36,
+            70
+          ],
+          "type": "Maintenance",
+          "comment": "Heater off"
+        },
+        {
+          "dmxRange": [
+            71,
+            105
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            106,
+            140
+          ],
+          "type": "Maintenance",
+          "comment": "Heater on"
+        },
+        {
+          "dmxRange": [
+            141,
+            175
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            176,
+            210
+          ],
+          "type": "Maintenance",
+          "comment": "Reset fixture"
+        },
+        {
+          "dmxRange": [
+            211,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Safety master control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Maintenance",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Safety control activated"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "11Ch",
+      "shortName": "11Ch",
+      "channels": [
+        "Fog volume",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "Color macro",
+        "Automatic program",
+        "Strobe",
+        "Dimmer",
+        "Control",
+        "Safety master control"
+      ]
+    }
+  ]
+}

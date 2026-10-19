@@ -1,0 +1,150 @@
+{
+  "name": "SlimPAR Q12BT ILS",
+  "shortName": "SlimPAR Q12BT ILS",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "Strobe": {
+      "capability": {
+        "type": "ShutterStrobe",
+        "shutterEffect": "Strobe",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Strobe 0 to 10 Hz, slow to fast"
+      }
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            55
+          ],
+          "type": "Effect",
+          "comment": "Program 1"
+        },
+        {
+          "dmxRange": [
+            56,
+            106
+          ],
+          "type": "Effect",
+          "comment": "Program 2"
+        },
+        {
+          "dmxRange": [
+            107,
+            157
+          ],
+          "type": "Effect",
+          "comment": "Program 3"
+        },
+        {
+          "dmxRange": [
+            158,
+            208
+          ],
+          "type": "Effect",
+          "comment": "Program 4"
+        },
+        {
+          "dmxRange": [
+            209,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Program 5"
+        }
+      ]
+    },
+    "Auto program speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            250
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Sound-active mode"
+        }
+      ]
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber"
+      ]
+    },
+    {
+      "name": "8Ch",
+      "shortName": "8Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "Strobe",
+        "Auto programs",
+        "Auto program speed",
+        "Dimmer"
+      ]
+    }
+  ]
+}

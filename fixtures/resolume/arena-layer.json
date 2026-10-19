@@ -1,0 +1,498 @@
+{
+  "name": "Arena Layer",
+  "shortName": "Arena layer",
+  "manufacturer": "Resolume",
+  "categories": [
+    "Other"
+  ],
+  "meta": {
+    "source": "Resolume Arena DMX Auto Map: one layer, 38 channels (layer n at 28 + 38 x (n-1))"
+  },
+  "availableChannels": {
+    "AV fader": {
+      "defaultValue": 255,
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Bypass": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Bypass on"
+        }
+      ]
+    },
+    "Clear": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Clear"
+        }
+      ]
+    },
+    "Solo": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Solo on"
+        }
+      ]
+    },
+    "Bus": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            1
+          ],
+          "type": "Generic",
+          "comment": "Bus A"
+        },
+        {
+          "dmxRange": [
+            2,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Bus B"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Move up": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Move up"
+        }
+      ]
+    },
+    "Move down": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Move down"
+        }
+      ]
+    },
+    "Trigger clip": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Clips 1 to 256"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 1": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 2": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 3": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 4": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 5": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 6": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 7": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Dashboard dial 8": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 0
+    },
+    "Playhead": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Start to end"
+      },
+      "defaultValue": 0
+    },
+    "Play mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Loop"
+        },
+        {
+          "dmxRange": [
+            1,
+            1
+          ],
+          "type": "Generic",
+          "comment": "Bounce"
+        },
+        {
+          "dmxRange": [
+            2,
+            2
+          ],
+          "type": "Generic",
+          "comment": "Play once"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Play once and hold"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Direction": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Backwards"
+        },
+        {
+          "dmxRange": [
+            1,
+            1
+          ],
+          "type": "Generic",
+          "comment": "Forwards"
+        },
+        {
+          "dmxRange": [
+            2,
+            2
+          ],
+          "type": "Generic",
+          "comment": "Paused"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Random"
+        }
+      ],
+      "defaultValue": 1
+    },
+    "Speed": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 10 (25 = 1)"
+      },
+      "defaultValue": 25
+    },
+    "Transition time": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 10 s"
+      },
+      "defaultValue": 0
+    },
+    "Transition blend": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Blend mode index"
+      },
+      "defaultValue": 4
+    },
+    "Auto pilot": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Play next"
+        },
+        {
+          "dmxRange": [
+            1,
+            1
+          ],
+          "type": "Generic",
+          "comment": "Play previous"
+        },
+        {
+          "dmxRange": [
+            2,
+            2
+          ],
+          "type": "Generic",
+          "comment": "Play random"
+        },
+        {
+          "dmxRange": [
+            3,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Paused"
+        }
+      ],
+      "defaultValue": 3
+    },
+    "Volume": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 255
+    },
+    "Pan": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Left to right (128 = center)"
+      },
+      "defaultValue": 128
+    },
+    "Opacity": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1"
+      },
+      "defaultValue": 255
+    },
+    "Blend mode": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Blend mode index (4 = Alpha)"
+      },
+      "defaultValue": 4
+    },
+    "Width": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 4096 (enable it in Arena first)"
+      },
+      "defaultValue": 0
+    },
+    "Height": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 4096 (enable it in Arena first)"
+      },
+      "defaultValue": 0
+    },
+    "Scale": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 1000% (26 = 100%)"
+      },
+      "defaultValue": 26
+    },
+    "Position X": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-4096 to 4096 (128 = 0)"
+      },
+      "defaultValue": 128
+    },
+    "Position Y": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-4096 to 4096 (128 = 0)"
+      },
+      "defaultValue": 128
+    },
+    "Rotate X": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-180 to 180 degrees"
+      },
+      "defaultValue": 127
+    },
+    "Rotate Y": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-180 to 180 degrees"
+      },
+      "defaultValue": 127
+    },
+    "Rotate Z": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-180 to 180 degrees"
+      },
+      "defaultValue": 127
+    },
+    "Anchor X": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-2048 to 2048 (128 = 0)"
+      },
+      "defaultValue": 128
+    },
+    "Anchor Y": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-2048 to 2048 (128 = 0)"
+      },
+      "defaultValue": 128
+    },
+    "Anchor Z": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-2048 to 2048 (128 = 0)"
+      },
+      "defaultValue": 128
+    }
+  },
+  "modes": [
+    {
+      "name": "Auto map",
+      "shortName": "38ch",
+      "channels": [
+        "AV fader",
+        "Bypass",
+        "Clear",
+        "Solo",
+        "Bus",
+        "Move up",
+        "Move down",
+        "Trigger clip",
+        "Dashboard dial 1",
+        "Dashboard dial 2",
+        "Dashboard dial 3",
+        "Dashboard dial 4",
+        "Dashboard dial 5",
+        "Dashboard dial 6",
+        "Dashboard dial 7",
+        "Dashboard dial 8",
+        "Playhead",
+        "Play mode",
+        "Direction",
+        "Speed",
+        "Transition time",
+        "Transition blend",
+        "Auto pilot",
+        "Volume",
+        "Pan",
+        "Opacity",
+        "Blend mode",
+        "Width",
+        "Height",
+        "Scale",
+        "Position X",
+        "Position Y",
+        "Rotate X",
+        "Rotate Y",
+        "Rotate Z",
+        "Anchor X",
+        "Anchor Y",
+        "Anchor Z"
+      ]
+    }
+  ]
+}

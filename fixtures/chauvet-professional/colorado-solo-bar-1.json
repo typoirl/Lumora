@@ -1,0 +1,1993 @@
+{
+  "name": "COLORado Solo Bar 1",
+  "shortName": "COLORado Solo Bar 1",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      4,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            6
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800K"
+        },
+        {
+          "dmxRange": [
+            7,
+            20
+          ],
+          "type": "ColorTemperature",
+          "comment": "2801-2999K"
+        },
+        {
+          "dmxRange": [
+            21,
+            21
+          ],
+          "type": "ColorTemperature",
+          "comment": "3000K"
+        },
+        {
+          "dmxRange": [
+            22,
+            34
+          ],
+          "type": "ColorTemperature",
+          "comment": "3001-3199K"
+        },
+        {
+          "dmxRange": [
+            35,
+            35
+          ],
+          "type": "ColorTemperature",
+          "comment": "3200K"
+        },
+        {
+          "dmxRange": [
+            36,
+            55
+          ],
+          "type": "ColorTemperature",
+          "comment": "3201-3499K"
+        },
+        {
+          "dmxRange": [
+            56,
+            56
+          ],
+          "type": "ColorTemperature",
+          "comment": "3500K"
+        },
+        {
+          "dmxRange": [
+            57,
+            90
+          ],
+          "type": "ColorTemperature",
+          "comment": "3501-3999K"
+        },
+        {
+          "dmxRange": [
+            91,
+            91
+          ],
+          "type": "ColorTemperature",
+          "comment": "4000K"
+        },
+        {
+          "dmxRange": [
+            92,
+            125
+          ],
+          "type": "ColorTemperature",
+          "comment": "4001-4499K"
+        },
+        {
+          "dmxRange": [
+            126,
+            126
+          ],
+          "type": "ColorTemperature",
+          "comment": "4500K"
+        },
+        {
+          "dmxRange": [
+            127,
+            160
+          ],
+          "type": "ColorTemperature",
+          "comment": "4501-4999K"
+        },
+        {
+          "dmxRange": [
+            161,
+            161
+          ],
+          "type": "ColorTemperature",
+          "comment": "5000K"
+        },
+        {
+          "dmxRange": [
+            162,
+            202
+          ],
+          "type": "ColorTemperature",
+          "comment": "5001-5599K"
+        },
+        {
+          "dmxRange": [
+            203,
+            203
+          ],
+          "type": "ColorTemperature",
+          "comment": "5600K"
+        },
+        {
+          "dmxRange": [
+            204,
+            216
+          ],
+          "type": "ColorTemperature",
+          "comment": "5601-5999K"
+        },
+        {
+          "dmxRange": [
+            217,
+            217
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            218,
+            223
+          ],
+          "type": "ColorTemperature",
+          "comment": "6001-6499K"
+        },
+        {
+          "dmxRange": [
+            224,
+            224
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            225,
+            230
+          ],
+          "type": "ColorTemperature",
+          "comment": "6501-6999K"
+        },
+        {
+          "dmxRange": [
+            231,
+            231
+          ],
+          "type": "ColorTemperature",
+          "comment": "7000K"
+        },
+        {
+          "dmxRange": [
+            232,
+            237
+          ],
+          "type": "ColorTemperature",
+          "comment": "7001-7499K"
+        },
+        {
+          "dmxRange": [
+            238,
+            238
+          ],
+          "type": "ColorTemperature",
+          "comment": "7500K"
+        },
+        {
+          "dmxRange": [
+            239,
+            244
+          ],
+          "type": "ColorTemperature",
+          "comment": "7501-7999K"
+        },
+        {
+          "dmxRange": [
+            245,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "8000K"
+        }
+      ],
+      "fineChannelAliases": [
+        "Color temperature fine"
+      ]
+    },
+    "Tint": {
+      "capability": {
+        "type": "Maintenance",
+        "comment": "Green -25% to +25% (128 neutral)"
+      }
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            14
+          ],
+          "type": "Maintenance",
+          "comment": "Reset dimmer"
+        },
+        {
+          "dmxRange": [
+            15,
+            24
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            25,
+            29
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            30,
+            34
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            35,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer"
+        },
+        {
+          "dmxRange": [
+            40,
+            44
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer"
+        },
+        {
+          "dmxRange": [
+            45,
+            49
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            50,
+            54
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            55,
+            59
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            60,
+            64
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            65,
+            69
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed off"
+        },
+        {
+          "dmxRange": [
+            70,
+            74
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 1"
+        },
+        {
+          "dmxRange": [
+            75,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 2"
+        },
+        {
+          "dmxRange": [
+            80,
+            84
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 3"
+        },
+        {
+          "dmxRange": [
+            85,
+            89
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 4"
+        },
+        {
+          "dmxRange": [
+            90,
+            94
+          ],
+          "type": "Maintenance",
+          "comment": "White calibration off"
+        },
+        {
+          "dmxRange": [
+            95,
+            99
+          ],
+          "type": "Maintenance",
+          "comment": "User custom white calibration"
+        },
+        {
+          "dmxRange": [
+            100,
+            104
+          ],
+          "type": "Maintenance",
+          "comment": "Factory white calibration"
+        },
+        {
+          "dmxRange": [
+            105,
+            129
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            130,
+            134
+          ],
+          "type": "Maintenance",
+          "comment": "LED frequency 600 Hz"
+        },
+        {
+          "dmxRange": [
+            135,
+            139
+          ],
+          "type": "Maintenance",
+          "comment": "LED frequency 1200 Hz"
+        },
+        {
+          "dmxRange": [
+            140,
+            144
+          ],
+          "type": "Maintenance",
+          "comment": "LED frequency 2000 Hz"
+        },
+        {
+          "dmxRange": [
+            145,
+            149
+          ],
+          "type": "Maintenance",
+          "comment": "LED frequency 4000 Hz"
+        },
+        {
+          "dmxRange": [
+            150,
+            154
+          ],
+          "type": "Maintenance",
+          "comment": "LED frequency 6000 Hz"
+        },
+        {
+          "dmxRange": [
+            155,
+            159
+          ],
+          "type": "Maintenance",
+          "comment": "LED frequency 25000 Hz"
+        },
+        {
+          "dmxRange": [
+            160,
+            164
+          ],
+          "type": "Maintenance",
+          "comment": "Cell order forward"
+        },
+        {
+          "dmxRange": [
+            165,
+            169
+          ],
+          "type": "Maintenance",
+          "comment": "Cell order reverse"
+        },
+        {
+          "dmxRange": [
+            170,
+            174
+          ],
+          "type": "Maintenance",
+          "comment": "Do not invert display"
+        },
+        {
+          "dmxRange": [
+            175,
+            179
+          ],
+          "type": "Maintenance",
+          "comment": "Invert display"
+        },
+        {
+          "dmxRange": [
+            180,
+            184
+          ],
+          "type": "Maintenance",
+          "comment": "Key lock on"
+        },
+        {
+          "dmxRange": [
+            185,
+            189
+          ],
+          "type": "Maintenance",
+          "comment": "Key lock off"
+        },
+        {
+          "dmxRange": [
+            190,
+            194
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            195,
+            199
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift off"
+        },
+        {
+          "dmxRange": [
+            200,
+            204
+          ],
+          "type": "Maintenance",
+          "comment": "Calibration full out on"
+        },
+        {
+          "dmxRange": [
+            205,
+            209
+          ],
+          "type": "Maintenance",
+          "comment": "Calibration full out off"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Hue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-360°"
+      }
+    },
+    "Saturation": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Value": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine"
+      ]
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine"
+      ]
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine"
+      ]
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine"
+      ]
+    },
+    "Lime": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Lime"
+      },
+      "fineChannelAliases": [
+        "Lime fine"
+      ]
+    },
+    "Blend": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "100% color temperature"
+        },
+        {
+          "dmxRange": [
+            1,
+            126
+          ],
+          "type": "Generic",
+          "comment": "CCT/color blend 99-51% CCT"
+        },
+        {
+          "dmxRange": [
+            127,
+            128
+          ],
+          "type": "Generic",
+          "comment": "50% CCT 50% color"
+        },
+        {
+          "dmxRange": [
+            129,
+            254
+          ],
+          "type": "Generic",
+          "comment": "CCT/color blend 49-1% CCT"
+        },
+        {
+          "dmxRange": [
+            255,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% color mix"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            84
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            85,
+            94
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            95,
+            144
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning effect, slow to fast"
+        },
+        {
+          "dmxRange": [
+            145,
+            149
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            150,
+            199
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe all, slow to fast"
+        },
+        {
+          "dmxRange": [
+            200,
+            204
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            205,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe cells, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Virtual color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            13
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "C3050 Md Yellow"
+        },
+        {
+          "dmxRange": [
+            14,
+            21
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "C3040 Lt Yellow"
+        },
+        {
+          "dmxRange": [
+            22,
+            28
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "C3240 Amb Yellow"
+        },
+        {
+          "dmxRange": [
+            29,
+            35
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "C2340 VLt Amber"
+        },
+        {
+          "dmxRange": [
+            36,
+            43
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "C2040 Lt Amber"
+        },
+        {
+          "dmxRange": [
+            44,
+            51
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "C2050 Md Amber"
+        },
+        {
+          "dmxRange": [
+            52,
+            59
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "C2060 Dk Amber"
+        },
+        {
+          "dmxRange": [
+            60,
+            67
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "C1050 Lt Red"
+        },
+        {
+          "dmxRange": [
+            68,
+            75
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "C1080 Md Red"
+        },
+        {
+          "dmxRange": [
+            76,
+            83
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "C1020 NC Pink"
+        },
+        {
+          "dmxRange": [
+            84,
+            91
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "C1030 Md Pink"
+        },
+        {
+          "dmxRange": [
+            92,
+            99
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "C1630 Dk Pink"
+        },
+        {
+          "dmxRange": [
+            100,
+            107
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffbf00"
+          ],
+          "comment": "C1250 Md Red Amber"
+        },
+        {
+          "dmxRange": [
+            108,
+            115
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffbf00"
+          ],
+          "comment": "C1060 Dk Red Amber"
+        },
+        {
+          "dmxRange": [
+            116,
+            121
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "C1650 Magenta"
+        },
+        {
+          "dmxRange": [
+            122,
+            130
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "C6170 Dk Magenta"
+        },
+        {
+          "dmxRange": [
+            131,
+            138
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#c0a0ff"
+          ],
+          "comment": "C6020 Lt Lavender"
+        },
+        {
+          "dmxRange": [
+            139,
+            146
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "C5030 Lt Blue"
+        },
+        {
+          "dmxRange": [
+            147,
+            154
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "C5020 VLt Blue"
+        },
+        {
+          "dmxRange": [
+            155,
+            162
+          ],
+          "type": "ColorPreset",
+          "comment": "C5430 Lt Blue2"
+        },
+        {
+          "dmxRange": [
+            163,
+            170
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "C5070 Blue"
+        },
+        {
+          "dmxRange": [
+            171,
+            178
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "C5050 Md Blue"
+        },
+        {
+          "dmxRange": [
+            179,
+            186
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "C5060 Dk Blue"
+        },
+        {
+          "dmxRange": [
+            187,
+            194
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#4b0082"
+          ],
+          "comment": "C5690 Indigo"
+        },
+        {
+          "dmxRange": [
+            195,
+            202
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "C5080 VDk Blue"
+        },
+        {
+          "dmxRange": [
+            203,
+            210
+          ],
+          "type": "ColorPreset",
+          "comment": "C5081 VDk Blue2"
+        },
+        {
+          "dmxRange": [
+            211,
+            218
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "C4370 Yel Green"
+        },
+        {
+          "dmxRange": [
+            219,
+            226
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "C4070 Green"
+        },
+        {
+          "dmxRange": [
+            227,
+            234
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#40e0d0"
+          ],
+          "comment": "C4550 Turquoise"
+        },
+        {
+          "dmxRange": [
+            235,
+            242
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ffff"
+          ],
+          "comment": "C4560 Aqua"
+        },
+        {
+          "dmxRange": [
+            243,
+            250
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "C4570 Blue Green"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "X coordinate": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      },
+      "fineChannelAliases": [
+        "X coordinate fine"
+      ]
+    },
+    "Y coordinate": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      },
+      "fineChannelAliases": [
+        "Y coordinate fine"
+      ]
+    }
+  },
+  "templateChannels": {
+    "Dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine $pixelKey"
+      ]
+    },
+    "Color temperature $pixelKey": {
+      "capability": {
+        "type": "ColorTemperature"
+      },
+      "fineChannelAliases": [
+        "Color temperature fine $pixelKey"
+      ]
+    },
+    "Tint $pixelKey": {
+      "capability": {
+        "type": "Maintenance"
+      }
+    },
+    "Hue $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Saturation $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Value $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine $pixelKey"
+      ]
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine $pixelKey"
+      ]
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine $pixelKey"
+      ]
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine $pixelKey"
+      ]
+    },
+    "Lime $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Lime"
+      },
+      "fineChannelAliases": [
+        "Lime fine $pixelKey"
+      ]
+    },
+    "Blend $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "X coordinate $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      },
+      "fineChannelAliases": [
+        "X coordinate fine $pixelKey"
+      ]
+    },
+    "Y coordinate $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      },
+      "fineChannelAliases": [
+        "Y coordinate fine $pixelKey"
+      ]
+    },
+    "Strobe $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Virtual color $pixelKey": {
+      "capability": {
+        "type": "ColorPreset"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1 Cell CCT 4ch",
+      "shortName": "1CellCCT4ch",
+      "channels": [
+        "Dimmer",
+        "Color temperature",
+        "Tint",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell HSV 4ch",
+      "shortName": "1CellHSV4ch",
+      "channels": [
+        "Hue",
+        "Saturation",
+        "Value",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell RGB 3ch",
+      "shortName": "1CellRGB3ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue"
+      ]
+    },
+    {
+      "name": "1 Cell RGBW 4ch",
+      "shortName": "1CellRGBW4ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "1 Cell RGBWL 5ch",
+      "shortName": "1CellRGBWL5ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Lime"
+      ]
+    },
+    {
+      "name": "1 Cell RGBWL 16-bit 10ch",
+      "shortName": "1CellRGBWL16-bit10ch",
+      "channels": [
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "White",
+        "White fine",
+        "Lime",
+        "Lime fine"
+      ]
+    },
+    {
+      "name": "1 Cell RGB Ext. 10ch",
+      "shortName": "1CellRGBExt.10ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Color temperature",
+        "Tint",
+        "Blend",
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell RGBW Ext. 11ch",
+      "shortName": "1CellRGBWExt.11ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Color temperature",
+        "Tint",
+        "Blend",
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell RGBWL Ext. 12ch",
+      "shortName": "1CellRGBWLExt.12ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Lime",
+        "Color temperature",
+        "Tint",
+        "Blend",
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell RGBWL Full 19ch",
+      "shortName": "1CellRGBWLFull19ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "White",
+        "White fine",
+        "Lime",
+        "Lime fine",
+        "Color temperature",
+        "Color temperature fine",
+        "Tint",
+        "Blend",
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell XY 4ch",
+      "shortName": "1CellXY4ch",
+      "channels": [
+        "Dimmer",
+        "X coordinate",
+        "Y coordinate",
+        "Control"
+      ]
+    },
+    {
+      "name": "1 Cell XY Ext. 9ch",
+      "shortName": "1CellXYExt.9ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "X coordinate",
+        "X coordinate fine",
+        "Y coordinate",
+        "Y coordinate fine",
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell CCT 7ch",
+      "shortName": "2CellCCT7ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell HSV 7ch",
+      "shortName": "2CellHSV7ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Hue $pixelKey",
+            "Saturation $pixelKey",
+            "Value $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell RGB 6ch",
+      "shortName": "2CellRGB6ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 Cell RGBW 8ch",
+      "shortName": "2CellRGBW8ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 Cell RGBWL 10ch",
+      "shortName": "2CellRGBWL10ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Lime $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 Cell RGBWL 16-bit 20ch",
+      "shortName": "2CellRGBWL16-bit20ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Lime $pixelKey",
+            "Lime fine $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 Cell RGB Ext. 17ch",
+      "shortName": "2CellRGBExt.17ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell RGBW Ext. 19ch",
+      "shortName": "2CellRGBWExt.19ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell RGBWL Ext. 21ch",
+      "shortName": "2CellRGBWLExt.21ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Lime $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell RGBWL Full 35ch",
+      "shortName": "2CellRGBWLFull35ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Lime $pixelKey",
+            "Lime fine $pixelKey",
+            "Color temperature $pixelKey",
+            "Color temperature fine $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell XY 7ch",
+      "shortName": "2CellXY7ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "X coordinate $pixelKey",
+            "Y coordinate $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "2 Cell XY Ext. 17ch",
+      "shortName": "2CellXYExt.17ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "X coordinate $pixelKey",
+            "X coordinate fine $pixelKey",
+            "Y coordinate $pixelKey",
+            "Y coordinate fine $pixelKey",
+            "Strobe $pixelKey",
+            "Virtual color $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell CCT 13ch",
+      "shortName": "4CellCCT13ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell HSV 13ch",
+      "shortName": "4CellHSV13ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Hue $pixelKey",
+            "Saturation $pixelKey",
+            "Value $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell RGB 12ch",
+      "shortName": "4CellRGB12ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 Cell RGBW 16ch",
+      "shortName": "4CellRGBW16ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 Cell RGBWL 20ch",
+      "shortName": "4CellRGBWL20ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Lime $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 Cell RGBWL 16-bit 40ch",
+      "shortName": "4CellRGBWL16-bit40ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Lime $pixelKey",
+            "Lime fine $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 Cell RGB Ext. 31ch",
+      "shortName": "4CellRGBExt.31ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell RGBW Ext. 35ch",
+      "shortName": "4CellRGBWExt.35ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell RGBWL Ext. 39ch",
+      "shortName": "4CellRGBWLExt.39ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey",
+            "Lime $pixelKey",
+            "Color temperature $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell RGBWL Full 67ch",
+      "shortName": "4CellRGBWLFull67ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Lime $pixelKey",
+            "Lime fine $pixelKey",
+            "Color temperature $pixelKey",
+            "Color temperature fine $pixelKey",
+            "Tint $pixelKey",
+            "Blend $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Virtual color",
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell XY 13ch",
+      "shortName": "4CellXY13ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "X coordinate $pixelKey",
+            "Y coordinate $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    },
+    {
+      "name": "4 Cell XY Ext. 33ch",
+      "shortName": "4CellXYExt.33ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Dimmer fine $pixelKey",
+            "X coordinate $pixelKey",
+            "X coordinate fine $pixelKey",
+            "Y coordinate $pixelKey",
+            "Y coordinate fine $pixelKey",
+            "Strobe $pixelKey",
+            "Virtual color $pixelKey"
+          ]
+        },
+        "Control"
+      ]
+    }
+  ]
+}

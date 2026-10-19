@@ -1,0 +1,918 @@
+{
+  "name": "COLORado Batten 72X",
+  "shortName": "COLORado Batten 72X",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      3,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine"
+      ]
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine"
+      ]
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine"
+      ]
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      },
+      "fineChannelAliases": [
+        "Amber fine"
+      ]
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine"
+      ]
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            34
+          ],
+          "type": "ColorPreset",
+          "comment": "R100 G0-100 B0"
+        },
+        {
+          "dmxRange": [
+            35,
+            59
+          ],
+          "type": "ColorPreset",
+          "comment": "R100-0 G100 B0"
+        },
+        {
+          "dmxRange": [
+            60,
+            84
+          ],
+          "type": "ColorPreset",
+          "comment": "R0 G100 B0-100"
+        },
+        {
+          "dmxRange": [
+            85,
+            109
+          ],
+          "type": "ColorPreset",
+          "comment": "R0 G100-0 B100"
+        },
+        {
+          "dmxRange": [
+            110,
+            134
+          ],
+          "type": "ColorPreset",
+          "comment": "R0-100 G0 B100"
+        },
+        {
+          "dmxRange": [
+            135,
+            159
+          ],
+          "type": "ColorPreset",
+          "comment": "R100 G0 B100-0"
+        },
+        {
+          "dmxRange": [
+            160,
+            184
+          ],
+          "type": "ColorPreset",
+          "comment": "R100 G0-100 B0-100"
+        },
+        {
+          "dmxRange": [
+            185,
+            209
+          ],
+          "type": "ColorPreset",
+          "comment": "R100-0 G100-0 B100"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "All full"
+        }
+      ]
+    },
+    "Color temperature preset": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            28
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 1"
+        },
+        {
+          "dmxRange": [
+            29,
+            46
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 2"
+        },
+        {
+          "dmxRange": [
+            47,
+            64
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 3"
+        },
+        {
+          "dmxRange": [
+            65,
+            82
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 4"
+        },
+        {
+          "dmxRange": [
+            83,
+            100
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 5"
+        },
+        {
+          "dmxRange": [
+            101,
+            118
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 6"
+        },
+        {
+          "dmxRange": [
+            119,
+            136
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 7"
+        },
+        {
+          "dmxRange": [
+            137,
+            154
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 8"
+        },
+        {
+          "dmxRange": [
+            155,
+            172
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 9"
+        },
+        {
+          "dmxRange": [
+            173,
+            190
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 10"
+        },
+        {
+          "dmxRange": [
+            191,
+            208
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 11"
+        },
+        {
+          "dmxRange": [
+            209,
+            226
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 12"
+        },
+        {
+          "dmxRange": [
+            227,
+            244
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 13"
+        },
+        {
+          "dmxRange": [
+            245,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "White 14"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            99
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            110,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Pulse strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Dimmer speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Maintenance",
+          "comment": "Preset dimmer speed from display menu"
+        },
+        {
+          "dmxRange": [
+            10,
+            29
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            30,
+            69
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            70,
+            129
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2"
+        },
+        {
+          "dmxRange": [
+            130,
+            189
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 4 (slowest)"
+        }
+      ]
+    },
+    "Hue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-360°"
+      },
+      "fineChannelAliases": [
+        "Hue fine"
+      ]
+    },
+    "Saturation": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Strobe all": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            99
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            110,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Pulse strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    }
+  },
+  "templateChannels": {
+    "Dimmer $pixelKey": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Hue $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      },
+      "fineChannelAliases": [
+        "Hue fine $pixelKey"
+      ]
+    },
+    "Saturation $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Strobe $pixelKey": {
+      "capability": {
+        "type": "Generic"
+      }
+    },
+    "Color macro $pixelKey": {
+      "capability": {
+        "type": "ColorPreset"
+      }
+    },
+    "Color temperature preset $pixelKey": {
+      "capability": {
+        "type": "ColorTemperature"
+      }
+    },
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine $pixelKey"
+      ]
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine $pixelKey"
+      ]
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine $pixelKey"
+      ]
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      },
+      "fineChannelAliases": [
+        "Amber fine $pixelKey"
+      ]
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      },
+      "fineChannelAliases": [
+        "White fine $pixelKey"
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1 RGBAW FUL",
+      "shortName": "1RGBAWFUL",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "Amber",
+        "Amber fine",
+        "White",
+        "White fine",
+        "Color macro",
+        "Color temperature preset",
+        "Strobe",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "1 HSIC",
+      "shortName": "1HSIC",
+      "channels": [
+        "Dimmer",
+        "Hue",
+        "Hue fine",
+        "Saturation",
+        "Strobe",
+        "Color macro",
+        "Color temperature preset",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "1 RGBAW FIN",
+      "shortName": "1RGBAWFIN",
+      "channels": [
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "Amber",
+        "Amber fine",
+        "White",
+        "White fine"
+      ]
+    },
+    {
+      "name": "1 RGBAW EXT",
+      "shortName": "1RGBAWEXT",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Color macro",
+        "Color temperature preset",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "1 RGBAW",
+      "shortName": "1RGBAW",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White"
+      ]
+    },
+    {
+      "name": "1 RGBA EXT",
+      "shortName": "1RGBAEXT",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "Color macro",
+        "Color temperature preset",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "1 RGBA",
+      "shortName": "1RGBA",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber"
+      ]
+    },
+    {
+      "name": "1 RGB EXT",
+      "shortName": "1RGBEXT",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "Color macro",
+        "Color temperature preset",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "1 RGB",
+      "shortName": "1RGB",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue"
+      ]
+    },
+    {
+      "name": "3 HSIC",
+      "shortName": "3HSIC",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer $pixelKey",
+            "Hue $pixelKey",
+            "Hue fine $pixelKey",
+            "Saturation $pixelKey",
+            "Strobe $pixelKey",
+            "Color macro $pixelKey",
+            "Color temperature preset $pixelKey"
+          ]
+        },
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "3 RGBAW FUL",
+      "shortName": "3RGBAWFUL",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "Amber $pixelKey",
+            "Amber fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey",
+            "Color macro $pixelKey",
+            "Color temperature preset $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Strobe all",
+        "Dimmer speed"
+      ]
+    },
+    {
+      "name": "3 RGBAW FIN",
+      "shortName": "3RGBAWFIN",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Red fine $pixelKey",
+            "Green $pixelKey",
+            "Green fine $pixelKey",
+            "Blue $pixelKey",
+            "Blue fine $pixelKey",
+            "Amber $pixelKey",
+            "Amber fine $pixelKey",
+            "White $pixelKey",
+            "White fine $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 RGBAW EXT",
+      "shortName": "3RGBAWEXT",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey",
+            "White $pixelKey",
+            "Color macro $pixelKey",
+            "Color temperature preset $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Strobe all"
+      ]
+    },
+    {
+      "name": "3 RGBAW",
+      "shortName": "3RGBAW",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey",
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 RGBA EXT",
+      "shortName": "3RGBAEXT",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey",
+            "Color macro $pixelKey",
+            "Color temperature preset $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Strobe all"
+      ]
+    },
+    {
+      "name": "3 RGBA",
+      "shortName": "3RGBA",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Amber $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 RGB EXT",
+      "shortName": "3RGBEXT",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "Color macro $pixelKey",
+            "Color temperature preset $pixelKey",
+            "Strobe $pixelKey"
+          ]
+        },
+        "Strobe all"
+      ]
+    },
+    {
+      "name": "3 RGB",
+      "shortName": "3RGB",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey"
+          ]
+        }
+      ]
+    }
+  ]
+}

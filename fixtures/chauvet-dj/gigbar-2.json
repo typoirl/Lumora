@@ -1,0 +1,1351 @@
+{
+  "name": "GigBAR 2",
+  "shortName": "GigBAR 2",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "Par 1",
+          "Par 2",
+          "Derby 1",
+          "Derby 2",
+          "Laser",
+          "Strobe"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "UV": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Pars and Derby dimmer/strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Intensity",
+          "comment": "Dimmer 0-100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            239
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe speed"
+        },
+        {
+          "dmxRange": [
+            240,
+            249
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Sound strobe"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "Intensity",
+          "comment": "Full On"
+        }
+      ]
+    },
+    "Derby rotation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            5,
+            127
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate clockwise, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            133
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            134,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate counter-clockwise, slow to fast"
+        }
+      ]
+    },
+    "Red laser": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "Effect",
+          "comment": "Red laser blackout"
+        },
+        {
+          "dmxRange": [
+            5,
+            54
+          ],
+          "type": "Effect",
+          "comment": "Red laser on"
+        },
+        {
+          "dmxRange": [
+            55,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Red laser strobe speed, slow to fast"
+        }
+      ]
+    },
+    "Green laser": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "Effect",
+          "comment": "Green laser blackout"
+        },
+        {
+          "dmxRange": [
+            5,
+            54
+          ],
+          "type": "Effect",
+          "comment": "Green laser on"
+        },
+        {
+          "dmxRange": [
+            55,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Green laser strobe speed, slow to fast"
+        }
+      ]
+    },
+    "Laser rotation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            5,
+            127
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate clockwise, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            133
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            134,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate counter-clockwise, slow to fast"
+        }
+      ]
+    },
+    "White strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            54
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "White strobe dimmer, 0-100%"
+        },
+        {
+          "dmxRange": [
+            55,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "White strobe speed, slow to fast"
+        }
+      ]
+    },
+    "UV strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            54
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "UV strobe dimmer, 0-100%"
+        },
+        {
+          "dmxRange": [
+            55,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "UV strobe speed, slow to fast"
+        }
+      ]
+    },
+    "LED operation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            119
+          ],
+          "type": "Generic",
+          "comment": "Auto mixed mode 1, fast to slow"
+        },
+        {
+          "dmxRange": [
+            120,
+            229
+          ],
+          "type": "Generic",
+          "comment": "Auto mixed mode 2, fast to slow"
+        },
+        {
+          "dmxRange": [
+            230,
+            234
+          ],
+          "type": "Generic",
+          "comment": "Sound mixed mode 1"
+        },
+        {
+          "dmxRange": [
+            235,
+            239
+          ],
+          "type": "Generic",
+          "comment": "Sound mixed mode 2"
+        },
+        {
+          "dmxRange": [
+            240,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Show setting (channels 2 and 3)"
+        }
+      ]
+    },
+    "Show": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "Effect",
+          "comment": "Blackout"
+        },
+        {
+          "dmxRange": [
+            10,
+            19
+          ],
+          "type": "Effect",
+          "comment": "Pars only"
+        },
+        {
+          "dmxRange": [
+            20,
+            29
+          ],
+          "type": "Effect",
+          "comment": "Derby lights only"
+        },
+        {
+          "dmxRange": [
+            30,
+            39
+          ],
+          "type": "Effect",
+          "comment": "Laser only"
+        },
+        {
+          "dmxRange": [
+            40,
+            49
+          ],
+          "type": "Effect",
+          "comment": "Strobes only"
+        },
+        {
+          "dmxRange": [
+            50,
+            59
+          ],
+          "type": "Effect",
+          "comment": "Auto pars and derby lights"
+        },
+        {
+          "dmxRange": [
+            60,
+            69
+          ],
+          "type": "Effect",
+          "comment": "Auto pars and laser"
+        },
+        {
+          "dmxRange": [
+            70,
+            79
+          ],
+          "type": "Effect",
+          "comment": "Auto pars and strobes"
+        },
+        {
+          "dmxRange": [
+            80,
+            89
+          ],
+          "type": "Effect",
+          "comment": "Auto derby lights and laser"
+        },
+        {
+          "dmxRange": [
+            90,
+            99
+          ],
+          "type": "Effect",
+          "comment": "Auto strobes and derby lights"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "Effect",
+          "comment": "Pars, derby lights and laser"
+        },
+        {
+          "dmxRange": [
+            110,
+            119
+          ],
+          "type": "Effect",
+          "comment": "Pars, derby lights and strobes"
+        },
+        {
+          "dmxRange": [
+            120,
+            129
+          ],
+          "type": "Effect",
+          "comment": "Pars, laser and strobes"
+        },
+        {
+          "dmxRange": [
+            130,
+            139
+          ],
+          "type": "Effect",
+          "comment": "Derby lights, laser and strobes"
+        },
+        {
+          "dmxRange": [
+            140,
+            149
+          ],
+          "type": "Effect",
+          "comment": "Sound par effect"
+        },
+        {
+          "dmxRange": [
+            150,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Sound derby effect"
+        },
+        {
+          "dmxRange": [
+            160,
+            169
+          ],
+          "type": "Effect",
+          "comment": "Sound laser effect"
+        },
+        {
+          "dmxRange": [
+            170,
+            179
+          ],
+          "type": "Effect",
+          "comment": "Sound strobe effect"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "Effect",
+          "comment": "Sound par + derby"
+        },
+        {
+          "dmxRange": [
+            190,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Sound par + laser"
+        },
+        {
+          "dmxRange": [
+            200,
+            209
+          ],
+          "type": "Effect",
+          "comment": "Sound par + strobe"
+        },
+        {
+          "dmxRange": [
+            210,
+            219
+          ],
+          "type": "Effect",
+          "comment": "Sound derby + laser"
+        },
+        {
+          "dmxRange": [
+            220,
+            229
+          ],
+          "type": "Effect",
+          "comment": "Sound derby + strobe"
+        },
+        {
+          "dmxRange": [
+            230,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Sound pars, derby lights and laser"
+        },
+        {
+          "dmxRange": [
+            240,
+            244
+          ],
+          "type": "Effect",
+          "comment": "Sound pars, derby and strobes"
+        },
+        {
+          "dmxRange": [
+            245,
+            249
+          ],
+          "type": "Effect",
+          "comment": "Sound pars, laser and strobes"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound derby lights, laser and strobes"
+        }
+      ]
+    },
+    "Auto speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Speed, slow to fast"
+      }
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "UV $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Dimmer/strobe $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Intensity",
+          "comment": "Dimmer 0-100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            239
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            240,
+            249
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe to sound"
+        },
+        {
+          "dmxRange": [
+            250,
+            255
+          ],
+          "type": "Intensity",
+          "comment": "RGB 100%"
+        }
+      ]
+    },
+    "Derby color $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            24
+          ],
+          "type": "ColorPreset",
+          "comment": "Blackout"
+        },
+        {
+          "dmxRange": [
+            25,
+            49
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            50,
+            74
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            75,
+            99
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            100,
+            124
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red + Green"
+        },
+        {
+          "dmxRange": [
+            125,
+            149
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red + Blue"
+        },
+        {
+          "dmxRange": [
+            150,
+            174
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green + Blue"
+        },
+        {
+          "dmxRange": [
+            175,
+            199
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red + Green + Blue"
+        },
+        {
+          "dmxRange": [
+            200,
+            224
+          ],
+          "type": "ColorPreset",
+          "comment": "Automatic (single colors only)"
+        },
+        {
+          "dmxRange": [
+            225,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Automatic (two colors at a time)"
+        }
+      ]
+    },
+    "Strobe $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            239
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, 0-30 Hz"
+        },
+        {
+          "dmxRange": [
+            240,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Strobe to sound"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Rotation $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            5,
+            127
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate clockwise, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            133
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            134,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Rotate counter-clockwise, slow to fast"
+        }
+      ]
+    },
+    "Laser color $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            39
+          ],
+          "type": "ColorPreset",
+          "comment": "Blackout"
+        },
+        {
+          "dmxRange": [
+            40,
+            79
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red on"
+        },
+        {
+          "dmxRange": [
+            80,
+            119
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green on"
+        },
+        {
+          "dmxRange": [
+            120,
+            159
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red + Green on"
+        },
+        {
+          "dmxRange": [
+            160,
+            199
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red on + Green strobe"
+        },
+        {
+          "dmxRange": [
+            200,
+            239
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Green on + Red strobe"
+        },
+        {
+          "dmxRange": [
+            240,
+            255
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red + Green (alternate strobe)"
+        }
+      ]
+    },
+    "Strobe 2 $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            239
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            240,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Strobe to sound"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Strobe patterns $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 1"
+        },
+        {
+          "dmxRange": [
+            10,
+            29
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 2"
+        },
+        {
+          "dmxRange": [
+            30,
+            49
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 3"
+        },
+        {
+          "dmxRange": [
+            50,
+            69
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 4"
+        },
+        {
+          "dmxRange": [
+            70,
+            89
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 5"
+        },
+        {
+          "dmxRange": [
+            90,
+            109
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 6"
+        },
+        {
+          "dmxRange": [
+            110,
+            129
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 7"
+        },
+        {
+          "dmxRange": [
+            130,
+            149
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 8"
+        },
+        {
+          "dmxRange": [
+            150,
+            169
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 9"
+        },
+        {
+          "dmxRange": [
+            170,
+            189
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto Strobe Program 10"
+        },
+        {
+          "dmxRange": [
+            190,
+            209
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Manual Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Strobe to sound mode"
+        }
+      ]
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Strobe speed $pixelKey": {
+      "capability": {
+        "type": "ShutterStrobe",
+        "shutterEffect": "Strobe",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Strobe speed, slow to fast"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "23CH",
+      "shortName": "23CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "UV $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer/strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "UV $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Par 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Dimmer/strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Derby color $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Derby color $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Derby 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Laser color $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe 2 $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Laser"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Rotation $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Strobe"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe patterns $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Strobe"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Strobe"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "UV $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Strobe"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Strobe speed $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "11CH",
+      "shortName": "11CH",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "UV",
+        "Pars and Derby dimmer/strobe",
+        "Derby rotation",
+        "Red laser",
+        "Green laser",
+        "Laser rotation",
+        "White strobe",
+        "UV strobe"
+      ]
+    },
+    {
+      "name": "3CH",
+      "shortName": "3CH",
+      "channels": [
+        "LED operation",
+        "Show",
+        "Auto speed"
+      ]
+    }
+  ]
+}

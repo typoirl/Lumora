@@ -1,0 +1,314 @@
+{
+  "name": "Derby X",
+  "shortName": "Derby X",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      6,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Automatic Programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            24
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            25,
+            38
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            39,
+            52
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            53,
+            66
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 4"
+        },
+        {
+          "dmxRange": [
+            67,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 5"
+        },
+        {
+          "dmxRange": [
+            81,
+            94
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 6"
+        },
+        {
+          "dmxRange": [
+            95,
+            108
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 7"
+        },
+        {
+          "dmxRange": [
+            109,
+            122
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 8"
+        },
+        {
+          "dmxRange": [
+            123,
+            136
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 9"
+        },
+        {
+          "dmxRange": [
+            137,
+            150
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 10"
+        },
+        {
+          "dmxRange": [
+            151,
+            164
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 11"
+        },
+        {
+          "dmxRange": [
+            165,
+            178
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 12"
+        },
+        {
+          "dmxRange": [
+            179,
+            192
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 13"
+        },
+        {
+          "dmxRange": [
+            193,
+            206
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 14"
+        },
+        {
+          "dmxRange": [
+            207,
+            220
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 15"
+        },
+        {
+          "dmxRange": [
+            221,
+            250
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 16"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound-active mode"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Cluster color $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            45
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            46,
+            80
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            81,
+            115
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            116,
+            150
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red and green"
+        },
+        {
+          "dmxRange": [
+            151,
+            185
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#0000ff"
+          ],
+          "comment": "Red and blue"
+        },
+        {
+          "dmxRange": [
+            186,
+            220
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Green and blue"
+        },
+        {
+          "dmxRange": [
+            221,
+            255
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Red, green, and blue"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "8Ch",
+      "shortName": "8Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Cluster color $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Automatic Programs"
+      ]
+    }
+  ]
+}

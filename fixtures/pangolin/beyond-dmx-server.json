@@ -1,0 +1,629 @@
+{
+  "name": "BEYOND DMX Server",
+  "shortName": "BEYOND",
+  "manufacturer": "Pangolin",
+  "categories": [
+    "Laser"
+  ],
+  "meta": {
+    "source": "Pangolin wiki: BEYOND DMX Server, Mid and Max modes"
+  },
+  "availableChannels": {
+    "Page": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Page 1, 2, 3\u2026"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Cue": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Cue 1 to 255"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Animation speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "0 to 100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% to 500%"
+        }
+      ],
+      "defaultValue": 255
+    },
+    "Animation mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Scan rate": {
+      "capability": {
+        "type": "Generic",
+        "comment": "25% to 100%"
+      },
+      "defaultValue": 255
+    },
+    "Visible points": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 255
+    },
+    "Size X": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-100% to 100% (middle: size 0)"
+      },
+      "defaultValue": "100%",
+      "fineChannelAliases": [
+        "Size X fine"
+      ]
+    },
+    "Size Y": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-100% to 100% (middle: size 0)"
+      },
+      "defaultValue": "100%",
+      "fineChannelAliases": [
+        "Size Y fine"
+      ]
+    },
+    "Angle Z": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 360 degrees"
+      },
+      "defaultValue": 0,
+      "fineChannelAliases": [
+        "Angle Z fine"
+      ]
+    },
+    "Position X": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-100% to 100%, middle centered"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Position X fine"
+      ]
+    },
+    "Position Y": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-100% to 100%, middle centered"
+      },
+      "defaultValue": "50%",
+      "fineChannelAliases": [
+        "Position Y fine"
+      ]
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": "100%",
+      "fineChannelAliases": [
+        "Zoom fine"
+      ]
+    },
+    "Color slider": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            32
+          ],
+          "type": "Generic",
+          "comment": "Inactive"
+        },
+        {
+          "dmxRange": [
+            33,
+            224
+          ],
+          "type": "Generic",
+          "comment": "Hue"
+        },
+        {
+          "dmxRange": [
+            225,
+            255
+          ],
+          "type": "Generic",
+          "comment": "White"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "Brightness": {
+      "defaultValue": 255,
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Hue shift": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 360 degrees"
+      },
+      "defaultValue": 0
+    },
+    "Saturation shift": {
+      "capability": {
+        "type": "Generic",
+        "comment": "-100% to 100% (128 = none)"
+      },
+      "defaultValue": 128
+    },
+    "Red": {
+      "defaultValue": 0,
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "defaultValue": 0,
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "defaultValue": 0,
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Alpha": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "No recolor"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Recolor to R, G, B"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "FX 1": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "FX index"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "FX 1 action": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Not applied to full"
+      },
+      "defaultValue": 255
+    },
+    "FX 1 speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "0 to 100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% to 500%"
+        }
+      ],
+      "defaultValue": 127
+    },
+    "FX 2": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "FX index"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "FX 2 action": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Not applied to full"
+      },
+      "defaultValue": 255
+    },
+    "FX 2 speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "0 to 100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% to 500%"
+        }
+      ],
+      "defaultValue": 127
+    },
+    "FX 3": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "FX index"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "FX 3 action": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Not applied to full"
+      },
+      "defaultValue": 255
+    },
+    "FX 3 speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "0 to 100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% to 500%"
+        }
+      ],
+      "defaultValue": 127
+    },
+    "FX 4": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Off"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "FX index"
+        }
+      ],
+      "defaultValue": 0
+    },
+    "FX 4 action": {
+      "capability": {
+        "type": "Generic",
+        "comment": "Not applied to full"
+      },
+      "defaultValue": 255
+    },
+    "FX 4 speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "Generic",
+          "comment": "0 to 100%"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Generic",
+          "comment": "100% to 500%"
+        }
+      ],
+      "defaultValue": 127
+    },
+    "Param 1": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 2": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 3": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 4": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 5": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 6": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 7": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 8": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 9": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 10": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 11": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    },
+    "Param 12": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0 to 100%"
+      },
+      "defaultValue": 0
+    }
+  },
+  "modes": [
+    {
+      "name": "Mid",
+      "shortName": "32ch",
+      "channels": [
+        "Page",
+        "Cue",
+        "Animation speed",
+        "Animation mode",
+        "Scan rate",
+        "Visible points",
+        "Size X",
+        "Size X fine",
+        "Size Y",
+        "Size Y fine",
+        "Angle Z",
+        "Angle Z fine",
+        "Position X",
+        "Position X fine",
+        "Position Y",
+        "Position Y fine",
+        "Zoom",
+        "Zoom fine",
+        "Color slider",
+        "Brightness",
+        "Hue shift",
+        "Saturation shift",
+        "Red",
+        "Green",
+        "Blue",
+        "Alpha",
+        "FX 1",
+        "FX 2",
+        "FX 3",
+        "FX 4",
+        "Param 1",
+        "Param 2"
+      ]
+    },
+    {
+      "name": "Max",
+      "shortName": "50ch",
+      "channels": [
+        "Page",
+        "Cue",
+        "Animation speed",
+        "Animation mode",
+        "Scan rate",
+        "Visible points",
+        "Size X",
+        "Size X fine",
+        "Size Y",
+        "Size Y fine",
+        "Angle Z",
+        "Angle Z fine",
+        "Position X",
+        "Position X fine",
+        "Position Y",
+        "Position Y fine",
+        "Zoom",
+        "Zoom fine",
+        "Color slider",
+        "Brightness",
+        "Hue shift",
+        "Saturation shift",
+        "Red",
+        "Green",
+        "Blue",
+        "Alpha",
+        "FX 1",
+        "FX 1 action",
+        "FX 1 speed",
+        "FX 2",
+        "FX 2 action",
+        "FX 2 speed",
+        "FX 3",
+        "FX 3 action",
+        "FX 3 speed",
+        "FX 4",
+        "FX 4 action",
+        "FX 4 speed",
+        "Param 1",
+        "Param 2",
+        "Param 3",
+        "Param 4",
+        "Param 5",
+        "Param 6",
+        "Param 7",
+        "Param 8",
+        "Param 9",
+        "Param 10",
+        "Param 11",
+        "Param 12"
+      ]
+    }
+  ]
+}

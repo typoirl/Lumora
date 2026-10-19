@@ -1,0 +1,587 @@
+{
+  "name": "Helicopter Q6",
+  "shortName": "Helicopter Q6",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      6,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Pod Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Pod Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            1,
+            80
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Pulse effect 0–100%, slow to fast"
+        },
+        {
+          "dmxRange": [
+            81,
+            160
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Pulse effect 100–0%, slow to fast"
+        },
+        {
+          "dmxRange": [
+            161,
+            240
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            241,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Sound-active strobe"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "SMD Strobe Auto Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            25
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            26,
+            51
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            52,
+            77
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            78,
+            103
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            104,
+            129
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            130,
+            155
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            156,
+            181
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            182,
+            207
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            208,
+            233
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            234,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        }
+      ]
+    },
+    "SMD Strobe Auto Speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Auto program speed, slow to fast"
+      }
+    },
+    "Laser color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            10,
+            49
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            50,
+            89
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            90,
+            129
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red and Green"
+        },
+        {
+          "dmxRange": [
+            130,
+            169
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red on, Green strobes"
+        },
+        {
+          "dmxRange": [
+            170,
+            209
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Green on, Red strobes"
+        },
+        {
+          "dmxRange": [
+            210,
+            255
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#00ff00"
+          ],
+          "comment": "Red and Green alternating strobe"
+        }
+      ]
+    },
+    "Laser Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            254
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            255,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "soundControlled": true,
+          "comment": "Sound-active strobe"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Laser Effect Wheel": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            5,
+            127
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Clockwise rotation, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            133
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            134,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Counter-clockwise rotation, slow to fast"
+        }
+      ]
+    },
+    "Rotation": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            4
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            5,
+            127
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Clockwise rotation, slow to fast"
+        },
+        {
+          "dmxRange": [
+            128,
+            133
+          ],
+          "type": "Effect",
+          "comment": "Stop"
+        },
+        {
+          "dmxRange": [
+            134,
+            255
+          ],
+          "type": "Effect",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Counter-clockwise rotation, slow to fast"
+        }
+      ]
+    },
+    "Auto Program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            41
+          ],
+          "type": "Effect",
+          "comment": "Pods"
+        },
+        {
+          "dmxRange": [
+            42,
+            77
+          ],
+          "type": "Effect",
+          "comment": "Laser"
+        },
+        {
+          "dmxRange": [
+            78,
+            113
+          ],
+          "type": "Effect",
+          "comment": "SMD Strobes"
+        },
+        {
+          "dmxRange": [
+            114,
+            149
+          ],
+          "type": "Effect",
+          "comment": "Pods and Laser"
+        },
+        {
+          "dmxRange": [
+            150,
+            185
+          ],
+          "type": "Effect",
+          "comment": "Pods and SMD Strobes"
+        },
+        {
+          "dmxRange": [
+            186,
+            221
+          ],
+          "type": "Effect",
+          "comment": "Laser and SMD Strobes"
+        },
+        {
+          "dmxRange": [
+            222,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Pods, Laser, and SMD Strobes"
+        }
+      ]
+    },
+    "Auto Program Speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            250
+          ],
+          "type": "EffectSpeed",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Auto program speed, slow to fast"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "EffectSpeed",
+          "comment": "Sound-active program"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Pod color $pixelKey": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            12
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            13,
+            66
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red 0–100%"
+        },
+        {
+          "dmxRange": [
+            67,
+            75
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            76,
+            129
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green 0–100%"
+        },
+        {
+          "dmxRange": [
+            130,
+            138
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            139,
+            192
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue 0–100%"
+        },
+        {
+          "dmxRange": [
+            193,
+            201
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            202,
+            255
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White 0–100%"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "16CH",
+      "shortName": "16CH",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Pod color $pixelKey"
+          ]
+        },
+        "Pod Dimmer",
+        "Pod Strobe",
+        "SMD Strobe Auto Program",
+        "SMD Strobe Auto Speed",
+        "Laser color",
+        "Laser Strobe",
+        "Laser Effect Wheel",
+        "Rotation",
+        "Auto Program",
+        "Auto Program Speed"
+      ]
+    },
+    {
+      "name": "3-CH",
+      "shortName": "3-CH",
+      "channels": [
+        "Auto Program",
+        "Auto Program Speed",
+        "Rotation"
+      ]
+    }
+  ]
+}

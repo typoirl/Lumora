@@ -1,0 +1,468 @@
+{
+  "name": "COLORado 2 Solo VW",
+  "shortName": "COLORado 2 Solo VW",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Warm white": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Warm White"
+      },
+      "fineChannelAliases": [
+        "Warm white fine"
+      ]
+    },
+    "Cool white": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Cold White"
+      },
+      "fineChannelAliases": [
+        "Cool white fine"
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            11
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800K"
+        },
+        {
+          "dmxRange": [
+            12,
+            40
+          ],
+          "type": "ColorTemperature",
+          "comment": "2801-3199K"
+        },
+        {
+          "dmxRange": [
+            41,
+            41
+          ],
+          "type": "ColorTemperature",
+          "comment": "3200K"
+        },
+        {
+          "dmxRange": [
+            42,
+            70
+          ],
+          "type": "ColorTemperature",
+          "comment": "3201-3599K"
+        },
+        {
+          "dmxRange": [
+            71,
+            71
+          ],
+          "type": "ColorTemperature",
+          "comment": "3600K"
+        },
+        {
+          "dmxRange": [
+            72,
+            100
+          ],
+          "type": "ColorTemperature",
+          "comment": "3601-3999K"
+        },
+        {
+          "dmxRange": [
+            101,
+            101
+          ],
+          "type": "ColorTemperature",
+          "comment": "4000K"
+        },
+        {
+          "dmxRange": [
+            102,
+            130
+          ],
+          "type": "ColorTemperature",
+          "comment": "4001-4499K"
+        },
+        {
+          "dmxRange": [
+            131,
+            131
+          ],
+          "type": "ColorTemperature",
+          "comment": "4500K"
+        },
+        {
+          "dmxRange": [
+            132,
+            160
+          ],
+          "type": "ColorTemperature",
+          "comment": "4501-4999K"
+        },
+        {
+          "dmxRange": [
+            161,
+            161
+          ],
+          "type": "ColorTemperature",
+          "comment": "5000K"
+        },
+        {
+          "dmxRange": [
+            162,
+            190
+          ],
+          "type": "ColorTemperature",
+          "comment": "5001-5499K"
+        },
+        {
+          "dmxRange": [
+            191,
+            191
+          ],
+          "type": "ColorTemperature",
+          "comment": "5500K"
+        },
+        {
+          "dmxRange": [
+            192,
+            220
+          ],
+          "type": "ColorTemperature",
+          "comment": "5501-5999K"
+        },
+        {
+          "dmxRange": [
+            221,
+            221
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            222,
+            250
+          ],
+          "type": "ColorTemperature",
+          "comment": "6001-6499K"
+        },
+        {
+          "dmxRange": [
+            251,
+            251
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            252,
+            254
+          ],
+          "type": "ColorTemperature",
+          "comment": "6501-6999K"
+        },
+        {
+          "dmxRange": [
+            255,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "7000K"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            9
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            10,
+            99
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        },
+        {
+          "dmxRange": [
+            100,
+            109
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            110,
+            179
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Pulse",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Lightning effect, slow to fast"
+        },
+        {
+          "dmxRange": [
+            180,
+            189
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            190,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Zoom"
+      }
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            70
+          ],
+          "type": "Maintenance",
+          "comment": "Reserved for future use"
+        },
+        {
+          "dmxRange": [
+            71,
+            80
+          ],
+          "type": "Maintenance",
+          "comment": "600 Hz pulse width modulation"
+        },
+        {
+          "dmxRange": [
+            81,
+            90
+          ],
+          "type": "Maintenance",
+          "comment": "1200 Hz pulse width modulation"
+        },
+        {
+          "dmxRange": [
+            91,
+            100
+          ],
+          "type": "Maintenance",
+          "comment": "2000 Hz pulse width modulation"
+        },
+        {
+          "dmxRange": [
+            101,
+            110
+          ],
+          "type": "Maintenance",
+          "comment": "4000 Hz pulse width modulation"
+        },
+        {
+          "dmxRange": [
+            111,
+            120
+          ],
+          "type": "Maintenance",
+          "comment": "6000 Hz pulse width modulation"
+        },
+        {
+          "dmxRange": [
+            121,
+            130
+          ],
+          "type": "Maintenance",
+          "comment": "25 KHz pulse width modulation"
+        },
+        {
+          "dmxRange": [
+            131,
+            140
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer reset"
+        },
+        {
+          "dmxRange": [
+            141,
+            150
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode Off"
+        },
+        {
+          "dmxRange": [
+            151,
+            160
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1"
+        },
+        {
+          "dmxRange": [
+            161,
+            170
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            171,
+            180
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3"
+        },
+        {
+          "dmxRange": [
+            181,
+            190
+          ],
+          "type": "Maintenance",
+          "comment": "Zoom reset"
+        },
+        {
+          "dmxRange": [
+            191,
+            200
+          ],
+          "type": "Maintenance",
+          "comment": "All reset"
+        },
+        {
+          "dmxRange": [
+            201,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Reserved for future use"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "10Ch",
+      "shortName": "10Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Warm white",
+        "Warm white fine",
+        "Cool white",
+        "Cool white fine",
+        "Color temperature",
+        "Strobe",
+        "Zoom",
+        "Control"
+      ]
+    },
+    {
+      "name": "10Ch Steady",
+      "shortName": "10ChSteady",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Warm white",
+        "Warm white fine",
+        "Cool white",
+        "Cool white fine",
+        "Color temperature",
+        "Strobe",
+        "Zoom",
+        "Control"
+      ]
+    },
+    {
+      "name": "7Ch",
+      "shortName": "7Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Warm white",
+        "Warm white fine",
+        "Cool white",
+        "Cool white fine",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Dimmer",
+        "Warm white",
+        "Cool white",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    }
+  ]
+}

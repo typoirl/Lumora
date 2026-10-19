@@ -1,0 +1,1496 @@
+{
+  "name": "Freedom Par H9 IP",
+  "shortName": "Freedom Par H9 IP",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "Amber": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Purple": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "UV"
+      }
+    },
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            15
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            16,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            30
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 100% G: 0-100% B: 0%"
+        },
+        {
+          "dmxRange": [
+            31,
+            50
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 100-0% G: 100% B: 0%"
+        },
+        {
+          "dmxRange": [
+            51,
+            70
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 0% G: 100% B: 0-100%"
+        },
+        {
+          "dmxRange": [
+            71,
+            90
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 0% G: 100-0% B: 100%"
+        },
+        {
+          "dmxRange": [
+            91,
+            110
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 0-100% G: 0% B: 100%"
+        },
+        {
+          "dmxRange": [
+            111,
+            130
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 100% G: 0% B: 0-100%"
+        },
+        {
+          "dmxRange": [
+            131,
+            150
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 100% G: 0-100% B: 0-100%"
+        },
+        {
+          "dmxRange": [
+            151,
+            170
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 100-0% G: 100-0% B: 100%"
+        },
+        {
+          "dmxRange": [
+            171,
+            200
+          ],
+          "type": "ColorPreset",
+          "comment": "R: 100% G: 100% B: 0% A: 100%"
+        },
+        {
+          "dmxRange": [
+            201,
+            205
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 1"
+        },
+        {
+          "dmxRange": [
+            206,
+            210
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 2"
+        },
+        {
+          "dmxRange": [
+            211,
+            215
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 3"
+        },
+        {
+          "dmxRange": [
+            216,
+            220
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 4"
+        },
+        {
+          "dmxRange": [
+            221,
+            225
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 5"
+        },
+        {
+          "dmxRange": [
+            226,
+            230
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 6"
+        },
+        {
+          "dmxRange": [
+            231,
+            235
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 7"
+        },
+        {
+          "dmxRange": [
+            236,
+            240
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 8"
+        },
+        {
+          "dmxRange": [
+            241,
+            245
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 9"
+        },
+        {
+          "dmxRange": [
+            246,
+            250
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 10"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 11"
+        }
+      ]
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            21
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            22,
+            43
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            44,
+            65
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            66,
+            87
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            88,
+            109
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            110,
+            131
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            132,
+            153
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            154,
+            175
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            176,
+            197
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            198,
+            219
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            220,
+            241
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1-9"
+        },
+        {
+          "dmxRange": [
+            242,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Sound show"
+        }
+      ]
+    },
+    "Foreground color dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Foreground color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            3
+          ],
+          "type": "Effect",
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            4,
+            7
+          ],
+          "type": "Effect",
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            8,
+            11
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            12,
+            15
+          ],
+          "type": "Effect",
+          "comment": "Amber"
+        },
+        {
+          "dmxRange": [
+            16,
+            19
+          ],
+          "type": "Effect",
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            20,
+            23
+          ],
+          "type": "Effect",
+          "comment": "Purple"
+        },
+        {
+          "dmxRange": [
+            24,
+            27
+          ],
+          "type": "Effect",
+          "comment": "Red + green"
+        },
+        {
+          "dmxRange": [
+            28,
+            31
+          ],
+          "type": "Effect",
+          "comment": "Red + blue"
+        },
+        {
+          "dmxRange": [
+            32,
+            35
+          ],
+          "type": "Effect",
+          "comment": "Red + amber"
+        },
+        {
+          "dmxRange": [
+            36,
+            39
+          ],
+          "type": "Effect",
+          "comment": "Red + white"
+        },
+        {
+          "dmxRange": [
+            40,
+            43
+          ],
+          "type": "Effect",
+          "comment": "Red + purple"
+        },
+        {
+          "dmxRange": [
+            44,
+            47
+          ],
+          "type": "Effect",
+          "comment": "Green + blue"
+        },
+        {
+          "dmxRange": [
+            48,
+            51
+          ],
+          "type": "Effect",
+          "comment": "Green + amber"
+        },
+        {
+          "dmxRange": [
+            52,
+            55
+          ],
+          "type": "Effect",
+          "comment": "Green + white"
+        },
+        {
+          "dmxRange": [
+            56,
+            59
+          ],
+          "type": "Effect",
+          "comment": "Green + purple"
+        },
+        {
+          "dmxRange": [
+            60,
+            63
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber"
+        },
+        {
+          "dmxRange": [
+            64,
+            67
+          ],
+          "type": "Effect",
+          "comment": "Blue + white"
+        },
+        {
+          "dmxRange": [
+            68,
+            71
+          ],
+          "type": "Effect",
+          "comment": "Blue + purple"
+        },
+        {
+          "dmxRange": [
+            72,
+            75
+          ],
+          "type": "Effect",
+          "comment": "Amber + white"
+        },
+        {
+          "dmxRange": [
+            76,
+            79
+          ],
+          "type": "Effect",
+          "comment": "Amber + purple"
+        },
+        {
+          "dmxRange": [
+            80,
+            83
+          ],
+          "type": "Effect",
+          "comment": "White + purple"
+        },
+        {
+          "dmxRange": [
+            84,
+            87
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue"
+        },
+        {
+          "dmxRange": [
+            88,
+            91
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber"
+        },
+        {
+          "dmxRange": [
+            92,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Red + green + white"
+        },
+        {
+          "dmxRange": [
+            96,
+            99
+          ],
+          "type": "Effect",
+          "comment": "Red + green + purple"
+        },
+        {
+          "dmxRange": [
+            100,
+            103
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber"
+        },
+        {
+          "dmxRange": [
+            104,
+            107
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + white"
+        },
+        {
+          "dmxRange": [
+            108,
+            111
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + purple"
+        },
+        {
+          "dmxRange": [
+            112,
+            115
+          ],
+          "type": "Effect",
+          "comment": "Red + amber + white"
+        },
+        {
+          "dmxRange": [
+            116,
+            119
+          ],
+          "type": "Effect",
+          "comment": "Red + amber + purple"
+        },
+        {
+          "dmxRange": [
+            120,
+            123
+          ],
+          "type": "Effect",
+          "comment": "Red + white + purple"
+        },
+        {
+          "dmxRange": [
+            124,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber"
+        },
+        {
+          "dmxRange": [
+            128,
+            131
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + white"
+        },
+        {
+          "dmxRange": [
+            132,
+            135
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + purple"
+        },
+        {
+          "dmxRange": [
+            136,
+            139
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            140,
+            143
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            144,
+            147
+          ],
+          "type": "Effect",
+          "comment": "Amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            148,
+            151
+          ],
+          "type": "Effect",
+          "comment": "Blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            152,
+            155
+          ],
+          "type": "Effect",
+          "comment": "Green + amber + white"
+        },
+        {
+          "dmxRange": [
+            156,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Green + amber + purple"
+        },
+        {
+          "dmxRange": [
+            160,
+            163
+          ],
+          "type": "Effect",
+          "comment": "Green + white + purple"
+        },
+        {
+          "dmxRange": [
+            164,
+            167
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber"
+        },
+        {
+          "dmxRange": [
+            168,
+            171
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + white"
+        },
+        {
+          "dmxRange": [
+            172,
+            175
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + purple"
+        },
+        {
+          "dmxRange": [
+            176,
+            179
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber + white"
+        },
+        {
+          "dmxRange": [
+            180,
+            183
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber + purple"
+        },
+        {
+          "dmxRange": [
+            184,
+            187
+          ],
+          "type": "Effect",
+          "comment": "Red + green + white + purple"
+        },
+        {
+          "dmxRange": [
+            188,
+            191
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            192,
+            195
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            196,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            200,
+            203
+          ],
+          "type": "Effect",
+          "comment": "Red + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            204,
+            207
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            208,
+            211
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            212,
+            215
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            216,
+            219
+          ],
+          "type": "Effect",
+          "comment": "Green + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            220,
+            223
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            224,
+            227
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            228,
+            231
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            232,
+            235
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            236,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            240,
+            243
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            244,
+            247
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            248,
+            251
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            252,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Off"
+        }
+      ]
+    },
+    "Background color dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "Background color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            3
+          ],
+          "type": "Effect",
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            4,
+            7
+          ],
+          "type": "Effect",
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            8,
+            11
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            12,
+            15
+          ],
+          "type": "Effect",
+          "comment": "Amber"
+        },
+        {
+          "dmxRange": [
+            16,
+            19
+          ],
+          "type": "Effect",
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            20,
+            23
+          ],
+          "type": "Effect",
+          "comment": "Purple"
+        },
+        {
+          "dmxRange": [
+            24,
+            27
+          ],
+          "type": "Effect",
+          "comment": "Red + green"
+        },
+        {
+          "dmxRange": [
+            28,
+            31
+          ],
+          "type": "Effect",
+          "comment": "Red + blue"
+        },
+        {
+          "dmxRange": [
+            32,
+            35
+          ],
+          "type": "Effect",
+          "comment": "Red + amber"
+        },
+        {
+          "dmxRange": [
+            36,
+            39
+          ],
+          "type": "Effect",
+          "comment": "Red + white"
+        },
+        {
+          "dmxRange": [
+            40,
+            43
+          ],
+          "type": "Effect",
+          "comment": "Red + purple"
+        },
+        {
+          "dmxRange": [
+            44,
+            47
+          ],
+          "type": "Effect",
+          "comment": "Green + blue"
+        },
+        {
+          "dmxRange": [
+            48,
+            51
+          ],
+          "type": "Effect",
+          "comment": "Green + amber"
+        },
+        {
+          "dmxRange": [
+            52,
+            55
+          ],
+          "type": "Effect",
+          "comment": "Green + white"
+        },
+        {
+          "dmxRange": [
+            56,
+            59
+          ],
+          "type": "Effect",
+          "comment": "Green + purple"
+        },
+        {
+          "dmxRange": [
+            60,
+            63
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber"
+        },
+        {
+          "dmxRange": [
+            64,
+            67
+          ],
+          "type": "Effect",
+          "comment": "Blue + white"
+        },
+        {
+          "dmxRange": [
+            68,
+            71
+          ],
+          "type": "Effect",
+          "comment": "Blue + purple"
+        },
+        {
+          "dmxRange": [
+            72,
+            75
+          ],
+          "type": "Effect",
+          "comment": "Amber + white"
+        },
+        {
+          "dmxRange": [
+            76,
+            79
+          ],
+          "type": "Effect",
+          "comment": "Amber + purple"
+        },
+        {
+          "dmxRange": [
+            80,
+            83
+          ],
+          "type": "Effect",
+          "comment": "White + purple"
+        },
+        {
+          "dmxRange": [
+            84,
+            87
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue"
+        },
+        {
+          "dmxRange": [
+            88,
+            91
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber"
+        },
+        {
+          "dmxRange": [
+            92,
+            95
+          ],
+          "type": "Effect",
+          "comment": "Red + green + white"
+        },
+        {
+          "dmxRange": [
+            96,
+            99
+          ],
+          "type": "Effect",
+          "comment": "Red + green + purple"
+        },
+        {
+          "dmxRange": [
+            100,
+            103
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber"
+        },
+        {
+          "dmxRange": [
+            104,
+            107
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + white"
+        },
+        {
+          "dmxRange": [
+            108,
+            111
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + purple"
+        },
+        {
+          "dmxRange": [
+            112,
+            115
+          ],
+          "type": "Effect",
+          "comment": "Red + amber + white"
+        },
+        {
+          "dmxRange": [
+            116,
+            119
+          ],
+          "type": "Effect",
+          "comment": "Red + amber + purple"
+        },
+        {
+          "dmxRange": [
+            120,
+            123
+          ],
+          "type": "Effect",
+          "comment": "Red + white + purple"
+        },
+        {
+          "dmxRange": [
+            124,
+            127
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber"
+        },
+        {
+          "dmxRange": [
+            128,
+            131
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + white"
+        },
+        {
+          "dmxRange": [
+            132,
+            135
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + purple"
+        },
+        {
+          "dmxRange": [
+            136,
+            139
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            140,
+            143
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            144,
+            147
+          ],
+          "type": "Effect",
+          "comment": "Amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            148,
+            151
+          ],
+          "type": "Effect",
+          "comment": "Blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            152,
+            155
+          ],
+          "type": "Effect",
+          "comment": "Green + amber + white"
+        },
+        {
+          "dmxRange": [
+            156,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Green + amber + purple"
+        },
+        {
+          "dmxRange": [
+            160,
+            163
+          ],
+          "type": "Effect",
+          "comment": "Green + white + purple"
+        },
+        {
+          "dmxRange": [
+            164,
+            167
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber"
+        },
+        {
+          "dmxRange": [
+            168,
+            171
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + white"
+        },
+        {
+          "dmxRange": [
+            172,
+            175
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + purple"
+        },
+        {
+          "dmxRange": [
+            176,
+            179
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber + white"
+        },
+        {
+          "dmxRange": [
+            180,
+            183
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber + purple"
+        },
+        {
+          "dmxRange": [
+            184,
+            187
+          ],
+          "type": "Effect",
+          "comment": "Red + green + white + purple"
+        },
+        {
+          "dmxRange": [
+            188,
+            191
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            192,
+            195
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            196,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            200,
+            203
+          ],
+          "type": "Effect",
+          "comment": "Red + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            204,
+            207
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            208,
+            211
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            212,
+            215
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            216,
+            219
+          ],
+          "type": "Effect",
+          "comment": "Green + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            220,
+            223
+          ],
+          "type": "Effect",
+          "comment": "Blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            224,
+            227
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber + white"
+        },
+        {
+          "dmxRange": [
+            228,
+            231
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber + purple"
+        },
+        {
+          "dmxRange": [
+            232,
+            235
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + white + purple"
+        },
+        {
+          "dmxRange": [
+            236,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Red + green + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            240,
+            243
+          ],
+          "type": "Effect",
+          "comment": "Red + blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            244,
+            247
+          ],
+          "type": "Effect",
+          "comment": "Green + blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            248,
+            251
+          ],
+          "type": "Effect",
+          "comment": "Red + green + blue + amber + white + purple"
+        },
+        {
+          "dmxRange": [
+            252,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Off"
+        }
+      ]
+    },
+    "Auto speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Auto speed, slow to fast"
+      }
+    },
+    "Dimmer speed mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Preset dimmer speed from display menu"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode off"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 2"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed mode 3 (slowest)"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "6Ch",
+      "shortName": "6Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Purple"
+      ]
+    },
+    {
+      "name": "8Ch",
+      "shortName": "8Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Purple",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "16Ch",
+      "shortName": "16Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Amber",
+        "White",
+        "Purple",
+        "Strobe",
+        "Color macro",
+        "Auto programs",
+        "Foreground color dimmer",
+        "Foreground color",
+        "Background color dimmer",
+        "Background color",
+        "Auto speed",
+        "Dimmer speed mode"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "name": "RGB LED Par",
+  "shortName": "RGB Par",
+  "manufacturer": "Generic",
+  "categories": ["Color Changer"],
+  "availableChannels": {
+    "Red": { "capability": { "type": "ColorIntensity", "color": "Red" } },
+    "Green": { "capability": { "type": "ColorIntensity", "color": "Green" } },
+    "Blue": { "capability": { "type": "ColorIntensity", "color": "Blue" } }
+  },
+  "modes": [ { "name": "3-channel", "shortName": "3ch", "channels": ["Red", "Green", "Blue"] } ]
+}

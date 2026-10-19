@@ -1,0 +1,929 @@
+{
+  "name": "EVE B-160Q",
+  "shortName": "EVE B-160Q",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Pixel Bar",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelCount": [
+      8,
+      1,
+      1
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            13
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Md yellow"
+        },
+        {
+          "dmxRange": [
+            14,
+            21
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Lt yellow"
+        },
+        {
+          "dmxRange": [
+            22,
+            28
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Amb yellow"
+        },
+        {
+          "dmxRange": [
+            29,
+            35
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Vlt amber"
+        },
+        {
+          "dmxRange": [
+            36,
+            43
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Lt amber"
+        },
+        {
+          "dmxRange": [
+            44,
+            51
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Md amber"
+        },
+        {
+          "dmxRange": [
+            52,
+            59
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffbf00"
+          ],
+          "comment": "Dk amber"
+        },
+        {
+          "dmxRange": [
+            60,
+            67
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Lt red"
+        },
+        {
+          "dmxRange": [
+            68,
+            75
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Md red"
+        },
+        {
+          "dmxRange": [
+            76,
+            83
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "NC pink"
+        },
+        {
+          "dmxRange": [
+            84,
+            91
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "Md pink"
+        },
+        {
+          "dmxRange": [
+            92,
+            99
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff80c0"
+          ],
+          "comment": "Dk pink"
+        },
+        {
+          "dmxRange": [
+            100,
+            107
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffbf00"
+          ],
+          "comment": "Md red amber"
+        },
+        {
+          "dmxRange": [
+            108,
+            115
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000",
+            "#ffbf00"
+          ],
+          "comment": "Dk red amber"
+        },
+        {
+          "dmxRange": [
+            116,
+            121
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "Magenta"
+        },
+        {
+          "dmxRange": [
+            122,
+            130
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff00ff"
+          ],
+          "comment": "Dk magenta"
+        },
+        {
+          "dmxRange": [
+            131,
+            138
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#c0a0ff"
+          ],
+          "comment": "Lt lavender"
+        },
+        {
+          "dmxRange": [
+            139,
+            154
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Lt blue"
+        },
+        {
+          "dmxRange": [
+            155,
+            162
+          ],
+          "type": "ColorPreset",
+          "comment": "Lt blue2"
+        },
+        {
+          "dmxRange": [
+            163,
+            170
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            171,
+            178
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Md blue"
+        },
+        {
+          "dmxRange": [
+            179,
+            186
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Dk blue"
+        },
+        {
+          "dmxRange": [
+            187,
+            194
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#4b0082"
+          ],
+          "comment": "Indigo"
+        },
+        {
+          "dmxRange": [
+            195,
+            202
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Vdk blue"
+        },
+        {
+          "dmxRange": [
+            203,
+            210
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Vdk blue 2"
+        },
+        {
+          "dmxRange": [
+            211,
+            218
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Yel Green"
+        },
+        {
+          "dmxRange": [
+            219,
+            226
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            227,
+            234
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#40e0d0"
+          ],
+          "comment": "Turquoise"
+        },
+        {
+          "dmxRange": [
+            235,
+            242
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ffff"
+          ],
+          "comment": "Aqua"
+        },
+        {
+          "dmxRange": [
+            243,
+            250
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00",
+            "#0000ff"
+          ],
+          "comment": "Blue green"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Color Temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            12
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800K"
+        },
+        {
+          "dmxRange": [
+            13,
+            19
+          ],
+          "type": "ColorTemperature",
+          "comment": "2900K"
+        },
+        {
+          "dmxRange": [
+            20,
+            26
+          ],
+          "type": "ColorTemperature",
+          "comment": "3000K"
+        },
+        {
+          "dmxRange": [
+            27,
+            33
+          ],
+          "type": "ColorTemperature",
+          "comment": "3100K"
+        },
+        {
+          "dmxRange": [
+            34,
+            40
+          ],
+          "type": "ColorTemperature",
+          "comment": "3200K"
+        },
+        {
+          "dmxRange": [
+            41,
+            47
+          ],
+          "type": "ColorTemperature",
+          "comment": "3300K"
+        },
+        {
+          "dmxRange": [
+            48,
+            54
+          ],
+          "type": "ColorTemperature",
+          "comment": "3400K"
+        },
+        {
+          "dmxRange": [
+            55,
+            61
+          ],
+          "type": "ColorTemperature",
+          "comment": "3500K"
+        },
+        {
+          "dmxRange": [
+            62,
+            68
+          ],
+          "type": "ColorTemperature",
+          "comment": "3600K"
+        },
+        {
+          "dmxRange": [
+            69,
+            75
+          ],
+          "type": "ColorTemperature",
+          "comment": "3700K"
+        },
+        {
+          "dmxRange": [
+            76,
+            82
+          ],
+          "type": "ColorTemperature",
+          "comment": "3800K"
+        },
+        {
+          "dmxRange": [
+            83,
+            89
+          ],
+          "type": "ColorTemperature",
+          "comment": "3900K"
+        },
+        {
+          "dmxRange": [
+            90,
+            96
+          ],
+          "type": "ColorTemperature",
+          "comment": "4000K"
+        },
+        {
+          "dmxRange": [
+            97,
+            103
+          ],
+          "type": "ColorTemperature",
+          "comment": "4100K"
+        },
+        {
+          "dmxRange": [
+            104,
+            110
+          ],
+          "type": "ColorTemperature",
+          "comment": "4200K"
+        },
+        {
+          "dmxRange": [
+            111,
+            117
+          ],
+          "type": "ColorTemperature",
+          "comment": "4300K"
+        },
+        {
+          "dmxRange": [
+            118,
+            124
+          ],
+          "type": "ColorTemperature",
+          "comment": "4400K"
+        },
+        {
+          "dmxRange": [
+            125,
+            131
+          ],
+          "type": "ColorTemperature",
+          "comment": "4500K"
+        },
+        {
+          "dmxRange": [
+            132,
+            138
+          ],
+          "type": "ColorTemperature",
+          "comment": "4600K"
+        },
+        {
+          "dmxRange": [
+            139,
+            145
+          ],
+          "type": "ColorTemperature",
+          "comment": "4700K"
+        },
+        {
+          "dmxRange": [
+            146,
+            152
+          ],
+          "type": "ColorTemperature",
+          "comment": "4800K"
+        },
+        {
+          "dmxRange": [
+            153,
+            159
+          ],
+          "type": "ColorTemperature",
+          "comment": "4900K"
+        },
+        {
+          "dmxRange": [
+            160,
+            166
+          ],
+          "type": "ColorTemperature",
+          "comment": "5000K"
+        },
+        {
+          "dmxRange": [
+            167,
+            173
+          ],
+          "type": "ColorTemperature",
+          "comment": "5100K"
+        },
+        {
+          "dmxRange": [
+            174,
+            180
+          ],
+          "type": "ColorTemperature",
+          "comment": "5200K"
+        },
+        {
+          "dmxRange": [
+            181,
+            187
+          ],
+          "type": "ColorTemperature",
+          "comment": "5300K"
+        },
+        {
+          "dmxRange": [
+            188,
+            194
+          ],
+          "type": "ColorTemperature",
+          "comment": "5400K"
+        },
+        {
+          "dmxRange": [
+            195,
+            201
+          ],
+          "type": "ColorTemperature",
+          "comment": "5500K"
+        },
+        {
+          "dmxRange": [
+            202,
+            208
+          ],
+          "type": "ColorTemperature",
+          "comment": "5600K"
+        },
+        {
+          "dmxRange": [
+            209,
+            215
+          ],
+          "type": "ColorTemperature",
+          "comment": "5700K"
+        },
+        {
+          "dmxRange": [
+            216,
+            222
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000K"
+        },
+        {
+          "dmxRange": [
+            223,
+            229
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500K"
+        },
+        {
+          "dmxRange": [
+            230,
+            236
+          ],
+          "type": "ColorTemperature",
+          "comment": "7000K"
+        },
+        {
+          "dmxRange": [
+            237,
+            243
+          ],
+          "type": "ColorTemperature",
+          "comment": "7500K"
+        },
+        {
+          "dmxRange": [
+            244,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "8000K"
+        }
+      ]
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            61,
+            110
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            111,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            161,
+            210
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            211,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        }
+      ]
+    },
+    "Auto program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Auto program speed, slow to fast"
+      }
+    },
+    "Control (Hold for 3 seconds)": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer reset"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3"
+        },
+        {
+          "dmxRange": [
+            48,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "3 Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Color macro",
+        "Color Temperature"
+      ]
+    },
+    {
+      "name": "4 Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "White"
+      ]
+    },
+    {
+      "name": "11 Ch",
+      "shortName": "11Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Strobe",
+        "Color macro",
+        "Color Temperature",
+        "Auto program",
+        "Auto program speed",
+        "Control (Hold for 3 seconds)"
+      ]
+    },
+    {
+      "name": "39 Ch",
+      "shortName": "39Ch",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey",
+            "Green $pixelKey",
+            "Blue $pixelKey",
+            "White $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Color macro",
+        "Color Temperature",
+        "Auto program",
+        "Auto program speed",
+        "Control (Hold for 3 seconds)"
+      ]
+    }
+  ]
+}

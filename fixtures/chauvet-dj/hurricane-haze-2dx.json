@@ -1,0 +1,61 @@
+{
+  "name": "Hurricane Haze 2DX",
+  "shortName": "Hurricane Haze 2DX",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Hazer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Fan speed": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Low to high"
+        }
+      ]
+    },
+    "Haze output": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Low to high"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "2Ch",
+      "shortName": "2Ch",
+      "channels": [
+        "Fan speed",
+        "Haze output"
+      ]
+    }
+  ]
+}

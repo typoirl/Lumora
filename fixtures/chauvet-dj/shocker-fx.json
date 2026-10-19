@@ -1,0 +1,2443 @@
+{
+  "name": "Shocker FX",
+  "shortName": "Shocker FX",
+  "manufacturer": "Chauvet DJ",
+  "categories": [
+    "Effect",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "RGB 1",
+          "RGB 2",
+          "RGB 3",
+          "RGB 4",
+          "RGB 5",
+          "RGB 6",
+          "RGB 7",
+          "RGB 8",
+          "White 1",
+          "White 2",
+          "White 3",
+          "White 4"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Strobe": {
+      "capability": {
+        "type": "ShutterStrobe",
+        "shutterEffect": "Strobe",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Strobe, slow to fast"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            18
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            19,
+            31
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            32,
+            44
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            45,
+            57
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            58,
+            70
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            71,
+            83
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            84,
+            96
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            97,
+            109
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            110,
+            122
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            123,
+            135
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            136,
+            148
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            149,
+            161
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            162,
+            174
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            175,
+            187
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            188,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Auto program 15"
+        },
+        {
+          "dmxRange": [
+            201,
+            213
+          ],
+          "type": "Effect",
+          "comment": "Auto program 16"
+        },
+        {
+          "dmxRange": [
+            214,
+            226
+          ],
+          "type": "Effect",
+          "comment": "Auto program 17"
+        },
+        {
+          "dmxRange": [
+            227,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Auto program 18"
+        },
+        {
+          "dmxRange": [
+            240,
+            252
+          ],
+          "type": "Effect",
+          "comment": "Auto program 19"
+        },
+        {
+          "dmxRange": [
+            253,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 20"
+        }
+      ]
+    },
+    "Auto program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Speed, slow to fast"
+      }
+    },
+    "Master dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "RGB dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "RGB strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "RGB auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            18
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            19,
+            31
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            32,
+            44
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            45,
+            57
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            58,
+            70
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            71,
+            83
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            84,
+            96
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            97,
+            109
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            110,
+            122
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            123,
+            135
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            136,
+            148
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            149,
+            161
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            162,
+            174
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            175,
+            187
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            188,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Auto program 15"
+        },
+        {
+          "dmxRange": [
+            201,
+            213
+          ],
+          "type": "Effect",
+          "comment": "Auto program 16"
+        },
+        {
+          "dmxRange": [
+            214,
+            226
+          ],
+          "type": "Effect",
+          "comment": "Auto program 17"
+        },
+        {
+          "dmxRange": [
+            227,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Auto program 18"
+        },
+        {
+          "dmxRange": [
+            240,
+            252
+          ],
+          "type": "Effect",
+          "comment": "Auto program 19"
+        },
+        {
+          "dmxRange": [
+            253,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 20"
+        }
+      ]
+    },
+    "RGB program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Speed, slow to fast"
+      }
+    },
+    "Color macro": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            23
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ff0000"
+          ],
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            24,
+            41
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ff00"
+          ],
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            42,
+            59
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#0000ff"
+          ],
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            60,
+            79
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffff00"
+          ],
+          "comment": "Yellow"
+        },
+        {
+          "dmxRange": [
+            80,
+            96
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#00ffff"
+          ],
+          "comment": "Cyan"
+        },
+        {
+          "dmxRange": [
+            97,
+            114
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#8000c0"
+          ],
+          "comment": "Purple"
+        },
+        {
+          "dmxRange": [
+            115,
+            127
+          ],
+          "type": "ColorPreset",
+          "colors": [
+            "#ffffff"
+          ],
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            128,
+            130
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 1"
+        },
+        {
+          "dmxRange": [
+            131,
+            134
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 2"
+        },
+        {
+          "dmxRange": [
+            135,
+            138
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 3"
+        },
+        {
+          "dmxRange": [
+            139,
+            142
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 4"
+        },
+        {
+          "dmxRange": [
+            143,
+            146
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 5"
+        },
+        {
+          "dmxRange": [
+            147,
+            150
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 6"
+        },
+        {
+          "dmxRange": [
+            151,
+            154
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 7"
+        },
+        {
+          "dmxRange": [
+            155,
+            158
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 8"
+        },
+        {
+          "dmxRange": [
+            159,
+            162
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 9"
+        },
+        {
+          "dmxRange": [
+            163,
+            166
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 10"
+        },
+        {
+          "dmxRange": [
+            167,
+            170
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 11"
+        },
+        {
+          "dmxRange": [
+            171,
+            174
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 12"
+        },
+        {
+          "dmxRange": [
+            175,
+            178
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 13"
+        },
+        {
+          "dmxRange": [
+            179,
+            182
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 14"
+        },
+        {
+          "dmxRange": [
+            183,
+            186
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 15"
+        },
+        {
+          "dmxRange": [
+            187,
+            190
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 16"
+        },
+        {
+          "dmxRange": [
+            191,
+            194
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 17"
+        },
+        {
+          "dmxRange": [
+            195,
+            198
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 18"
+        },
+        {
+          "dmxRange": [
+            199,
+            202
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 19"
+        },
+        {
+          "dmxRange": [
+            203,
+            206
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 20"
+        },
+        {
+          "dmxRange": [
+            207,
+            210
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 21"
+        },
+        {
+          "dmxRange": [
+            211,
+            214
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 22"
+        },
+        {
+          "dmxRange": [
+            215,
+            218
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 23"
+        },
+        {
+          "dmxRange": [
+            219,
+            222
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 24"
+        },
+        {
+          "dmxRange": [
+            223,
+            226
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 25"
+        },
+        {
+          "dmxRange": [
+            227,
+            230
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 26"
+        },
+        {
+          "dmxRange": [
+            231,
+            234
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 27"
+        },
+        {
+          "dmxRange": [
+            235,
+            238
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 28"
+        },
+        {
+          "dmxRange": [
+            239,
+            242
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 29"
+        },
+        {
+          "dmxRange": [
+            243,
+            246
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 30"
+        },
+        {
+          "dmxRange": [
+            247,
+            250
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 31"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "ColorPreset",
+          "comment": "Color 32"
+        }
+      ]
+    },
+    "Background color": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            23
+          ],
+          "type": "Effect",
+          "comment": "Red"
+        },
+        {
+          "dmxRange": [
+            24,
+            41
+          ],
+          "type": "Effect",
+          "comment": "Green"
+        },
+        {
+          "dmxRange": [
+            42,
+            59
+          ],
+          "type": "Effect",
+          "comment": "Blue"
+        },
+        {
+          "dmxRange": [
+            60,
+            79
+          ],
+          "type": "Effect",
+          "comment": "Yellow"
+        },
+        {
+          "dmxRange": [
+            80,
+            96
+          ],
+          "type": "Effect",
+          "comment": "Cyan"
+        },
+        {
+          "dmxRange": [
+            97,
+            114
+          ],
+          "type": "Effect",
+          "comment": "Purple"
+        },
+        {
+          "dmxRange": [
+            115,
+            127
+          ],
+          "type": "Effect",
+          "comment": "White"
+        },
+        {
+          "dmxRange": [
+            128,
+            130
+          ],
+          "type": "Effect",
+          "comment": "Color 1"
+        },
+        {
+          "dmxRange": [
+            131,
+            134
+          ],
+          "type": "Effect",
+          "comment": "Color 2"
+        },
+        {
+          "dmxRange": [
+            135,
+            138
+          ],
+          "type": "Effect",
+          "comment": "Color 3"
+        },
+        {
+          "dmxRange": [
+            139,
+            142
+          ],
+          "type": "Effect",
+          "comment": "Color 4"
+        },
+        {
+          "dmxRange": [
+            143,
+            146
+          ],
+          "type": "Effect",
+          "comment": "Color 5"
+        },
+        {
+          "dmxRange": [
+            147,
+            150
+          ],
+          "type": "Effect",
+          "comment": "Color 6"
+        },
+        {
+          "dmxRange": [
+            151,
+            154
+          ],
+          "type": "Effect",
+          "comment": "Color 7"
+        },
+        {
+          "dmxRange": [
+            155,
+            158
+          ],
+          "type": "Effect",
+          "comment": "Color 8"
+        },
+        {
+          "dmxRange": [
+            159,
+            162
+          ],
+          "type": "Effect",
+          "comment": "Color 9"
+        },
+        {
+          "dmxRange": [
+            163,
+            166
+          ],
+          "type": "Effect",
+          "comment": "Color 10"
+        },
+        {
+          "dmxRange": [
+            167,
+            170
+          ],
+          "type": "Effect",
+          "comment": "Color 11"
+        },
+        {
+          "dmxRange": [
+            171,
+            174
+          ],
+          "type": "Effect",
+          "comment": "Color 12"
+        },
+        {
+          "dmxRange": [
+            175,
+            178
+          ],
+          "type": "Effect",
+          "comment": "Color 13"
+        },
+        {
+          "dmxRange": [
+            179,
+            182
+          ],
+          "type": "Effect",
+          "comment": "Color 14"
+        },
+        {
+          "dmxRange": [
+            183,
+            186
+          ],
+          "type": "Effect",
+          "comment": "Color 15"
+        },
+        {
+          "dmxRange": [
+            187,
+            190
+          ],
+          "type": "Effect",
+          "comment": "Color 16"
+        },
+        {
+          "dmxRange": [
+            191,
+            194
+          ],
+          "type": "Effect",
+          "comment": "Color 17"
+        },
+        {
+          "dmxRange": [
+            195,
+            198
+          ],
+          "type": "Effect",
+          "comment": "Color 18"
+        },
+        {
+          "dmxRange": [
+            199,
+            202
+          ],
+          "type": "Effect",
+          "comment": "Color 19"
+        },
+        {
+          "dmxRange": [
+            203,
+            206
+          ],
+          "type": "Effect",
+          "comment": "Color 20"
+        },
+        {
+          "dmxRange": [
+            207,
+            210
+          ],
+          "type": "Effect",
+          "comment": "Color 21"
+        },
+        {
+          "dmxRange": [
+            211,
+            214
+          ],
+          "type": "Effect",
+          "comment": "Color 22"
+        },
+        {
+          "dmxRange": [
+            215,
+            218
+          ],
+          "type": "Effect",
+          "comment": "Color 23"
+        },
+        {
+          "dmxRange": [
+            219,
+            222
+          ],
+          "type": "Effect",
+          "comment": "Color 24"
+        },
+        {
+          "dmxRange": [
+            223,
+            226
+          ],
+          "type": "Effect",
+          "comment": "Color 25"
+        },
+        {
+          "dmxRange": [
+            227,
+            230
+          ],
+          "type": "Effect",
+          "comment": "Color 26"
+        },
+        {
+          "dmxRange": [
+            231,
+            234
+          ],
+          "type": "Effect",
+          "comment": "Color 27"
+        },
+        {
+          "dmxRange": [
+            235,
+            238
+          ],
+          "type": "Effect",
+          "comment": "Color 28"
+        },
+        {
+          "dmxRange": [
+            239,
+            242
+          ],
+          "type": "Effect",
+          "comment": "Color 29"
+        },
+        {
+          "dmxRange": [
+            243,
+            246
+          ],
+          "type": "Effect",
+          "comment": "Color 30"
+        },
+        {
+          "dmxRange": [
+            247,
+            250
+          ],
+          "type": "Effect",
+          "comment": "Color 31"
+        },
+        {
+          "dmxRange": [
+            251,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Color 32"
+        }
+      ]
+    },
+    "Background color dimmer": {
+      "capability": {
+        "type": "Effect",
+        "comment": "0-100%"
+      }
+    },
+    "White dimmer": {
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "White strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            6,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "White auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            9
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            10,
+            14
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            15,
+            19
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            20,
+            24
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            25,
+            29
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            30,
+            34
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            35,
+            39
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            40,
+            44
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            45,
+            49
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            50,
+            54
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            55,
+            59
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            60,
+            64
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            65,
+            69
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            70,
+            74
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            75,
+            79
+          ],
+          "type": "Effect",
+          "comment": "Auto program 15"
+        },
+        {
+          "dmxRange": [
+            80,
+            84
+          ],
+          "type": "Effect",
+          "comment": "Auto program 16"
+        },
+        {
+          "dmxRange": [
+            85,
+            89
+          ],
+          "type": "Effect",
+          "comment": "Auto program 17"
+        },
+        {
+          "dmxRange": [
+            90,
+            94
+          ],
+          "type": "Effect",
+          "comment": "Auto program 18"
+        },
+        {
+          "dmxRange": [
+            95,
+            99
+          ],
+          "type": "Effect",
+          "comment": "Auto program 19"
+        },
+        {
+          "dmxRange": [
+            100,
+            104
+          ],
+          "type": "Effect",
+          "comment": "Auto program 20"
+        },
+        {
+          "dmxRange": [
+            105,
+            109
+          ],
+          "type": "Effect",
+          "comment": "Auto program 21"
+        },
+        {
+          "dmxRange": [
+            110,
+            114
+          ],
+          "type": "Effect",
+          "comment": "Auto program 22"
+        },
+        {
+          "dmxRange": [
+            115,
+            119
+          ],
+          "type": "Effect",
+          "comment": "Auto program 23"
+        },
+        {
+          "dmxRange": [
+            120,
+            124
+          ],
+          "type": "Effect",
+          "comment": "Auto program 24"
+        },
+        {
+          "dmxRange": [
+            125,
+            129
+          ],
+          "type": "Effect",
+          "comment": "Auto program 25"
+        },
+        {
+          "dmxRange": [
+            130,
+            134
+          ],
+          "type": "Effect",
+          "comment": "Auto program 26"
+        },
+        {
+          "dmxRange": [
+            135,
+            139
+          ],
+          "type": "Effect",
+          "comment": "Auto program 27"
+        },
+        {
+          "dmxRange": [
+            140,
+            144
+          ],
+          "type": "Effect",
+          "comment": "Auto program 28"
+        },
+        {
+          "dmxRange": [
+            145,
+            149
+          ],
+          "type": "Effect",
+          "comment": "Auto program 29"
+        },
+        {
+          "dmxRange": [
+            150,
+            154
+          ],
+          "type": "Effect",
+          "comment": "Auto program 30"
+        },
+        {
+          "dmxRange": [
+            155,
+            159
+          ],
+          "type": "Effect",
+          "comment": "Auto program 31"
+        },
+        {
+          "dmxRange": [
+            160,
+            164
+          ],
+          "type": "Effect",
+          "comment": "Auto program 32"
+        },
+        {
+          "dmxRange": [
+            165,
+            169
+          ],
+          "type": "Effect",
+          "comment": "Auto program 33"
+        },
+        {
+          "dmxRange": [
+            170,
+            174
+          ],
+          "type": "Effect",
+          "comment": "Auto program 34"
+        },
+        {
+          "dmxRange": [
+            175,
+            179
+          ],
+          "type": "Effect",
+          "comment": "Auto program 35"
+        },
+        {
+          "dmxRange": [
+            180,
+            184
+          ],
+          "type": "Effect",
+          "comment": "Auto program 36"
+        },
+        {
+          "dmxRange": [
+            185,
+            189
+          ],
+          "type": "Effect",
+          "comment": "Auto program 37"
+        },
+        {
+          "dmxRange": [
+            190,
+            194
+          ],
+          "type": "Effect",
+          "comment": "Auto program 38"
+        },
+        {
+          "dmxRange": [
+            195,
+            199
+          ],
+          "type": "Effect",
+          "comment": "Auto program 39"
+        },
+        {
+          "dmxRange": [
+            200,
+            204
+          ],
+          "type": "Effect",
+          "comment": "Auto program 40"
+        },
+        {
+          "dmxRange": [
+            205,
+            209
+          ],
+          "type": "Effect",
+          "comment": "Auto program 41"
+        },
+        {
+          "dmxRange": [
+            210,
+            214
+          ],
+          "type": "Effect",
+          "comment": "Auto program 42"
+        },
+        {
+          "dmxRange": [
+            215,
+            219
+          ],
+          "type": "Effect",
+          "comment": "Auto program 43"
+        },
+        {
+          "dmxRange": [
+            220,
+            224
+          ],
+          "type": "Effect",
+          "comment": "Auto program 44"
+        },
+        {
+          "dmxRange": [
+            225,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 45"
+        }
+      ]
+    },
+    "White program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Speed, slow to fast"
+      }
+    },
+    "RGBW auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            18
+          ],
+          "type": "Effect",
+          "comment": "Auto program 1"
+        },
+        {
+          "dmxRange": [
+            19,
+            31
+          ],
+          "type": "Effect",
+          "comment": "Auto program 2"
+        },
+        {
+          "dmxRange": [
+            32,
+            44
+          ],
+          "type": "Effect",
+          "comment": "Auto program 3"
+        },
+        {
+          "dmxRange": [
+            45,
+            57
+          ],
+          "type": "Effect",
+          "comment": "Auto program 4"
+        },
+        {
+          "dmxRange": [
+            58,
+            70
+          ],
+          "type": "Effect",
+          "comment": "Auto program 5"
+        },
+        {
+          "dmxRange": [
+            71,
+            83
+          ],
+          "type": "Effect",
+          "comment": "Auto program 6"
+        },
+        {
+          "dmxRange": [
+            84,
+            96
+          ],
+          "type": "Effect",
+          "comment": "Auto program 7"
+        },
+        {
+          "dmxRange": [
+            97,
+            109
+          ],
+          "type": "Effect",
+          "comment": "Auto program 8"
+        },
+        {
+          "dmxRange": [
+            110,
+            122
+          ],
+          "type": "Effect",
+          "comment": "Auto program 9"
+        },
+        {
+          "dmxRange": [
+            123,
+            135
+          ],
+          "type": "Effect",
+          "comment": "Auto program 10"
+        },
+        {
+          "dmxRange": [
+            136,
+            148
+          ],
+          "type": "Effect",
+          "comment": "Auto program 11"
+        },
+        {
+          "dmxRange": [
+            149,
+            161
+          ],
+          "type": "Effect",
+          "comment": "Auto program 12"
+        },
+        {
+          "dmxRange": [
+            162,
+            174
+          ],
+          "type": "Effect",
+          "comment": "Auto program 13"
+        },
+        {
+          "dmxRange": [
+            175,
+            187
+          ],
+          "type": "Effect",
+          "comment": "Auto program 14"
+        },
+        {
+          "dmxRange": [
+            188,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Auto program 15"
+        },
+        {
+          "dmxRange": [
+            201,
+            213
+          ],
+          "type": "Effect",
+          "comment": "Auto program 16"
+        },
+        {
+          "dmxRange": [
+            214,
+            226
+          ],
+          "type": "Effect",
+          "comment": "Auto program 17"
+        },
+        {
+          "dmxRange": [
+            227,
+            239
+          ],
+          "type": "Effect",
+          "comment": "Auto program 18"
+        },
+        {
+          "dmxRange": [
+            240,
+            252
+          ],
+          "type": "Effect",
+          "comment": "Auto program 19"
+        },
+        {
+          "dmxRange": [
+            253,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Auto program 20"
+        }
+      ]
+    },
+    "RGBW program speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Speed, slow to fast"
+      }
+    },
+    "Dimmer mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            25
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer curve off"
+        },
+        {
+          "dmxRange": [
+            26,
+            50
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer curve 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            51,
+            75
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer curve 2 (medium)"
+        },
+        {
+          "dmxRange": [
+            76,
+            100
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer curve 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            101,
+            125
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer curve set on display"
+        },
+        {
+          "dmxRange": [
+            126,
+            150
+          ],
+          "type": "Maintenance",
+          "comment": "Reset fixture"
+        },
+        {
+          "dmxRange": [
+            151,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "Red $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      }
+    },
+    "Green $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      }
+    },
+    "Blue $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      }
+    },
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "8CH",
+      "shortName": "8CH",
+      "channels": [
+        "Dimmer",
+        "Strobe",
+        "Red",
+        "Green",
+        "Blue",
+        "White",
+        "Auto programs",
+        "Auto program speed"
+      ]
+    },
+    {
+      "name": "18CH",
+      "shortName": "18CH",
+      "channels": [
+        "Master dimmer",
+        "RGB dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "RGB strobe",
+        "RGB auto programs",
+        "RGB program speed",
+        "Color macro",
+        "Background color",
+        "Background color dimmer",
+        "White dimmer",
+        "White strobe",
+        "White auto programs",
+        "White program speed",
+        "RGBW auto programs",
+        "RGBW program speed",
+        "Dimmer mode"
+      ]
+    },
+    {
+      "name": "30CH",
+      "shortName": "30CH",
+      "channels": [
+        "Dimmer",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Dimmer mode"
+      ]
+    },
+    {
+      "name": "43CH",
+      "shortName": "43CH",
+      "channels": [
+        "Master dimmer",
+        "RGB dimmer",
+        "RGB strobe",
+        "RGB auto programs",
+        "RGB program speed",
+        "Color macro",
+        "Background color",
+        "Background color dimmer",
+        "White dimmer",
+        "White strobe",
+        "White auto programs",
+        "White program speed",
+        "RGBW auto programs",
+        "RGBW program speed",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 5"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 6"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 7"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Red $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Green $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "RGB 8"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "Blue $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 1"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 2"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 3"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "White 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Dimmer mode"
+      ]
+    }
+  ]
+}

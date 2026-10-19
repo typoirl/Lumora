@@ -1,0 +1,469 @@
+{
+  "name": "Ovation F-415VW",
+  "shortName": "Ovation F-415VW",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Color temperature": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            5
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            6,
+            209
+          ],
+          "type": "ColorTemperature",
+          "comment": "2800-5700K"
+        },
+        {
+          "dmxRange": [
+            210,
+            216
+          ],
+          "type": "ColorTemperature",
+          "comment": "5700-6000K"
+        },
+        {
+          "dmxRange": [
+            217,
+            223
+          ],
+          "type": "ColorTemperature",
+          "comment": "6000-6500K"
+        },
+        {
+          "dmxRange": [
+            224,
+            230
+          ],
+          "type": "ColorTemperature",
+          "comment": "6500-7000K"
+        },
+        {
+          "dmxRange": [
+            231,
+            237
+          ],
+          "type": "ColorTemperature",
+          "comment": "7000-7500K"
+        },
+        {
+          "dmxRange": [
+            238,
+            244
+          ],
+          "type": "ColorTemperature",
+          "comment": "7500-8000K"
+        },
+        {
+          "dmxRange": [
+            245,
+            255
+          ],
+          "type": "ColorTemperature",
+          "comment": "8000K"
+        }
+      ]
+    },
+    "Tint": {
+      "capability": {
+        "type": "Maintenance",
+        "comment": "Green/magenta -25 to 25"
+      }
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Zoom",
+        "comment": "Narrow to wide"
+      }
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine"
+      ]
+    },
+    "Orange": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      },
+      "fineChannelAliases": [
+        "Orange fine"
+      ]
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine"
+      ]
+    },
+    "Royal blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Indigo"
+      },
+      "fineChannelAliases": [
+        "Royal blue fine"
+      ]
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine"
+      ]
+    },
+    "Lime": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Lime"
+      },
+      "fineChannelAliases": [
+        "Lime fine"
+      ]
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer reset"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift off"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer S-curve"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer linear"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer square"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer inverse square"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed off"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 1"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 2"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 3"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Fan auto"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Fan on"
+        },
+        {
+          "dmxRange": [
+            112,
+            119
+          ],
+          "type": "Maintenance",
+          "comment": "Fan off"
+        },
+        {
+          "dmxRange": [
+            120,
+            127
+          ],
+          "type": "Maintenance",
+          "comment": "Fan silent"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Motor reset": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            200
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            201,
+            220
+          ],
+          "type": "Effect",
+          "comment": "Motor reset"
+        },
+        {
+          "dmxRange": [
+            221,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "modes": [
+    {
+      "name": "1Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "4Ch",
+      "shortName": "4Ch",
+      "channels": [
+        "Dimmer",
+        "Color temperature",
+        "Tint",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "6Ch",
+      "shortName": "6Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Color temperature",
+        "Tint",
+        "Zoom",
+        "Strobe"
+      ]
+    },
+    {
+      "name": "7Ch",
+      "shortName": "7Ch",
+      "channels": [
+        "Red",
+        "Orange",
+        "Green",
+        "Royal blue",
+        "Blue",
+        "Lime",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "9Ch",
+      "shortName": "9Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Orange",
+        "Green",
+        "Royal blue",
+        "Blue",
+        "Lime",
+        "Strobe",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "13Ch",
+      "shortName": "13Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Orange",
+        "Green",
+        "Royal blue",
+        "Blue",
+        "Lime",
+        "Strobe",
+        "Color temperature",
+        "Tint",
+        "Control",
+        "Zoom",
+        "Motor reset"
+      ]
+    },
+    {
+      "name": "16Ch",
+      "shortName": "16Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Orange",
+        "Orange fine",
+        "Green",
+        "Green fine",
+        "Royal blue",
+        "Royal blue fine",
+        "Blue",
+        "Blue fine",
+        "Lime",
+        "Lime fine",
+        "Strobe",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "19Ch",
+      "shortName": "19Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Orange",
+        "Orange fine",
+        "Green",
+        "Green fine",
+        "Royal blue",
+        "Royal blue fine",
+        "Blue",
+        "Blue fine",
+        "Lime",
+        "Lime fine",
+        "Strobe",
+        "Color temperature",
+        "Tint",
+        "Zoom",
+        "Control"
+      ]
+    }
+  ]
+}

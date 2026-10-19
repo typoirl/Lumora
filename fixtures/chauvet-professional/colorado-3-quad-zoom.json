@@ -1,0 +1,566 @@
+{
+  "name": "COLORado 3 Quad Zoom",
+  "shortName": "COLORado 3 Quad Zoom",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Virtual color": {
+      "capability": {
+        "type": "ColorPreset",
+        "comment": "Virtual color wheel"
+      }
+    },
+    "Color Temperature": {
+      "capability": {
+        "type": "ColorTemperature"
+      }
+    },
+    "Tint": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Green/magenta shift -25 to 25"
+        }
+      ]
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Zoom",
+        "comment": "Wide to narrow"
+      }
+    },
+    "Red": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Red"
+      },
+      "fineChannelAliases": [
+        "Red fine"
+      ]
+    },
+    "Green": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Green"
+      },
+      "fineChannelAliases": [
+        "Green fine"
+      ]
+    },
+    "Blue": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Blue"
+      },
+      "fineChannelAliases": [
+        "Blue fine"
+      ]
+    },
+    "Lime": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Lime"
+      },
+      "fineChannelAliases": [
+        "Lime fine"
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Automatic program": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            60
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 1"
+        },
+        {
+          "dmxRange": [
+            61,
+            110
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 2"
+        },
+        {
+          "dmxRange": [
+            111,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 3"
+        },
+        {
+          "dmxRange": [
+            161,
+            210
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 4"
+        },
+        {
+          "dmxRange": [
+            211,
+            255
+          ],
+          "type": "Effect",
+          "comment": "Automatic program 5"
+        }
+      ]
+    },
+    "Automatic speed": {
+      "capability": {
+        "type": "EffectSpeed",
+        "speedStart": "slow",
+        "speedEnd": "fast",
+        "comment": "Program speed, slow to fast"
+      }
+    },
+    "Control": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            7
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            8,
+            15
+          ],
+          "type": "Maintenance",
+          "comment": "Reset dimmer"
+        },
+        {
+          "dmxRange": [
+            16,
+            23
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            24,
+            31
+          ],
+          "type": "Maintenance",
+          "comment": "Red shift off"
+        },
+        {
+          "dmxRange": [
+            32,
+            39
+          ],
+          "type": "Maintenance",
+          "comment": "S-curve dimmer"
+        },
+        {
+          "dmxRange": [
+            40,
+            47
+          ],
+          "type": "Maintenance",
+          "comment": "Linear dimmer"
+        },
+        {
+          "dmxRange": [
+            48,
+            55
+          ],
+          "type": "Maintenance",
+          "comment": "Square dimmer"
+        },
+        {
+          "dmxRange": [
+            56,
+            63
+          ],
+          "type": "Maintenance",
+          "comment": "Inverse square dimmer"
+        },
+        {
+          "dmxRange": [
+            64,
+            71
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode off"
+        },
+        {
+          "dmxRange": [
+            72,
+            79
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 1 (fast)"
+        },
+        {
+          "dmxRange": [
+            80,
+            87
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 2"
+        },
+        {
+          "dmxRange": [
+            88,
+            95
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer mode 3 (slow)"
+        },
+        {
+          "dmxRange": [
+            96,
+            103
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode auto"
+        },
+        {
+          "dmxRange": [
+            104,
+            111
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode on"
+        },
+        {
+          "dmxRange": [
+            112,
+            119
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode off"
+        },
+        {
+          "dmxRange": [
+            120,
+            127
+          ],
+          "type": "Maintenance",
+          "comment": "Fan mode silent"
+        },
+        {
+          "dmxRange": [
+            128,
+            135
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed off"
+        },
+        {
+          "dmxRange": [
+            136,
+            143
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 1"
+        },
+        {
+          "dmxRange": [
+            144,
+            151
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 2"
+        },
+        {
+          "dmxRange": [
+            152,
+            159
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 3"
+        },
+        {
+          "dmxRange": [
+            160,
+            167
+          ],
+          "type": "Maintenance",
+          "comment": "X-Fade speed 4"
+        },
+        {
+          "dmxRange": [
+            168,
+            172
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency 750 Hz"
+        },
+        {
+          "dmxRange": [
+            173,
+            177
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency 1200 Hz"
+        },
+        {
+          "dmxRange": [
+            178,
+            182
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency 2000 Hz"
+        },
+        {
+          "dmxRange": [
+            183,
+            187
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency 4000 Hz"
+        },
+        {
+          "dmxRange": [
+            188,
+            192
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency 6000 Hz"
+        },
+        {
+          "dmxRange": [
+            193,
+            197
+          ],
+          "type": "Maintenance",
+          "comment": "PWM frequency 25000 Hz"
+        },
+        {
+          "dmxRange": [
+            198,
+            200
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            201,
+            220
+          ],
+          "type": "Maintenance",
+          "comment": "Zoom reset"
+        },
+        {
+          "dmxRange": [
+            221,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    },
+    "Hue": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-360°"
+      }
+    },
+    "Saturation": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    },
+    "Value": {
+      "capability": {
+        "type": "Generic",
+        "comment": "0-100%"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1 Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "5 Ch1",
+      "shortName": "5Ch1",
+      "channels": [
+        "Dimmer",
+        "Virtual color",
+        "Color Temperature",
+        "Tint",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "5 Ch2",
+      "shortName": "5Ch2",
+      "channels": [
+        "Red",
+        "Green",
+        "Blue",
+        "Lime",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "7 Ch",
+      "shortName": "7Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Lime",
+        "Strobe",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "11 Ch",
+      "shortName": "11Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Green",
+        "Blue",
+        "Lime",
+        "Strobe",
+        "Virtual color",
+        "Color Temperature",
+        "Tint",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "12 Ch",
+      "shortName": "12Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "Lime",
+        "Lime fine",
+        "Strobe",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "13 Ch",
+      "shortName": "13Ch",
+      "channels": [
+        "Dimmer",
+        "Red",
+        "Green",
+        "Blue",
+        "Lime",
+        "Strobe",
+        "Virtual color",
+        "Color Temperature",
+        "Tint",
+        "Automatic program",
+        "Automatic speed",
+        "Control",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "16 Ch",
+      "shortName": "16Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red",
+        "Red fine",
+        "Green",
+        "Green fine",
+        "Blue",
+        "Blue fine",
+        "Lime",
+        "Lime fine",
+        "Strobe",
+        "Virtual color",
+        "Color Temperature",
+        "Tint",
+        "Control",
+        "Zoom"
+      ]
+    },
+    {
+      "name": "HSV",
+      "shortName": "HSV",
+      "channels": [
+        "Hue",
+        "Saturation",
+        "Value"
+      ]
+    }
+  ]
+}

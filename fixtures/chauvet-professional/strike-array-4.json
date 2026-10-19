@@ -1,0 +1,335 @@
+{
+  "name": "STRIKE Array 4",
+  "shortName": "STRIKE Array 4",
+  "manufacturer": "Chauvet Professional",
+  "categories": [
+    "Effect",
+    "Strobe",
+    "Color Changer"
+  ],
+  "meta": {
+    "source": "Transcribed from the manufacturer's user manual"
+  },
+  "matrix": {
+    "pixelKeys": [
+      [
+        [
+          "Cell 1",
+          "Cell 2",
+          "Cell 3",
+          "Cell 4"
+        ]
+      ]
+    ]
+  },
+  "availableChannels": {
+    "Dimmer": {
+      "capability": {
+        "type": "Intensity"
+      },
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ]
+    },
+    "Red shift": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            0
+          ],
+          "type": "Generic",
+          "comment": "Red shift on"
+        },
+        {
+          "dmxRange": [
+            1,
+            255
+          ],
+          "type": "Generic",
+          "comment": "Red shift off"
+        }
+      ]
+    },
+    "Dimmer speed mode": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            51
+          ],
+          "type": "Maintenance",
+          "comment": "Current dimmer speed mode"
+        },
+        {
+          "dmxRange": [
+            52,
+            101
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed off (linear)"
+        },
+        {
+          "dmxRange": [
+            102,
+            152
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 1 (fastest)"
+        },
+        {
+          "dmxRange": [
+            153,
+            203
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 2"
+        },
+        {
+          "dmxRange": [
+            204,
+            255
+          ],
+          "type": "Maintenance",
+          "comment": "Dimmer speed 3 (slowest)"
+        }
+      ]
+    },
+    "Strobe": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open",
+          "comment": "No function"
+        },
+        {
+          "dmxRange": [
+            11,
+            132
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Strobe all pods, slow to fast"
+        },
+        {
+          "dmxRange": [
+            133,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "RandomStrobe",
+          "speedStart": "slow",
+          "speedEnd": "fast",
+          "comment": "Random strobe, slow to fast"
+        }
+      ],
+      "defaultValue": 0,
+      "highlightValue": 0
+    },
+    "Auto programs": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            10
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            11,
+            40
+          ],
+          "type": "Effect",
+          "comment": "Auto 1"
+        },
+        {
+          "dmxRange": [
+            41,
+            80
+          ],
+          "type": "Effect",
+          "comment": "Auto 2"
+        },
+        {
+          "dmxRange": [
+            81,
+            120
+          ],
+          "type": "Effect",
+          "comment": "Auto 3"
+        },
+        {
+          "dmxRange": [
+            121,
+            160
+          ],
+          "type": "Effect",
+          "comment": "Auto 4"
+        },
+        {
+          "dmxRange": [
+            161,
+            200
+          ],
+          "type": "Effect",
+          "comment": "Auto 5"
+        },
+        {
+          "dmxRange": [
+            201,
+            240
+          ],
+          "type": "Effect",
+          "comment": "Auto 6"
+        },
+        {
+          "dmxRange": [
+            241,
+            255
+          ],
+          "type": "NoFunction"
+        }
+      ]
+    }
+  },
+  "templateChannels": {
+    "White $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "White"
+      }
+    },
+    "Amber $pixelKey": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Amber"
+      }
+    }
+  },
+  "modes": [
+    {
+      "name": "1 Ch",
+      "shortName": "1Ch",
+      "channels": [
+        "Dimmer"
+      ]
+    },
+    {
+      "name": "3 Ch",
+      "shortName": "3Ch",
+      "channels": [
+        "Dimmer",
+        "Red shift",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "4 Ch",
+      "shortName": "4Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5 Ch",
+      "shortName": "5Ch",
+      "channels": [
+        "Dimmer",
+        "Red shift",
+        "Strobe",
+        "Auto programs",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "6 Ch",
+      "shortName": "6Ch",
+      "channels": [
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Red shift",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "10 Ch",
+      "shortName": "10Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        "Red shift",
+        "Strobe",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey"
+          ]
+        },
+        "Auto programs",
+        "Dimmer speed mode"
+      ]
+    },
+    {
+      "name": "13 Ch",
+      "shortName": "13Ch",
+      "channels": [
+        "Dimmer",
+        "Dimmer fine",
+        {
+          "insert": "matrixChannels",
+          "repeatFor": [
+            "Cell 1",
+            "Cell 2",
+            "Cell 3",
+            "Cell 4"
+          ],
+          "channelOrder": "perPixel",
+          "templateChannels": [
+            "White $pixelKey",
+            "Amber $pixelKey"
+          ]
+        },
+        "Strobe",
+        "Auto programs",
+        "Dimmer speed mode"
+      ]
+    }
+  ]
+}
