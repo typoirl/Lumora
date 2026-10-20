@@ -1,226 +1,375 @@
 {
- "name": "Moving Head Profile",
- "shortName": "Profile",
- "manufacturer": "Generic",
- "categories": [
-  "Moving Head"
- ],
- "availableChannels": {
-  "Pan": {
-   "fineChannelAliases": [
-    "Pan fine"
-   ],
-   "defaultValue": "50%",
-   "capability": {
-    "type": "Pan",
-    "angleStart": "0deg",
-    "angleEnd": "540deg"
-   }
-  },
-  "Tilt": {
-   "fineChannelAliases": [
-    "Tilt fine"
-   ],
-   "defaultValue": "50%",
-   "capability": {
-    "type": "Tilt",
-    "angleStart": "0deg",
-    "angleEnd": "270deg"
-   }
-  },
-  "Dimmer": {
-   "fineChannelAliases": [
-    "Dimmer fine"
-   ],
-   "capability": {
-    "type": "Intensity"
-   }
-  },
-  "Shutter": {
-   "defaultValue": 0,
-   "highlightValue": 0,
-   "capabilities": [
-    {
-     "dmxRange": [
-      0,
-      31
-     ],
-     "type": "ShutterStrobe",
-     "shutterEffect": "Open"
+  "name": "Moving Head Profile",
+  "shortName": "Profile",
+  "manufacturer": "Generic",
+  "categories": [
+    "Moving Head"
+  ],
+  "availableChannels": {
+    "Pan": {
+      "fineChannelAliases": [
+        "Pan fine"
+      ],
+      "defaultValue": "50%",
+      "capability": {
+        "type": "Pan",
+        "angleStart": "0deg",
+        "angleEnd": "540deg"
+      }
     },
-    {
-     "dmxRange": [
-      32,
-      63
-     ],
-     "type": "ShutterStrobe",
-     "shutterEffect": "Closed"
+    "Tilt": {
+      "fineChannelAliases": [
+        "Tilt fine"
+      ],
+      "defaultValue": "50%",
+      "capability": {
+        "type": "Tilt",
+        "angleStart": "0deg",
+        "angleEnd": "270deg"
+      }
     },
-    {
-     "dmxRange": [
-      64,
-      255
-     ],
-     "type": "ShutterStrobe",
-     "shutterEffect": "Strobe",
-     "speedStart": "slow",
-     "speedEnd": "fast"
+    "Dimmer": {
+      "fineChannelAliases": [
+        "Dimmer fine"
+      ],
+      "capability": {
+        "type": "Intensity"
+      }
+    },
+    "Shutter": {
+      "defaultValue": 0,
+      "highlightValue": 0,
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            31
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Open"
+        },
+        {
+          "dmxRange": [
+            32,
+            63
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Closed"
+        },
+        {
+          "dmxRange": [
+            64,
+            255
+          ],
+          "type": "ShutterStrobe",
+          "shutterEffect": "Strobe",
+          "speedStart": "slow",
+          "speedEnd": "fast"
+        }
+      ]
+    },
+    "Cyan": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Cyan"
+      }
+    },
+    "Magenta": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Magenta"
+      }
+    },
+    "Yellow": {
+      "capability": {
+        "type": "ColorIntensity",
+        "color": "Yellow"
+      }
+    },
+    "CTO": {
+      "capability": {
+        "type": "ColorTemperature",
+        "colorTemperatureStart": "6500K",
+        "colorTemperatureEnd": "3200K"
+      }
+    },
+    "Iris": {
+      "capability": {
+        "type": "Iris",
+        "openPercentStart": "open",
+        "openPercentEnd": "closed"
+      }
+    },
+    "Blade 1 in": {
+      "capability": {
+        "type": "BladeInsertion",
+        "blade": 1,
+        "insertionStart": "out",
+        "insertionEnd": "in"
+      }
+    },
+    "Blade 1 swivel": {
+      "defaultValue": "50%",
+      "capability": {
+        "type": "BladeRotation",
+        "blade": 1,
+        "angleStart": "-45deg",
+        "angleEnd": "45deg"
+      }
+    },
+    "Blade 2 in": {
+      "capability": {
+        "type": "BladeInsertion",
+        "blade": 2,
+        "insertionStart": "out",
+        "insertionEnd": "in"
+      }
+    },
+    "Blade 2 swivel": {
+      "defaultValue": "50%",
+      "capability": {
+        "type": "BladeRotation",
+        "blade": 2,
+        "angleStart": "-45deg",
+        "angleEnd": "45deg"
+      }
+    },
+    "Blade 3 in": {
+      "capability": {
+        "type": "BladeInsertion",
+        "blade": 3,
+        "insertionStart": "out",
+        "insertionEnd": "in"
+      }
+    },
+    "Blade 3 swivel": {
+      "defaultValue": "50%",
+      "capability": {
+        "type": "BladeRotation",
+        "blade": 3,
+        "angleStart": "-45deg",
+        "angleEnd": "45deg"
+      }
+    },
+    "Blade 4 in": {
+      "capability": {
+        "type": "BladeInsertion",
+        "blade": 4,
+        "insertionStart": "out",
+        "insertionEnd": "in"
+      }
+    },
+    "Blade 4 swivel": {
+      "defaultValue": "50%",
+      "capability": {
+        "type": "BladeRotation",
+        "blade": 4,
+        "angleStart": "-45deg",
+        "angleEnd": "45deg"
+      }
+    },
+    "Blade rotation": {
+      "defaultValue": "50%",
+      "capability": {
+        "type": "BladeSystemRotation",
+        "angleStart": "-45deg",
+        "angleEnd": "45deg"
+      }
+    },
+    "Zoom": {
+      "capability": {
+        "type": "Zoom",
+        "angleStart": "7deg",
+        "angleEnd": "50deg"
+      }
+    },
+    "Focus": {
+      "defaultValue": "50%",
+      "capability": {
+        "type": "Focus",
+        "distanceStart": "near",
+        "distanceEnd": "far"
+      }
+    },
+    "Gobo Wheel": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            19
+          ],
+          "type": "WheelSlot",
+          "slotNumber": 1
+        },
+        {
+          "dmxRange": [
+            20,
+            39
+          ],
+          "type": "WheelSlot",
+          "slotNumber": 2
+        },
+        {
+          "dmxRange": [
+            40,
+            59
+          ],
+          "type": "WheelSlot",
+          "slotNumber": 3
+        },
+        {
+          "dmxRange": [
+            60,
+            79
+          ],
+          "type": "WheelSlot",
+          "slotNumber": 4
+        },
+        {
+          "dmxRange": [
+            80,
+            99
+          ],
+          "type": "WheelSlot",
+          "slotNumber": 5
+        },
+        {
+          "dmxRange": [
+            100,
+            255
+          ],
+          "type": "WheelSlot",
+          "slotNumber": 6
+        }
+      ]
+    },
+    "Gobo Rotation": {
+      "capability": {
+        "type": "WheelSlotRotation",
+        "wheel": "Gobo Wheel",
+        "speedStart": "fast CCW",
+        "speedEnd": "fast CW"
+      },
+      "defaultValue": "50%"
+    },
+    "Prism": {
+      "capabilities": [
+        {
+          "dmxRange": [
+            0,
+            127
+          ],
+          "type": "NoFunction"
+        },
+        {
+          "dmxRange": [
+            128,
+            255
+          ],
+          "type": "Prism",
+          "comment": "3-facet"
+        }
+      ]
+    },
+    "Frost": {
+      "capability": {
+        "type": "Frost",
+        "frostIntensityStart": "0%",
+        "frostIntensityEnd": "100%"
+      }
     }
-   ]
   },
-  "Cyan": {
-   "capability": {
-    "type": "ColorIntensity",
-    "color": "Cyan"
-   }
-  },
-  "Magenta": {
-   "capability": {
-    "type": "ColorIntensity",
-    "color": "Magenta"
-   }
-  },
-  "Yellow": {
-   "capability": {
-    "type": "ColorIntensity",
-    "color": "Yellow"
-   }
-  },
-  "CTO": {
-   "capability": {
-    "type": "ColorTemperature",
-    "colorTemperatureStart": "6500K",
-    "colorTemperatureEnd": "3200K"
-   }
-  },
-  "Iris": {
-   "capability": {
-    "type": "Iris",
-    "openPercentStart": "open",
-    "openPercentEnd": "closed"
-   }
-  },
-  "Blade 1 in": {
-   "capability": {
-    "type": "BladeInsertion",
-    "blade": 1,
-    "insertionStart": "out",
-    "insertionEnd": "in"
-   }
-  },
-  "Blade 1 swivel": {
-   "defaultValue": "50%",
-   "capability": {
-    "type": "BladeRotation",
-    "blade": 1,
-    "angleStart": "-45deg",
-    "angleEnd": "45deg"
-   }
-  },
-  "Blade 2 in": {
-   "capability": {
-    "type": "BladeInsertion",
-    "blade": 2,
-    "insertionStart": "out",
-    "insertionEnd": "in"
-   }
-  },
-  "Blade 2 swivel": {
-   "defaultValue": "50%",
-   "capability": {
-    "type": "BladeRotation",
-    "blade": 2,
-    "angleStart": "-45deg",
-    "angleEnd": "45deg"
-   }
-  },
-  "Blade 3 in": {
-   "capability": {
-    "type": "BladeInsertion",
-    "blade": 3,
-    "insertionStart": "out",
-    "insertionEnd": "in"
-   }
-  },
-  "Blade 3 swivel": {
-   "defaultValue": "50%",
-   "capability": {
-    "type": "BladeRotation",
-    "blade": 3,
-    "angleStart": "-45deg",
-    "angleEnd": "45deg"
-   }
-  },
-  "Blade 4 in": {
-   "capability": {
-    "type": "BladeInsertion",
-    "blade": 4,
-    "insertionStart": "out",
-    "insertionEnd": "in"
-   }
-  },
-  "Blade 4 swivel": {
-   "defaultValue": "50%",
-   "capability": {
-    "type": "BladeRotation",
-    "blade": 4,
-    "angleStart": "-45deg",
-    "angleEnd": "45deg"
-   }
-  },
-  "Blade rotation": {
-   "defaultValue": "50%",
-   "capability": {
-    "type": "BladeSystemRotation",
-    "angleStart": "-45deg",
-    "angleEnd": "45deg"
-   }
-  },
-  "Zoom": {
-   "capability": {
-    "type": "Zoom",
-    "angleStart": "7deg",
-    "angleEnd": "50deg"
-   }
-  },
-  "Focus": {
-   "defaultValue": "50%",
-   "capability": {
-    "type": "Focus",
-    "distanceStart": "near",
-    "distanceEnd": "far"
-   }
+  "modes": [
+    {
+      "name": "23-channel",
+      "shortName": "23ch",
+      "channels": [
+        "Pan",
+        "Pan fine",
+        "Tilt",
+        "Tilt fine",
+        "Dimmer",
+        "Dimmer fine",
+        "Shutter",
+        "Cyan",
+        "Magenta",
+        "Yellow",
+        "CTO",
+        "Iris",
+        "Blade 1 in",
+        "Blade 1 swivel",
+        "Blade 2 in",
+        "Blade 2 swivel",
+        "Blade 3 in",
+        "Blade 3 swivel",
+        "Blade 4 in",
+        "Blade 4 swivel",
+        "Blade rotation",
+        "Zoom",
+        "Focus"
+      ]
+    },
+    {
+      "name": "27-channel",
+      "shortName": "27ch",
+      "channels": [
+        "Pan",
+        "Pan fine",
+        "Tilt",
+        "Tilt fine",
+        "Dimmer",
+        "Dimmer fine",
+        "Shutter",
+        "Cyan",
+        "Magenta",
+        "Yellow",
+        "CTO",
+        "Iris",
+        "Blade 1 in",
+        "Blade 1 swivel",
+        "Blade 2 in",
+        "Blade 2 swivel",
+        "Blade 3 in",
+        "Blade 3 swivel",
+        "Blade 4 in",
+        "Blade 4 swivel",
+        "Blade rotation",
+        "Zoom",
+        "Focus",
+        "Gobo Wheel",
+        "Gobo Rotation",
+        "Prism",
+        "Frost"
+      ]
+    }
+  ],
+  "wheels": {
+    "Gobo Wheel": {
+      "slots": [
+        {
+          "type": "Open"
+        },
+        {
+          "type": "Gobo",
+          "name": "Dots"
+        },
+        {
+          "type": "Gobo",
+          "name": "Ring"
+        },
+        {
+          "type": "Gobo",
+          "name": "Breakup"
+        },
+        {
+          "type": "Gobo",
+          "name": "Star"
+        },
+        {
+          "type": "Gobo",
+          "name": "Triangles"
+        }
+      ]
+    }
   }
- },
- "modes": [
-  {
-   "name": "23-channel",
-   "shortName": "23ch",
-   "channels": [
-    "Pan",
-    "Pan fine",
-    "Tilt",
-    "Tilt fine",
-    "Dimmer",
-    "Dimmer fine",
-    "Shutter",
-    "Cyan",
-    "Magenta",
-    "Yellow",
-    "CTO",
-    "Iris",
-    "Blade 1 in",
-    "Blade 1 swivel",
-    "Blade 2 in",
-    "Blade 2 swivel",
-    "Blade 3 in",
-    "Blade 3 swivel",
-    "Blade 4 in",
-    "Blade 4 swivel",
-    "Blade rotation",
-    "Zoom",
-    "Focus"
-   ]
-  }
- ]
 }

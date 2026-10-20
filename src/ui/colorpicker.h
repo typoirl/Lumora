@@ -21,6 +21,7 @@ namespace lumora {
 
 class AppContext;
 class Show;
+struct FixtureMode;
 
 // ---- Color math -----------------------------------------------------------
 
@@ -55,6 +56,10 @@ struct Swatch {
 std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title, const QString &current);
 
 const QVector<Swatch> &gelLibrary();
+// The values a fixture of this mode needs to show a color (its emitters, CMY or the nearest wheel
+// slot; `name` matches a slot by name first), or a color temperature (warm/cool whites blended).
+RawAttr colorValuesFor(const FixtureMode *m, const LinearRgb &color, const QColor &display, const QString &name);
+RawAttr temperatureValuesFor(const FixtureMode *m, double kelvin);
 const QVector<Swatch> &standardColors();
 
 // A grid of color chips with their code and name.
@@ -136,6 +141,9 @@ class CieDiagram : public QWidget {
 public:
     explicit CieDiagram(QWidget *parent = nullptr);
     void setMarker(const LinearRgb &c, bool valid);
+    // The colors the selected fixtures can make, as CIE xy points (their outline is drawn, and
+    // picks outside it are pulled in to it); empty: a typical RGB LED's triangle.
+    void setGamut(const QVector<QPointF> &xy, const QString &label);
     QSize sizeHint() const override { return {300, 300}; }
 
 signals:
@@ -151,9 +159,12 @@ private:
     QRectF plotRect() const;
     QPointF toWidget(double x, double y) const;
     void pickAt(const QPointF &p);
+    QPointF clampToGamut(const QPointF &xy) const;
     QImage m_cache;
     LinearRgb m_marker;
     bool m_hasMarker = false;
+    QVector<QPointF> m_gamut;   // convex hull, CIE xy (1 point: white only; 2: a line)
+    QString m_gamutLabel;
 };
 
 // The color picker panel: Gels, Standard, Temperature and Gamut tabs, like a theatre console's.

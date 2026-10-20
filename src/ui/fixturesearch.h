@@ -6,6 +6,7 @@
 class QComboBox;
 class QLabel;
 class QLineEdit;
+class QTabBar;
 class QTimer;
 class QTreeWidget;
 class QTreeWidgetItem;
@@ -15,9 +16,10 @@ namespace lumora {
 class AppContext;
 class FixtureSources;
 
-// One search over every fixture Lumora can get: the types already in the library first, then
-// GDTF Share, the Open Fixture Library and QLC+. Picking one that isn't in the library yet
-// downloads it on the spot; typeChosen fires once it's ready to patch.
+// Two tabs. In Show: the fixture types this show already has. All fixtures: one search over
+// every fixture Lumora can get: the library it ships with (files on this computer), GDTF Share,
+// the Open Fixture Library and QLC+, none of them in the show until picked. Picking one that
+// isn't downloaded yet gets it on the spot; typeChosen fires once it's ready to patch.
 class FixtureSearch : public QWidget {
     Q_OBJECT
 public:
@@ -40,6 +42,8 @@ private:
     FixtureSources *m_src = nullptr;
     QLineEdit *m_search = nullptr;
     QComboBox *m_filter = nullptr;
+    QTabBar *m_tabs = nullptr;   // In Show, or every fixture Lumora can get
+    bool m_tabPicked = false;    // once you pick a tab, it stays
     QTreeWidget *m_list = nullptr;
     QLabel *m_status = nullptr;
     QTimer *m_debounce = nullptr;

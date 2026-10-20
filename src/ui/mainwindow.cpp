@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "mainwindow.h"
+#include "controlview.h"
+#include "gotodialog.h"
+#include "helpview.h"
+#include "presetbuilder.h"
 #include "plotsui.h"
 
 #include "appcontext.h"
@@ -15,6 +19,7 @@
 #include "workspace.h"
 
 #include <QApplication>
+#include <QCursor>
 #include <QButtonGroup>
 #include <QCloseEvent>
 #include <QComboBox>
@@ -30,6 +35,8 @@
 #include <QFileInfo>
 #include <QFormLayout>
 #include <QHBoxLayout>
+#include <QCheckBox>
+#include <QDoubleSpinBox>
 #include <QInputDialog>
 #include <QJsonDocument>
 #include <QLabel>
@@ -129,9 +136,12 @@ QString railStoreStyle()
 QList<StoredView> standardViews()
 {
     return {
+        // Pools along the top; the fixture sheet (with the help beside it as a tab), the selection
+        // matrix with the spreads modifier, and the spreads pool.
         {1, QObject::tr("Program"),
-         QJsonArray{frameJson(0, 0, 8, 6, {"groups"}), frameJson(8, 0, 16, 6, {"presets"}),
-                    frameJson(0, 6, 24, 10, {"fixtures"})}},
+         QJsonArray{frameJson(0, 0, 7, 6, {"groups"}), frameJson(7, 0, 17, 6, {"presets"}),
+                    frameJson(0, 6, 15, 10, {"fixtures", "help"}), frameJson(15, 6, 9, 6, {"selectionmatrix", "spreadmodifier"}),
+                    frameJson(15, 12, 9, 4, {"spreads"})}},
         {2, QObject::tr("Sequences"), QJsonArray{frameJson(0, 0, 7, 16, {"sequences"}), frameJson(7, 0, 17, 16, {"cues"})}},
         // The rate masters under the effects pool, ten faders to set their speed.
         {3, QObject::tr("Effects"), QJsonArray{frameJson(0, 0, 10, 9, {"effects"}), frameJson(0, 9, 10, 7, {"ratemasters"}),
@@ -194,6 +204,9 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
                                  : QStringLiteral("Lumora %1 · Screen %2").arg(version).arg(m_screen));
     resize(m_screen == 1 ? 1500 : 1200, m_screen == 1 ? 940 : 800);
     restoreGeometry(QSettings().value(settingsPrefix() + "ui/window").toByteArray());
+    // Developer: screenshots at another size ("1920x1080").
+    if (const QStringList wh = qEnvironmentVariable("LUMORA_WINDOW_SIZE").split('x'); wh.size() == 2)
+        resize(wh[0].toInt(), wh[1].toInt());
 
     auto *central = new QWidget(this);
     auto *root = new QVBoxLayout(central);
@@ -237,13 +250,13 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
     m_nav = new QButtonGroup(this);
     m_nav->setExclusive(true);
     m_stack = new QStackedWidget(central);
-    const QStringList setupNames = {tr("Patch"), tr("Outputs"), tr("MIDI")};
+    const QStringList setupNames = {tr("Patch"), tr("Outputs"), tr("Control")};
     if (m_screen == 1) {
         auto *setupLabel = new QLabel(tr("Setup"), m_rail);
         setupLabel->setProperty("role", "muted");
         setupLabel->setContentsMargins(10, 18, 0, 2);
         rv->addWidget(setupLabel);
-        m_setupPages << new PatchView(ctx, m_stack) << new OutputView(ctx, m_stack) << new MidiView(ctx, m_stack);
+        m_setupPages << new PatchView(ctx, m_stack) << new OutputView(ctx, m_stack) << new ControlView(ctx, m_stack);
     }
     for (int i = 0; i < m_setupPages.size(); ++i) {
         auto *b = new QToolButton(m_rail);
@@ -320,6 +333,11 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
     connect(ctx->show, &Show::viewRecallRequested, this, [this](int id) {
         if (activeScreen() == this)
             recallView(id);
+    });
+    // Goto (a button or "Goto Executor 201"): one cue list, on the screen the request came from.
+    connect(ctx->show, &Show::gotoRequested, this, [this](int page, int number) {
+        if (m_screen == 1)
+            GotoDialog::open(m_ctx, page, number, this);
     });
 
     Show *show = ctx->show;
@@ -406,6 +424,32 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
     connect(focusCmd, &QShortcut::activated, m_commandBar, &CommandBar::focusInput);
     auto *keys = new QShortcut(QKeySequence(Qt::CTRL | Qt::Key_K), this);
     connect(keys, &QShortcut::activated, this, [this]() { setKeypadVisible(!m_keypad->isVisible()); });
+    // Undo: Ctrl+Z. Over a plot it takes back the plot's last edit; anywhere else the last command,
+    // store, delete or edit. Ctrl+Y (or Ctrl+Shift+Z) redoes.
+    auto undoHere = [this](bool redo) {
+        QWidget *w = QApplication::widgetAt(QCursor::pos());
+        if (!w || w->window() != this)
+            w = QApplication::focusWidget();
+        bool inPlot = false;
+        for (QWidget *p = w; p; p = p->parentWidget())
+            if (qobject_cast<PlotView *>(p)) {
+                inPlot = true;
+                break;
+            }
+        const CommandResult r = m_ctx->undoStep(inPlot, redo);
+        m_commandBar->showMessage(r.message);
+        emit m_ctx->status(r.message);
+    };
+    auto *undoKey = new QShortcut(QKeySequence::Undo, this);
+    connect(undoKey, &QShortcut::activated, this, [undoHere]() { undoHere(false); });
+    QList<QKeySequence> redoKeys = QKeySequence::keyBindings(QKeySequence::Redo);
+    for (const QKeySequence &k : {QKeySequence(Qt::CTRL | Qt::Key_Y), QKeySequence(Qt::CTRL | Qt::SHIFT | Qt::Key_Z)})
+        if (!redoKeys.contains(k))
+            redoKeys << k;
+    for (const QKeySequence &k : std::as_const(redoKeys)) {
+        auto *redoKey = new QShortcut(k, this);
+        connect(redoKey, &QShortcut::activated, this, [undoHere]() { undoHere(true); });
+    }
     auto *esc = new QShortcut(QKeySequence(Qt::Key_Escape), this);
     connect(esc, &QShortcut::activated, this, [this]() {
         m_ctx->setStoreArmed(false);
@@ -835,7 +879,7 @@ QMenu *MainWindow::buildWindowMenu(QWidget *parent)
 void MainWindow::showInterfaceSettings()
 {
     QDialog d(this);
-    d.setWindowTitle(tr("Interface settings"));
+    d.setWindowTitle(tr("Config"));
     auto *v = new QVBoxLayout(&d);
     auto *form = new QFormLayout;
     form->setVerticalSpacing(12);
@@ -844,7 +888,7 @@ void MainWindow::showInterfaceSettings()
         scale->addItem(QStringLiteral("%1%").arg(pct), pct);
     scale->setCurrentIndex(std::max(0, scale->findData(QSettings().value("ui/scale", 100).toInt())));
     auto *execs = new QSpinBox(&d);
-    execs->setRange(1, 60);
+    execs->setRange(1, 99);
     execs->setValue(m_ctx->executorCount());
     form->addRow(tr("Interface size"), scale);
     form->addRow(tr("Executors per row"), execs);
@@ -852,8 +896,31 @@ void MainWindow::showInterfaceSettings()
     encs->setRange(1, 20);
     encs->setValue(m_ctx->encodersPerPage());
     form->addRow(tr("Encoders per page"), encs);
+    auto *liveOn = new QCheckBox(tr("On"), &d);
+    liveOn->setChecked(m_ctx->show->progFadeOn());
+    auto *liveTime = new QDoubleSpinBox(&d);
+    liveTime->setRange(0.0, 600.0);
+    liveTime->setDecimals(1);
+    liveTime->setSuffix(tr(" s"));
+    liveTime->setValue(m_ctx->show->progFadeTime());
+    auto *liveRow = new QHBoxLayout;
+    liveRow->addWidget(liveOn);
+    liveRow->addWidget(liveTime, 1);
+    form->addRow(tr("Programmer fade"), liveRow);
+    auto seconds = [&d](double v) {
+        auto *b = new QDoubleSpinBox(&d);
+        b->setRange(0.0, 3600.0);
+        b->setDecimals(1);
+        b->setSuffix(QObject::tr(" s"));
+        b->setValue(v);
+        return b;
+    };
+    auto *cueFade = seconds(m_ctx->show->defaultCueFade());
+    auto *cueDelay = seconds(m_ctx->show->defaultCueDelay());
+    form->addRow(tr("New cues: fade"), cueFade);
+    form->addRow(tr("New cues: delay"), cueDelay);
     v->addLayout(form);
-    auto *note = new QLabel(tr("Executors per row (up to 60: 101–160, 201–260…) sets how many an executor window shows by default; encoders per page caps the encoder bar (fewer show when they don't fit). Both are saved with the show. Interface size is for this computer (it depends on the screen) "
+    auto *note = new QLabel(tr("Executors per row (up to 99: 101–199, 201–299…) sets how many an executor window shows by default; encoders per page caps the encoder bar (fewer show when they don't fit). Programmer fade is how long programmer changes take while it's on (ProgFade 3 in a macro sets it too). New cues get the fade and delay set here. These are saved with the show. Interface size is for this computer (it depends on the screen) "
                              "and applies the next time you open Lumora; larger sizes suit touch screens."), &d);
     note->setProperty("role", "muted");
     note->setWordWrap(true);
@@ -868,6 +935,8 @@ void MainWindow::showInterfaceSettings()
     QSettings().setValue("ui/scale", scale->currentData().toInt());
     m_ctx->setExecutorCount(execs->value());
     m_ctx->setEncodersPerPage(encs->value());
+    m_ctx->show->setProgFade(liveOn->isChecked(), liveTime->value());
+    m_ctx->show->setDefaultCueTimes(cueFade->value(), cueDelay->value());
     if (oldScale != scale->currentData().toInt())
         m_commandBar->showMessage(tr("Interface size changes after you restart Lumora"));
 }
@@ -933,13 +1002,16 @@ QWidget *MainWindow::buildTopBar()
         if (currentWorkspace())
             storeView(m_currentView);
     });
-    menu->addAction(tr("Interface settings…"), this, &MainWindow::showInterfaceSettings);
+    menu->addAction(tr("Preset builder…"), this, [this]() { openPresetBuilder(m_ctx, this); });
+    menu->addAction(tr("Config…"), this, &MainWindow::showInterfaceSettings);
     menu->addSeparator();
-    QAction *guide = menu->addAction(tr("User guide"), this, [this]() { openUserGuide(); });
-    guide->setShortcut(QKeySequence(Qt::Key_F1));
+    // F1: the guide built in, searchable. The PDF is still there to print or read elsewhere.
+    QAction *help = menu->addAction(tr("Help"), this, [this]() { HelpView::openWindow(m_ctx, this); });
+    help->setShortcut(QKeySequence(Qt::Key_F1));
     auto *f1 = new QShortcut(QKeySequence(Qt::Key_F1), this);
     f1->setContext(Qt::WindowShortcut);
-    connect(f1, &QShortcut::activated, this, [this]() { openUserGuide(); });
+    connect(f1, &QShortcut::activated, this, [this]() { HelpView::openWindow(m_ctx, this); });
+    menu->addAction(tr("User guide (PDF)"), this, [this]() { openUserGuide(); });
     menu->addSeparator();
     menu->addAction(tr("Quit"), this, &QWidget::close);
     menuButton->setMenu(menu);
@@ -951,8 +1023,7 @@ QWidget *MainWindow::buildTopBar()
     m_screenButton->setText(QStringLiteral("▣ %1").arg(m_screen));
     m_screenButton->setToolTip(tr("Screens: open more windows of Lumora (up to %1)").arg(kMaxScreens));
     m_screenButton->setCheckable(true);
-    m_screenButton->setMinimumHeight(30);
-    h->addWidget(m_screenButton);
+    m_screenButton->setMinimumHeight(30);   // placed at the far right, below
     m_screenRow = new QWidget(bar);
     auto *sr = new QHBoxLayout(m_screenRow);
     sr->setContentsMargins(0, 0, 6, 0);
@@ -974,7 +1045,6 @@ QWidget *MainWindow::buildTopBar()
         });
     }
     m_screenRow->hide();
-    h->addWidget(m_screenRow);
     connect(m_screenButton, &QToolButton::toggled, this, [this](bool on) {
         refreshScreenButtons();
         m_screenRow->setVisible(on);
@@ -992,7 +1062,7 @@ QWidget *MainWindow::buildTopBar()
                         tr("While on, click any executor fader or button, then move a control on your MIDI device"), bar);
     m_highlight = topButton(tr("Highlight"), "highlight", tr("Selected fixtures go to full white"), bar);
     auto *clear = topButton(tr("Clear"), "clear", tr("First clears the selection, then the programmer values"), bar, false);
-    for (QToolButton *b : {m_store, m_learn, m_highlight, clear})
+    for (QToolButton *b : {m_store, m_highlight, clear})
         h->addWidget(b);
     h->addSpacing(10);
     m_keys = topButton(tr("Keypad"), "keypad", tr("Command keys on screen (Ctrl+K)"), bar);
@@ -1008,6 +1078,7 @@ QWidget *MainWindow::buildTopBar()
         m_commandBar->showMessage(on ? tr("Keyboard shortcuts on (Insert turns them off)") : tr("Keyboard shortcuts off (Insert turns them on)"));
     });
     h->addWidget(m_shortcuts);
+    h->addWidget(m_learn);
     auto *window = topButton(QStringLiteral("+"), "addWindow", tr("Add a window to this view (or double-click empty space)"), bar, false);
     window->setPopupMode(QToolButton::InstantPopup);
     window->setMenu(buildWindowMenu(window));
@@ -1070,16 +1141,10 @@ QWidget *MainWindow::buildTopBar()
         if (std::lround(m_ctx->show->grandMaster() * 100) != v)
             m_ctx->show->setGrandMaster(v / 100.0);
     });
+    // Screens at the far right: the numbers open out to the left of the button.
     h->addSpacing(10);
-    m_fps = new QLabel(bar);
-    m_fps->setProperty("role", "muted");
-    m_fps->setMinimumWidth(52);
-    h->addWidget(m_fps);
-    auto *t = new QTimer(this);
-    connect(t, &QTimer::timeout, this, [this]() {
-        m_fps->setText(m_ctx->engine->isRunning() ? tr("%1 fps").arg(std::lround(m_ctx->engine->frameRate())) : tr("Stopped"));
-    });
-    t->start(500);
+    h->addWidget(m_screenRow);
+    h->addWidget(m_screenButton);
     return bar;
 }
 
@@ -1131,8 +1196,9 @@ bool MainWindow::saveShow(const QString &path)
     if (!p.endsWith(".lumora"))
         p += ".lumora";
     Show *show = m_ctx->show;
-    if (show->name() == QLatin1String("Untitled Show") || show->name().isEmpty())
-        show->setName(QFileInfo(p).completeBaseName());
+    // The show is called what its file is called: Save as (from the demo, or anything else)
+    // renames it, and the top bar follows.
+    show->setName(QFileInfo(p).completeBaseName());
     show->setExtra("midi", m_ctx->midi->toJson());
     show->removeExtra("outputs");   // network settings stay on this computer
     QFile f(p);
@@ -1170,6 +1236,7 @@ bool MainWindow::openShow(const QString &path)
             m_ctx->refreshOutputs();
         }
         m_ctx->show->removeExtra("outputs");
+        m_ctx->show->setName(QFileInfo(path).completeBaseName());   // named after its file
     }
     m_loading = false;
     if (!ok) {
@@ -1277,36 +1344,42 @@ void buildDemoShow(AppContext *ctx)
     s->clearShow();
     ctx->midi->fromJson(QJsonObject());
     s->setName(QObject::tr("Demo show"));
-    // Four stored views: Program (groups, presets, fixture sheet), Sequences (pool and cue
-    // editor), Effects (pool and editor) and Playback (executors).
     s->setViews(standardViews());
+
+    // The rig: 8 moving washes, 4 profiles (framing shutters, gobos, prism), 8 pixel bars of 8
+    // cells and 4 two-cell blinders.
+    //   Washes 1–8      universe 1 from 1      Profiles 11–14   universe 1 from 121
+    //   Blinders 31–34  universe 1 from 241    Pixel bars 21–28 universe 2 from 1 (cells 21.1–21.8…)
     for (int i = 0; i < 8; ++i)
-        s->addFixture({i + 1, QStringLiteral("Par %1").arg(i + 1), "generic/rgbw-par", "6-channel", 1, 1 + i * 6});
-    // Spots come from the bundled GDTF file (gobo images), or the OFL spot if it isn't installed.
-    const bool gdtf = s->library().find("generic/gdtf-sample-spot") != nullptr;
+        s->addFixture({1 + i, QStringLiteral("Wash %1").arg(i + 1), "generic/moving-wash", "15-channel", 1, 1 + i * 15});
     for (int i = 0; i < 4; ++i)
-        s->addFixture({11 + i, QStringLiteral("Spot %1").arg(i + 1), gdtf ? "generic/gdtf-sample-spot" : "generic/moving-spot",
-                       gdtf ? "Extended" : "16-channel", 1, 101 + i * 16});
+        s->addFixture({11 + i, QStringLiteral("Profile %1").arg(i + 1), "generic/moving-profile", "27-channel", 1, 121 + i * 27});
+    for (int i = 0; i < 8; ++i)
+        s->addFixture({21 + i, QStringLiteral("Bar %1").arg(i + 1), "generic/pixel-bar", "26-channel", 2, 1 + i * 26});
+    for (int i = 0; i < 4; ++i)
+        s->addFixture({31 + i, QStringLiteral("Blinder %1").arg(i + 1), "generic/blinder-2", "2-channel", 1, 241 + i * 2});
 
     CommandLine cl(s);
-    cl.execute("Fixture 1 Thru 8");
-    cl.execute("Store Group 1 \"All pars\"");
-    s->clearSelection();   // selections add up until cleared
-    cl.execute("Fixture 11 Thru 14");
-    cl.execute("Store Group 2 \"Spots\"");
-    s->clearSelection();
-    cl.execute("Fixture 1 Thru 8 + 11 Thru 14");
-    cl.execute("Store Group 3 \"Everything\"");
-    // Two profiles with framing shutters.
-    if (s->library().find("generic/moving-profile")) {
-        s->addFixture({15, QStringLiteral("Profile 1"), "generic/moving-profile", "23-channel", 1, 165});
-        s->addFixture({16, QStringLiteral("Profile 2"), "generic/moving-profile", "23-channel", 1, 188});
+    auto storeGroup = [&](const QString &select, int id, const QString &name) {
         s->clearSelection();
-        cl.execute("Fixture 15 Thru 16");
-        cl.execute("Store Group 5 \"Profiles\"");
+        cl.execute(select);
+        cl.execute(QStringLiteral("Store Group %1 \"%2\"").arg(id).arg(name));
+    };
+    storeGroup("Fixture 1 Thru 8", 1, QObject::tr("Washes"));
+    storeGroup("Fixture 11 Thru 14", 2, QObject::tr("Profiles"));
+    // The pixel bars as an 8 × 8 selection matrix: each bar's cells along X, one bar per Y.
+    {
+        QStringList parts;
+        for (int bar = 0; bar < 8; ++bar)
+            parts << QStringLiteral("Fixture %1.1 Thru %1.8").arg(21 + bar);
+        storeGroup(parts.join(QStringLiteral(" NextY ")), 3, QObject::tr("Pixel bars"));
     }
+    // The blinders 4 × 2: the four along X, top cells at Y 0 and bottom cells at Y 1.
+    storeGroup("Fixture 31.1 + 32.1 + 33.1 + 34.1 NextY Fixture 31.2 + 32.2 + 33.2 + 34.2", 4, QObject::tr("Blinders"));
+    storeGroup("Fixture 1 Thru 8 + 11 Thru 14", 5, QObject::tr("Movers"));
     s->clearSelection();
-    // A few spread to start from.
+
+    // Spreads to start from.
     {
         auto add = [s](int id, const QString &name, std::function<void(Spread &)> fn) {
             Spread m;
@@ -1321,20 +1394,14 @@ void buildDemoShow(AppContext *ctx)
         add(4, QObject::tr("Wings 2"), [](Spread &m) { m.wings = 2; });
         add(5, QObject::tr("Blocks 2"), [](Spread &m) { m.blocks = 2; });
         add(6, QObject::tr("Middle out"), [](Spread &m) { m.direction = SpreadDirection::Outward; });
-    }
-    // Two pixel bars, 21.1–21.8 and 22.1–22.8 their pixels. Bar 1 has a dimmer and strobe of its
-    // own (fixture 21); Bar 2 is only pixels, so 22 just labels them.
-    if (s->library().find("generic/pixel-bar")) {
-        s->addFixture({21, QStringLiteral("Bar 1"), "generic/pixel-bar", "26-channel", 2, 1});
-        s->addFixture({22, QStringLiteral("Bar 2"), "generic/pixel-bar", "24-channel", 2, 27});   // pixels only
-        s->clearSelection();
-        cl.execute("Fixture 21.1 Thru 22.8");
-        cl.execute("Store Group 4 \"Pixels\"");
+        add(7, QObject::tr("Alternate bars"), [](Spread &m) {
+            m.every = 2;
+            m.onX = false;
+            m.onY = true;
+        });
     }
 
-    // The standard colors as Universal color presets 1–13, then a 3200K warm white as 14: one
-    // value per attribute, so any fixture with RGB(W), CMY or (for the demo spot) this color
-    // wheel can use them.
+    // The standard colors as Universal color presets 1–13, then a 3200K warm white as 14.
     {
         auto colorPreset = [&](int id, const QString &name, const LinearRgb &lin, const QColor &display) {
             const double peak = std::max({lin.r, lin.g, lin.b, 1e-6});
@@ -1346,13 +1413,6 @@ void buildDemoShow(AppContext *ctx)
             p.universal = {{"ColorAdd_R", r}, {"ColorAdd_G", g}, {"ColorAdd_B", b},
                            {"ColorAdd_W", std::min({r, g, b})}, {"ColorAdd_A", 0.0}, {"ColorAdd_UV", 0.0},
                            {"ColorSub_C", 1 - r}, {"ColorSub_M", 1 - g}, {"ColorSub_Y", 1 - b}};
-            // The wheel slot nearest this color, taken from the spot itself.
-            s->clearAll();
-            s->select({11});
-            applyColorToSelection(s, lin, display, name);
-            const AttrValues spot = s->programmerValues().value(11);
-            if (spot.contains("Color1"))
-                p.universal.insert("Color1", spot.value("Color1").value);
             s->setPreset(p);
         };
         const QVector<Swatch> &colors = standardColors();
@@ -1361,38 +1421,6 @@ void buildDemoShow(AppContext *ctx)
         const LinearRgb warm = kelvinToLinear(3200);
         colorPreset(int(colors.size()) + 1, QStringLiteral("3200K"), warm, toDisplay(warm));
     }
-
-    s->clearAll();
-    s->select({11, 12, 13, 14});
-    s->setAttribute("Pan", 0.0);    // degrees: straight ahead
-    s->setAttribute("Tilt", 0.0);
-    s->storePreset(2, 1, Show::StoreMode::Overwrite, QObject::tr("Center"));
-    s->setAttribute("Tilt", -50.0);
-    s->storePreset(2, 2, Show::StoreMode::Overwrite, QObject::tr("Audience"));
-    const double fan[] = {-60.0, -20.0, 20.0, 60.0};   // degrees
-    for (int i = 0; i < 4; ++i) {
-        s->setAttribute(11 + i, "Pan", fan[i]);
-        s->setAttribute(11 + i, "Tilt", -20.0);
-    }
-    s->storePreset(2, 3, Show::StoreMode::Overwrite, QObject::tr("Fan"));
-
-    s->clearAll();
-    s->select({11, 12, 13, 14});
-    s->setAttribute("Gobo1", 29.5 / 255.0);
-    s->storePreset(3, 1, Show::StoreMode::Overwrite, QObject::tr("Dots"));
-    s->setAttribute("Gobo1", 69.5 / 255.0);
-    s->storePreset(3, 2, Show::StoreMode::Overwrite, QObject::tr("Ring"));
-    s->setAttribute("Gobo1", 49.5 / 255.0);
-    s->storePreset(3, 3, Show::StoreMode::Overwrite, QObject::tr("Breakup"));
-    s->setAttribute("Gobo1", 89.5 / 255.0);
-    s->storePreset(3, 4, Show::StoreMode::Overwrite, QObject::tr("Star"));
-    s->setAttribute("Gobo1", 109.5 / 255.0);
-    s->storePreset(3, 5, Show::StoreMode::Overwrite, QObject::tr("Triangles"));
-    s->clearAll();
-    s->select({11, 12, 13, 14});
-    s->setAttribute("Prism1", 0.8);
-    s->storePreset(5, 1, Show::StoreMode::Overwrite, QObject::tr("Prism"));
-    s->clearAll();
 
     // Universal Dimmer presets: blueprint lines get their level from these.
     {
@@ -1406,64 +1434,141 @@ void buildDemoShow(AppContext *ctx)
             s->setPreset(p);
         }
     }
-    const PresetRef full{1, 1}, quarter{1, 2};
 
-    auto line = [](const QString &name, int group, QVector<PresetRef> presets, int every = 1, int offset = 0) {
+    // Positions for the washes and the profiles: Center, Audience, Fan.
+    s->clearAll();
+    cl.execute("Group 5");
+    s->setAttribute("Pan", 0.0);   // degrees: straight ahead
+    s->setAttribute("Tilt", 0.0);
+    s->storePreset(2, 1, Show::StoreMode::Overwrite, QObject::tr("Center"));
+    s->setAttribute("Tilt", -50.0);
+    s->storePreset(2, 2, Show::StoreMode::Overwrite, QObject::tr("Audience"));
+    for (int i = 0; i < 8; ++i) {
+        s->setAttribute(1 + i, "Pan", -70.0 + i * 20.0);
+        s->setAttribute(1 + i, "Tilt", -25.0);
+    }
+    const double fan[] = {-60.0, -20.0, 20.0, 60.0};
+    for (int i = 0; i < 4; ++i) {
+        s->setAttribute(11 + i, "Pan", fan[i]);
+        s->setAttribute(11 + i, "Tilt", -20.0);
+    }
+    s->storePreset(2, 3, Show::StoreMode::Overwrite, QObject::tr("Fan"));
+
+    // Gobos, prism and frost on the profiles; zoom on the washes (Focus presets).
+    s->clearAll();
+    cl.execute("Group 2");
+    const QStringList gobos = {QObject::tr("Dots"), QObject::tr("Ring"), QObject::tr("Breakup"), QObject::tr("Star"), QObject::tr("Triangles")};
+    for (int i = 0; i < gobos.size(); ++i) {
+        s->setAttribute("Gobo1", (30.0 + i * 20.0) / 255.0);   // the middle of slots 2–6
+        s->storePreset(3, i + 1, Show::StoreMode::Overwrite, gobos[i]);
+    }
+    s->clearAll();
+    cl.execute("Group 2");
+    s->setAttribute("Prism1", 0.8);
+    s->storePreset(5, 1, Show::StoreMode::Overwrite, QObject::tr("Prism"));
+    s->clearAll();
+    cl.execute("Group 2");
+    s->setAttribute("Frost1", 0.6);
+    s->storePreset(5, 2, Show::StoreMode::Overwrite, QObject::tr("Frost"));
+    s->clearAll();
+    cl.execute("Group 1");
+    s->setAttribute("Zoom", 1.0);   // zoom is a Focus attribute
+    s->storePreset(6, 1, Show::StoreMode::Overwrite, QObject::tr("Zoom wide"));
+    s->setAttribute("Zoom", 0.0);
+    s->storePreset(6, 2, Show::StoreMode::Overwrite, QObject::tr("Zoom narrow"));
+    s->clearAll();
+
+    // Effects: the whole library in the pool, then three for the pixel matrix.
+    const QVector<Effect> templates = effectTemplates();
+    for (int i = 0; i < templates.size(); ++i) {
+        Effect e = templates[i];
+        e.id = i + 1;
+        s->setEffect(e);
+    }
+    auto effectId = [s](const QString &name) {
+        for (auto it = s->effects().begin(); it != s->effects().end(); ++it)
+            if (it->name == name)
+                return it.key();
+        return 0;
+    };
+    int nextEffect = s->effects().isEmpty() ? 1 : s->effects().lastKey() + 1;
+    auto pixelEffect = [&](const QString &from, const QString &name, bool x, bool y) {
+        const int src = effectId(from);
+        if (!src)
+            return 0;
+        Effect e = *s->effect(src);
+        e.id = nextEffect++;
+        e.name = name;
+        e.axisX = x;
+        e.axisY = y;
+        s->setEffect(e);
+        return e.id;
+    };
+    const int across = pixelEffect(QObject::tr("Chase"), QObject::tr("Pixels across"), true, false);
+    const int down = pixelEffect(QObject::tr("Chase"), QObject::tr("Pixels down"), false, true);
+    const int diagonal = pixelEffect(QObject::tr("Rainbow"), QObject::tr("Pixel rainbow"), true, true);
+
+    // Presets that carry effects: each one is used by a cue below.
+    auto effectPreset = [&](const QString &select, const QString &before, const QString &effect, const QString &store) {
+        s->clearAll();
+        cl.execute(select);
+        if (!before.isEmpty())
+            cl.execute(before);
+        if (const int id = effectId(effect))
+            cl.execute(QStringLiteral("Effect %1").arg(id));
+        cl.execute(store);
+    };
+    effectPreset("Group 1", QString(), QObject::tr("Chase"), "Store Dimmer.4 \"Chase\" /universal");
+    effectPreset("Group 1", QString(), QObject::tr("Breathe"), "Store Dimmer.5 \"Breathe\" /universal");
+    effectPreset("Group 1", QString(), QObject::tr("Rainbow"), "Store Color.15 \"Rainbow\" /universal");
+    effectPreset("Group 1", QString(), QObject::tr("Color swap"), "Store Color.16 \"Color swap\" /universal");
+    effectPreset("Group 5", "At Position.1", QObject::tr("Circle"), "Store Position.4 \"Circle\" /global");
+    effectPreset("Group 5", "At Position.2", QObject::tr("Ballyhoo"), "Store Position.5 \"Ballyhoo\" /global");
+    effectPreset("Group 1", QString(), QObject::tr("Zoom breathe"), "Store Focus.3 \"Zoom breathe\" /universal");
+    effectPreset("Group 4", QString(), QObject::tr("Random strobe"), "Store All.1 \"Random strobe\" /universal");
+    s->clearAll();
+
+    const PresetRef full{1, 1}, quarter{1, 2};
+    auto line = [](const QString &name, int group, QVector<PresetRef> presets, int spread = 0) {
         BlueprintLine l;
         l.name = name;
         l.groupId = group;
         l.presets = presets;
-        l.every = every;
-        l.offset = offset;
+        l.spreadId = spread;
         return l;
     };
-    s->addBlueprintLine(1, 1, line("Pars blue", 1, {full, {4, 9}}));
-    s->addBlueprintLine(1, 2, line("Odd red", 1, {full, {4, 1}}, 2, 0));
-    s->addBlueprintLine(1, 2, line("Even orange", 1, {full, {4, 2}}, 2, 1));
-    s->addBlueprintLine(1, 3, line("Pars warm", 1, {full, {4, 14}}));
-    s->addBlueprintLine(2, 1, line("Spots center", 2, {full, {2, 1}, {4, 13}}));
-    s->addBlueprintLine(2, 2, line("Spots fan", 2, {full, {2, 3}, {3, 1}, {4, 9}}));
-    s->addBlueprintLine(2, 3, line("Spots audience", 2, {quarter, {2, 2}, {4, 2}, {5, 1}}));
-    s->addBlueprintLine(3, 1, line("Everything magenta", 3, {quarter, {4, 11}, {2, 1}}));
-
-    // Effects: the whole library in the pool, and a few in cues.
+    auto withEffects = [](BlueprintLine l, QVector<int> fx) {
+        l.effects = fx;
+        return l;
+    };
+    // 1 Washes: blue, a two-color split on spreads, a rainbow circle, a chase to the audience.
     {
-        const QVector<Effect> templates = effectTemplates();
-        for (int i = 0; i < templates.size(); ++i) {
-            Effect e = templates[i];
-            e.id = i + 1;
-            s->setEffect(e);
-        }
-        BlueprintLine rainbow = line("Pars rainbow", 1, {full});
-        rainbow.effects = {12};
-        s->addBlueprintLine(1, 4, rainbow);
-        BlueprintLine circle = line("Spots circle", 2, {});
-        circle.effects = {7};
-        s->addBlueprintLine(2, 2, circle);
+        BlueprintLine blue = line("Washes blue", 1, {full, {4, 9}, {2, 1}});
+        blue.fadeTimes = {0.0, 3.0};   // they come up one after another
+        s->addBlueprintLine(1, 1, blue);
+        s->addBlueprintLine(1, 2, line("Odd red", 1, {full, {4, 1}, {2, 3}}, 1));
+        s->addBlueprintLine(1, 2, line("Even orange", 1, {full, {4, 2}, {2, 3}}, 2));
+        s->addBlueprintLine(1, 3, line("Rainbow circle", 1, {full, {4, 15}, {2, 4}, {6, 1}}, 4));
+        s->addBlueprintLine(1, 4, line("Chase to the audience", 1, {{1, 4}, {4, 13}, {2, 2}, {6, 3}}, 6));
+        s->addBlueprintLine(1, 5, line("Breathing color swap", 1, {{1, 5}, {4, 16}, {2, 3}}, 5));
     }
+    // 2 Profiles: dots in warm white, a fanned prism, a ballyhoo.
+    {
+        s->addBlueprintLine(2, 1, line("Profiles center dots", 2, {full, {2, 1}, {3, 1}, {4, 14}}));
+        s->addBlueprintLine(2, 2, line("Fan, ring, prism", 2, {full, {2, 3}, {3, 2}, {5, 1}, {4, 11}}));
+        s->addBlueprintLine(2, 3, line("Ballyhoo stars", 2, {full, {2, 5}, {3, 4}, {4, 9}, {5, 2}}, 4));
+    }
+    // 3 Pixel bars: chases across and down the matrix, a rainbow corner to corner, alternate bars.
+    {
+        s->addBlueprintLine(3, 1, withEffects(line("White chase across", 3, {full, {4, 13}}), {across}));
+        s->addBlueprintLine(3, 2, withEffects(line("Blue chase down", 3, {full, {4, 9}}), {down}));
+        s->addBlueprintLine(3, 3, withEffects(line("Rainbow corner to corner", 3, {full}), {diagonal}));
+        s->addBlueprintLine(3, 4, line("Alternate bars red", 3, {full, {4, 1}}, 7));
+    }
+    // 4 Blinders: full, with a random strobe, while the Temp key is held.
+    s->addBlueprintLine(4, 1, line("Blinders", 4, {full, {8, 1}}));
 
-    const char *names[3][4] = {{"Blue wash", "Red and orange", "Warm white", "Rainbow chase"}, {"Center", "Fan with dots", "Audience", nullptr}, {"Magenta", nullptr, nullptr, nullptr}};
-    const double fades[3][4] = {{2, 3, 1.5, 2}, {2, 2.5, 3, 0}, {4, 0, 0, 0}};
-    const char *seqNames[3] = {"Pars", "Spots", "Everything"};
-    const char *seqColors[3] = {"#3d7be0", "#e0a030", "#c040c0"};
-    for (int sid = 1; sid <= 3; ++sid) {
-        Sequence q = *s->sequence(sid);
-        q.name = QString::fromLatin1(seqNames[sid - 1]);
-        q.color = QString::fromLatin1(seqColors[sid - 1]);
-        for (int i = 0; i < q.cues.size(); ++i) {
-            q.cues[i].name = QString::fromLatin1(names[sid - 1][i]);
-            q.cues[i].fade = fades[sid - 1][i];
-        }
-        s->setSequence(q);
-        s->assignSequence(sid, 1, 200 + sid);
-    }
-    // The pars come up blue one after another: the line's fade, 0 to 3 s across the group.
-    if (const Sequence *wash = s->sequence(1); wash && !wash->cues.isEmpty() && !wash->cues[0].blueprints.isEmpty()) {
-        Sequence q = *wash;
-        q.cues[0].blueprints[0].fadeTimes = {0.0, 3.0};
-        s->setSequence(q);
-    }
-    // A few macros to start from.
+    // Macros.
     {
         auto macro = [s](int id, const QString &name, const QString &color, bool background, const QVector<MacroLine> &lines) {
             Macro m;
@@ -1474,15 +1579,63 @@ void buildDemoShow(AppContext *ctx)
             m.lines = lines;
             s->setMacro(m);
         };
-        macro(1, QObject::tr("Blue pars"), "#0050ff", false,
-              {{"ClearAll"}, {"Group 1 At Color.9"}, {"At 100 Fade 0 Thru 3"}});
-        macro(2, QObject::tr("Wash, tap for next"), "#ff7800", true,
+        macro(1, QObject::tr("Blue washes"), "#0050ff", false, {{"ClearAll"}, {"Group 1 At Color.9"}, {"At 100 Fade 0 Thru 3"}});
+        macro(2, QObject::tr("Washes, tap for next"), "#ff7800", true,
               {{"Go Executor 201", MacroWait::Wait}, {"Go Executor 201", MacroWait::Wait}, {"Off Executor 201"}});
         macro(3, QObject::tr("Profiles in"), "#a0ff00", false,
-              {{"ClearAll"}, {"Group 5 At 100"}, {"Attribute Blade1A At 30"}, {"Attribute Blade3A At 30"}});
+              {{"ClearAll"}, {"Group 2 At 100"}, {"Attribute Blade1A At 30"}, {"Attribute Blade3A At 30"}});
+        macro(4, QObject::tr("Profiles to the audience"), "#e0a030", false, {{"Goto Cue 3 Executor 202"}});
     }
-    // A plot of the rig: spots and profiles upstage, the pixel bars' cells, pars downstage, and
-    // the groups, a few colors, the wash executor and a macro to tap down the side.
+
+    // The cue lists, named and colored, on faders 201–204.
+    {
+        struct SeqInfo {
+            const char *name;
+            const char *color;
+            QVector<const char *> cues;
+            QVector<double> fades;
+        };
+        const SeqInfo info[4] = {
+            {"Washes", "#3d7be0", {"Blue wash", "Red and orange", "Rainbow circle", "Chase", "Breathing swap"}, {2, 3, 2, 1.5, 3}},
+            {"Profiles", "#e0a030", {"Center dots", "Fan with a prism", "Ballyhoo"}, {2, 2.5, 3}},
+            {"Pixel bars", "#30c0a0", {"White chase across", "Blue chase down", "Rainbow corner to corner", "Alternate bars"}, {1, 2, 3, 1}},
+            {"Blinders", "#f0f0f0", {"Blinders"}, {0}},
+        };
+        for (int sid = 1; sid <= 4; ++sid) {
+            const Sequence *have = s->sequence(sid);
+            if (!have)
+                continue;
+            Sequence q = *have;
+            q.name = QString::fromLatin1(info[sid - 1].name);
+            q.color = QString::fromLatin1(info[sid - 1].color);
+            for (int i = 0; i < q.cues.size() && i < info[sid - 1].cues.size(); ++i) {
+                q.cues[i].name = QString::fromLatin1(info[sid - 1].cues[i]);
+                q.cues[i].fade = info[sid - 1].fades[i];
+            }
+            if (sid == 3 && q.cues.size() >= 4) {
+                q.cues[1].trigger = CueTrigger::Wait;   // eight seconds after the white chase, by itself
+                q.cues[1].wait = 8;
+                q.cues[1].notes = QObject::tr("Follows on by itself");
+                q.cues[3].macro = 4;
+                q.cues[3].notes = QObject::tr("Runs macro 4: profiles to the audience");
+            }
+            if (sid == 4) {
+                q.offFade = 0.7;   // the blinders snap on and fall away
+                q.cues[0].notes = QObject::tr("Hold the Temp key");
+            }
+            s->setSequence(q);
+            s->assignSequence(sid, 1, 200 + sid);
+        }
+        // The blinders' executor has only a Temp key.
+        if (Executor *e = s->executor(1, 204)) {
+            e->buttons[0] = ButtonFn::Temp;
+            e->buttons[1] = ButtonFn::None;
+            e->buttons[2] = ButtonFn::None;
+        }
+    }
+
+    // A plot of the rig: profiles on the upstage truss, washes on the mid truss, the pixel bars'
+    // cells as a wall, blinders downstage, and things to tap down the side.
     {
         Plot plot;
         plot.id = 1;
@@ -1521,43 +1674,48 @@ void buildDemoShow(AppContext *ctx)
             it.rect = QRectF(x, y, size, size);
             plot.items << it;
         };
-        // The upstage truss the spots hang on (it gets more sections as it's stretched).
-        {
-            PlotItem truss;
-            truss.kind = PlotItem::Image;
-            truss.image = builtinPlotIcons()[1].second;
-            truss.imageName = QStringLiteral("Truss");
-            truss.color = QStringLiteral("#5b6472");
-            truss.rect = QRectF(0, 56, 600, 16);
-            plot.items << truss;
-        }
+        auto truss = [&plot](double y) {
+            PlotItem t;
+            t.kind = PlotItem::Image;
+            t.image = builtinPlotIcons()[1].second;
+            t.imageName = QStringLiteral("Truss");
+            t.color = QStringLiteral("#5b6472");
+            t.rect = QRectF(0, y, 600, 16);
+            plot.items << t;
+        };
         text(QObject::tr("UPSTAGE"), 0, 0, 200, 13, QStringLiteral("#7d8796"));
-        plot.items.last().link = QStringLiteral("Group 2");   // tapping the label selects the spots
-        if (s->hasFixture(15))
-            fixture(15, 24, 40);
+        plot.items.last().link = QStringLiteral("Group 2");   // tapping the label selects the profiles
+        truss(56);
         for (int i = 0; i < 4; ++i)
-            fixture(11 + i, 120 + i * 96, 40);
-        if (s->hasFixture(16))
-            fixture(16, 528, 40);
-        for (int bar = 0; bar < 2 && s->hasFixture(21 + bar); ++bar)
+            fixture(11 + i, 84 + i * 128, 40);
+        // The pixel wall: eight bars, one above the other.
+        for (int bar = 0; bar < 8; ++bar)
             for (int c = 1; c <= 8; ++c)
-                fixture(s->parseId(QStringLiteral("%1.%2").arg(21 + bar).arg(c)), 112 + (c - 1) * 48, 136 + bar * 48, true, 32);
-        icon(4, 280, 232, 40);   // a performer
+                fixture(s->parseId(QStringLiteral("%1.%2").arg(21 + bar).arg(c)), 140 + (c - 1) * 40, 108 + bar * 26, true, 22);
+        truss(334);
         for (int i = 0; i < 8; ++i)
-            fixture(1 + i, 24 + i * 72, 296);
-        text(QObject::tr("DOWNSTAGE"), 0, 360, 200, 13, QStringLiteral("#7d8796"));
-        icon(3, 0, 136, 40);     // speakers either side, grouped so they move together
+            fixture(1 + i, 12 + i * 74, 318, true);
+        icon(4, 280, 384, 40);   // a performer
+        for (int i = 0; i < 4; ++i)
+            for (int c = 1; c <= 2; ++c)
+                fixture(s->parseId(QStringLiteral("%1.%2").arg(31 + i).arg(c)), 40 + i * 148 + (c - 1) * 40, 440, false, 36);
+        text(QObject::tr("DOWNSTAGE"), 0, 488, 200, 13, QStringLiteral("#7d8796"));
+        icon(3, 0, 200, 40);     // speakers either side, grouped so they move together
         plot.items.last().group = 1;
-        icon(3, 560, 136, 40);
+        icon(3, 560, 200, 40);
         plot.items.last().group = 1;
         object(QStringLiteral("Group 1"), 640, 40);
         object(QStringLiteral("Group 2"), 640, 96);
-        object(QStringLiteral("Group 5"), 640, 152);
+        object(QStringLiteral("Group 3"), 640, 152);
+        object(QStringLiteral("Group 4"), 640, 208);
         object(QStringLiteral("Preset 4.1"), 784, 40);
         object(QStringLiteral("Preset 4.9"), 784, 96);
         object(QStringLiteral("Preset 4.14"), 784, 152);
-        object(QStringLiteral("Executor 1.201"), 640, 240);
-        object(QStringLiteral("Macro 1"), 784, 240);
+        object(QStringLiteral("Preset 4.15"), 784, 208);
+        object(QStringLiteral("Executor 1.201"), 640, 296);
+        object(QStringLiteral("Executor 1.204"), 784, 296);
+        object(QStringLiteral("Macro 1"), 640, 352);
+        object(QStringLiteral("Macro 3"), 784, 352);
         s->setPlot(plot);
     }
     s->setSelectedSequence(1);

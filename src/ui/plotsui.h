@@ -10,6 +10,8 @@
 #include <QPixmap>
 #include <QWidget>
 
+#include <functional>
+
 class QLabel;
 class QMenu;
 class QToolButton;
@@ -42,7 +44,7 @@ public:
     void setEditing(bool on);
     bool editing() const { return m_editing; }
     void zoomBy(double factor);   // around the middle; nothing while the zoom is locked
-    void fit();
+    void fit(bool byUser = true);   // byUser false: framing a plot shown for the first time (not kept)
     QPointF viewCenter() const;   // in plot units
     double zoom() const { return view().zoom; }
     bool zoomLocked() const { return view().locked; }
@@ -86,16 +88,16 @@ private:
     int itemAt(const QPointF &w, bool includeBackground) const;
     void tapObject(const QString &object);
     void tapLink(const QString &link);                  // what a linked item stands for
-    QString normalizeLink(const QString &text) const;   // "Color.1" -> "Preset 4.1", "101" -> "Fixture 101"; empty if not one
     void itemMenu(int index, const QPoint &global);
     void commit(const Plot &p);
-    void setView(double zoom, double panX, double panY);
+    void setView(double zoom, double panX, double panY, bool byUser = true);
     bool objectActive(const QString &object) const;
     QString objectTitle(const QString &object, QString *kind) const;
 
     struct ViewState {
         double zoom = 1.0, panX = 0, panY = 0;
         bool locked = false;
+        bool set = false;   // moved by hand (or stored with the view): only these are kept in the view
     };
     const ViewState &view() const;   // this plot's, made from the plot's own on first use
 
@@ -127,7 +129,11 @@ private:
     void follow();
     void refreshHeader();
     void addMenu();
-    void addPicture(bool background);
+    void addPicture(bool background);   // background: becomes the plot's background (replacing any)
+    void setBackgroundColor();
+    void fitBackground();
+    void removeBackground();
+    void fillBackgroundMenu(QMenu *menu);
     void fillAddMenu(QMenu *menu);
     void fillAlignMenu(QMenu *menu);
     void backgroundMenu(const QPoint &global);
@@ -147,6 +153,11 @@ private:
     QLabel *m_zoomLabel = nullptr;
     int m_pinned = 0;   // 0: shows the plot chosen last (pool, Plot 3); else always this one
 };
+
+// A drop-down to pick one fixture or pool object, by kind and search; `chosen` gets it as the command
+// line writes it ("Group 3", "Preset 4.1", "Fixture 21.3"), or "" for No link (offerNone).
+void pickPoolObject(AppContext *ctx, QWidget *parent, const QPoint &global, const QString &title, const QString &current,
+                    bool offerNone, std::function<void(const QString &)> chosen);
 
 // Ready-made icons for plots (SVG): name and file bytes.
 QVector<QPair<QString, QByteArray>> builtinPlotIcons();

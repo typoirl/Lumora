@@ -6,6 +6,7 @@
 
 #include <QJsonObject>
 #include <QPair>
+#include <QPoint>
 #include <QString>
 #include <QVector>
 
@@ -46,6 +47,8 @@ struct Group {
     int id = 0;
     QString name;
     QVector<int> fixtures;   // ordered: selection order matters for spreads and fans
+    // Where each sits on the selection matrix (parallel to fixtures); empty: one row, in order.
+    QVector<QPoint> grid;
 
     QJsonObject toJson() const;
     static Group fromJson(const QJsonObject &o);
@@ -119,6 +122,7 @@ struct Cue {
     double wait = 0.0;    // seconds, for a Wait trigger
     QString triggerText() const;   // "Go", "Wait 5", "Follow"
     QString notes;        // for the operator: shown in the cue list and the playback monitor
+    int macro = 0;        // a macro that runs as the cue starts (0: none)
     QVector<BlueprintLine> blueprints;
     ValueTable values;    // hard (or preset-referenced) values; override blueprint output
     QVector<EffectInstance> effects;   // effects that run while this cue is live
@@ -163,7 +167,8 @@ struct Sequence {
 // Executors
 // ---------------------------------------------------------------------------
 
-enum class ButtonFn { None, Go, GoBack, Pause, Flash, Temp, Toggle, On, Off, Swop, Select, Top };
+// Goto: opens a list of the sequence's cues to pick one (with its fade).
+enum class ButtonFn { None, Go, GoBack, Pause, Flash, Temp, Toggle, On, Off, Swop, Select, Top, Goto };
 enum class FaderFn { Master, XFade, Temp };
 // What an executor is on screen. The hundreds say it: 101–199 buttons, 201–299 faders,
 // 301–399 encoders; 401–499 are whichever each one is set to (a fader until changed).
@@ -222,7 +227,7 @@ struct Executor {
     int number = 201;   // 101… buttons, 201… faders, 301… encoders, 401… any (see executorKind)
     int sequenceId = 0;
     int rateMaster = 0;   // instead of a sequence: this executor controls rate master 1–10
-    ButtonFn buttons[3] = {ButtonFn::Go, ButtonFn::Pause, ButtonFn::Flash};
+    ButtonFn buttons[3] = {ButtonFn::Go, ButtonFn::GoBack, ButtonFn::Off};
     FaderFn faderFn = FaderFn::Master;
     double fader = 1.0;
     bool autoStart = true;   // raising the master from 0 starts the sequence

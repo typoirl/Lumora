@@ -27,11 +27,8 @@ Show::Show(QObject *parent) : QObject(parent)
 void Show::resetRateMasters()
 {
     m_rateMasters.clear();
-    for (int i = 1; i <= RateMaster::kCount; ++i) {
-        RateMaster m;
-        m.id = i;
-        m_rateMasters.append(m);
-    }
+    for (int i = 1; i <= RateMaster::kCount; ++i)
+        m_rateMasters.append(RateMaster::defaultFor(i));
 }
 
 void Show::setName(const QString &n)
@@ -69,6 +66,10 @@ void Show::clearShow()
     m_views.clear();
     m_spreads.clear();
     m_activeSpread = Spread();
+    m_activeSpreadY = Spread::none(Spread::Axis::Y);
+    m_spreadXOn = m_spreadYOn = true;
+    m_selGrid.clear();
+    m_gridCursor = QPoint();
     m_parked.clear();
     m_lastSelection.clear();
     m_stepList.clear();
@@ -76,6 +77,10 @@ void Show::clearShow()
     m_selectedSequence = 1;
     m_grandMaster = 1.0;
     m_blackout = m_highlight = false;
+    m_progFadeOn = false;
+    m_progFadeTime = 2.0;
+    m_defaultCueFade = 2.0;
+    m_defaultCueDelay = 0.0;
     emit changed(AllParts);
 }
 
@@ -423,6 +428,145 @@ bool Show::importFixtureFile(const QString &path, QString *error, QString *typeI
     return true;
 }
 
+Show::Snapshot Show::snapshot() const
+{
+    Snapshot s;
+    s.library = m_library;
+    s.name = m_name;
+    s.fixtures = m_fixtures;
+    s.groups = m_groups;
+    s.presets = m_presets;
+    s.sequences = m_sequences;
+    s.effects = m_effects;
+    s.shapes = m_shapes;
+    s.progEffects = m_progEffects;
+    s.executors = m_executors;
+    s.rateMasters = m_rateMasters;
+    s.macros = m_macros;
+    s.selection = m_selection;
+    s.parked = m_parked;
+    s.programmer = m_programmer;
+    s.defaults = m_defaults;
+    s.extra = m_extra;
+    s.pageNames = m_pageNames;
+    s.views = m_views;
+    s.spreads = m_spreads;
+    s.activeSpread = m_activeSpread;
+    s.activeSpreadY = m_activeSpreadY;
+    s.spreadXOn = m_spreadXOn;
+    s.spreadYOn = m_spreadYOn;
+    s.selGrid = m_selGrid;
+    s.gridCursor = m_gridCursor;
+    s.progFadeOn = m_progFadeOn;
+    s.progFadeTime = m_progFadeTime;
+    s.cueFade = m_defaultCueFade;
+    s.cueDelay = m_defaultCueDelay;
+    return s;
+}
+
+bool Show::Snapshot::sameData(const Snapshot &o) const
+{
+    return library.sharesDataWith(o.library) && name == o.name && fixtures.isSharedWith(o.fixtures) && groups.isSharedWith(o.groups)
+           && presets.isSharedWith(o.presets) && sequences.isSharedWith(o.sequences) && effects.isSharedWith(o.effects)
+           && shapes.isSharedWith(o.shapes) && progEffects.isSharedWith(o.progEffects) && macros.isSharedWith(o.macros)
+           && selection.isSharedWith(o.selection) && parked.isSharedWith(o.parked) && programmer.isSharedWith(o.programmer)
+           && defaults.isSharedWith(o.defaults) && extra == o.extra && pageNames.isSharedWith(o.pageNames)
+           && views.isSharedWith(o.views) && spreads.isSharedWith(o.spreads) && selGrid.isSharedWith(o.selGrid)
+           && gridCursor == o.gridCursor && spreadXOn == o.spreadXOn && spreadYOn == o.spreadYOn
+           && activeSpread.toJson() == o.activeSpread.toJson() && activeSpreadY.toJson() == o.activeSpreadY.toJson()
+           && progFadeOn == o.progFadeOn && progFadeTime == o.progFadeTime && cueFade == o.cueFade && cueDelay == o.cueDelay;
+}
+
+void Show::restore(const Snapshot &s)
+{
+    // Keep what's running: each executor's playback, fader and held buttons, where it still exists.
+    QMap<int, Executor> executors = s.executors;
+    for (auto it = executors.begin(); it != executors.end(); ++it) {
+        auto now = m_executors.constFind(it.key());
+        if (now == m_executors.constEnd()) {
+            it->state = std::make_shared<PlaybackState>();
+            continue;
+        }
+        it->fader = now->fader;
+        it->flashHeld = now->flashHeld;
+        it->tempHeld = now->tempHeld;
+        it->swopHeld = now->swopHeld;
+        it->flashStartedPlayback = now->flashStartedPlayback;
+        for (int b = 0; b < 3; ++b)
+            it->buttonDown[b] = now->buttonDown[b];
+        it->state = it->sequenceId == now->sequenceId ? now->state : std::make_shared<PlaybackState>();
+    }
+    // Rate masters keep their live tempo: only names, colors and settings come back.
+    QVector<RateMaster> masters = m_rateMasters;
+    for (int i = 0; i < masters.size() && i < s.rateMasters.size(); ++i) {
+        const RateMaster &o = s.rateMasters[i];
+        masters[i].name = o.name;
+        masters[i].color = o.color;
+        masters[i].button = o.button;
+        masters[i].key = o.key;
+        if (masters[i].mode != o.mode) {
+            masters[i].mode = o.mode;
+            masters[i].value = o.value;
+        }
+    }
+    m_library = s.library;
+    m_name = s.name;
+    m_fixtures = s.fixtures;
+    m_groups = s.groups;
+    m_presets = s.presets;
+    m_sequences = s.sequences;
+    m_effects = s.effects;
+    m_shapes = s.shapes;
+    m_progEffects = s.progEffects;
+    m_executors = executors;
+    m_rateMasters = masters;
+    m_macros = s.macros;
+    m_selection = s.selection;
+    m_parked = s.parked;
+    m_programmer = s.programmer;
+    m_defaults = s.defaults;
+    m_extra = s.extra;
+    m_pageNames = s.pageNames;
+    m_views = s.views;
+    m_spreads = s.spreads;
+    m_activeSpread = s.activeSpread;
+    m_activeSpreadY = s.activeSpreadY;
+    m_spreadXOn = s.spreadXOn;
+    m_spreadYOn = s.spreadYOn;
+    m_selGrid = s.selGrid;
+    m_gridCursor = s.gridCursor;
+    m_progFadeOn = s.progFadeOn;
+    m_progFadeTime = s.progFadeTime;
+    m_defaultCueFade = s.cueFade;
+    m_defaultCueDelay = s.cueDelay;
+    rebuildCells();
+    linkPlaybacks();
+    // A cue list that lost cues: its playback stays on the last one there is.
+    for (Executor &e : m_executors) {
+        const Sequence *sq = sequence(e.sequenceId);
+        if (e.pb().cueIndex >= 0 && (!sq || e.pb().cueIndex >= sq->cues.size()))
+            e.pb().cueIndex = sq && !sq->cues.isEmpty() ? int(sq->cues.size()) - 1 : -1;
+    }
+    emit changed(Parts(AllParts) & ~Parts(PlotsPart));
+}
+
+void Show::restorePlots(const QMap<int, Plot> &plots)
+{
+    m_plots = plots;
+    emit changed(PlotsPart);
+}
+
+QStringList Show::typeIdsInShow() const
+{
+    QSet<QString> ids;
+    for (const Fixture &f : m_fixtures)
+        if (!f.typeId.isEmpty() && m_library.find(f.typeId))
+            ids.insert(f.typeId);
+    for (const FixtureType &t : m_library.showTypes())
+        ids.insert(t.id);
+    return QStringList(ids.begin(), ids.end());
+}
+
 void Show::adoptType(const QString &typeId)
 {
     if (!m_library.isShowType(typeId))
@@ -520,6 +664,13 @@ bool Show::storeGroup(int id, const QString &name)
     Group g = m_groups.value(id);
     g.id = id;
     g.fixtures = m_selection;
+    // Its matrix layout, unless it's simply one row in order.
+    g.grid = selectionGrid(m_selection);
+    bool oneRow = true;
+    for (int i = 0; i < g.grid.size(); ++i)
+        oneRow = oneRow && g.grid[i] == QPoint(i, 0);
+    if (oneRow)
+        g.grid.clear();
     if (!name.isEmpty())
         g.name = name;
     if (g.name.isEmpty())
@@ -702,15 +853,23 @@ void Show::select(const QVector<int> &fids, SelectMode mode)
     if (mode == SelectMode::Replace) {
         rememberSelection();
         m_selection.clear();
+        m_selGrid.clear();
+        m_gridCursor = QPoint();
     }
     for (int fid : expandMasters(fids)) {
         if (!hasFixture(fid))
             continue;
-        if (mode == SelectMode::Remove)
+        if (mode == SelectMode::Remove) {
             m_selection.removeAll(fid);
-        else if (!m_selection.contains(fid))
+            m_selGrid.remove(fid);
+        } else if (!m_selection.contains(fid)) {
             m_selection.append(fid);
+            m_selGrid.insert(fid, m_gridCursor);   // along X, in the row being filled
+            m_gridCursor.rx()++;
+        }
     }
+    if (m_selection.isEmpty())
+        m_gridCursor = QPoint();
     emit changed(ProgrammerPart);
 }
 
@@ -730,8 +889,157 @@ void Show::putProgrammer(int fid, const QString &attribute, ValueRef r)
 
 void Show::selectGroup(int id, SelectMode mode)
 {
-    if (const Group *g = group(id))
+    const Group *g = group(id);
+    if (!g)
+        return;
+    if (mode == SelectMode::Remove || g->grid.size() != g->fixtures.size()) {
         select(g->fixtures, mode);
+        return;
+    }
+    // A group with a matrix layout keeps it: on rows of its own after what's selected.
+    if (mode == SelectMode::Replace)
+        select({}, SelectMode::Replace);
+    int top = m_gridCursor.y() + (m_gridCursor.x() > 0 ? 1 : 0);
+    int minX = INT_MAX, minY = INT_MAX, maxY = 0;
+    for (const QPoint &p : g->grid) {
+        minX = std::min(minX, p.x());
+        minY = std::min(minY, p.y());
+    }
+    QPoint last;
+    bool any = false;
+    for (int i = 0; i < g->fixtures.size(); ++i) {
+        const int fid = g->fixtures[i];
+        if (!hasFixture(fid) || m_selection.contains(fid))
+            continue;
+        const QPoint at(g->grid[i].x() - minX, top + g->grid[i].y() - minY);
+        m_selection.append(fid);
+        m_selGrid.insert(fid, at);
+        maxY = std::max(maxY, at.y());
+        if (!any || at.y() > last.y() || (at.y() == last.y() && at.x() > last.x()))
+            last = at;
+        any = true;
+    }
+    if (any)
+        m_gridCursor = QPoint(last.x() + 1, last.y());
+    m_stepList.clear();
+    m_stepIndex = -1;
+    emit changed(ProgrammerPart);
+}
+
+QVector<QPoint> Show::selectionGrid(const QVector<int> &fids) const
+{
+    QVector<QPoint> out;
+    out.reserve(fids.size());
+    for (int fid : fids)
+        out << m_selGrid.value(fid);
+    return out;
+}
+
+void Show::nextY()
+{
+    if (m_gridCursor.x() > 0)
+        m_gridCursor = QPoint(0, m_gridCursor.y() + 1);
+    emit changed(ProgrammerPart);
+}
+
+void Show::setGridCursor(const QPoint &at)
+{
+    m_gridCursor = QPoint(std::max(0, at.x()), std::max(0, at.y()));
+    emit changed(ProgrammerPart);
+}
+
+void Show::placeInGrid(const QVector<int> &fids, const QPoint &at)
+{
+    QPoint p(std::max(0, at.x()), std::max(0, at.y()));
+    for (int fid : fids) {
+        if (!m_selGrid.contains(fid))
+            continue;
+        for (auto it = m_selGrid.begin(); it != m_selGrid.end(); ++it)   // whoever's there moves to where this was
+            if (it.key() != fid && it.value() == p && !fids.contains(it.key()))
+                it.value() = m_selGrid.value(fid);
+        m_selGrid[fid] = p;
+        p.rx()++;
+    }
+    m_gridCursor = p;
+    emit changed(ProgrammerPart);
+}
+
+void Show::fillGridArea(const QPoint &from, const QPoint &to)
+{
+    const int x0 = std::max(0, std::min(from.x(), to.x())), x1 = std::max(0, std::max(from.x(), to.x()));
+    const int y0 = std::max(0, std::min(from.y(), to.y()));
+    const int width = x1 - x0 + 1;
+    for (int i = 0; i < m_selection.size(); ++i)
+        m_selGrid[m_selection[i]] = QPoint(x0 + i % width, y0 + i / width);
+    const int n = int(m_selection.size());
+    m_gridCursor = QPoint(x0 + n % width, y0 + n / width);
+    emit changed(ProgrammerPart);
+}
+
+void Show::setGridPosition(int fid, const QPoint &at)
+{
+    if (!m_selGrid.contains(fid))
+        return;
+    const QPoint was = m_selGrid.value(fid);
+    for (auto it = m_selGrid.begin(); it != m_selGrid.end(); ++it)
+        if (it.key() != fid && it.value() == at)
+            it.value() = was;   // swap with whoever was there
+    m_selGrid[fid] = QPoint(std::max(0, at.x()), std::max(0, at.y()));
+    emit changed(ProgrammerPart);
+}
+
+void Show::moveInGrid(const QVector<int> &fidsIn, const QPoint &offsetIn)
+{
+    QVector<int> fids;
+    for (int fid : fidsIn)
+        if (m_selGrid.contains(fid) && !fids.contains(fid))
+            fids << fid;
+    if (fids.isEmpty() || offsetIn.isNull())
+        return;
+    QPoint offset = offsetIn;
+    for (int fid : fids) {   // not past the top or left edge
+        const QPoint g = m_selGrid.value(fid);
+        offset.setX(std::max(offset.x(), -g.x()));
+        offset.setY(std::max(offset.y(), -g.y()));
+    }
+    if (offset.isNull())
+        return;
+    QSet<QPoint> targets, left;
+    QHash<int, QPoint> moved;
+    for (int fid : fids) {
+        const QPoint g = m_selGrid.value(fid);
+        moved.insert(fid, g + offset);
+        targets.insert(g + offset);
+        left.insert(g);
+    }
+    // The cells the moved fixtures leave, in reading order, for anyone in the way.
+    QVector<QPoint> freed;
+    for (const QPoint &c : left)
+        if (!targets.contains(c))
+            freed << c;
+    std::sort(freed.begin(), freed.end(), [](const QPoint &a, const QPoint &b) { return a.y() != b.y() ? a.y() < b.y() : a.x() < b.x(); });
+    QVector<int> inTheWay;
+    for (auto it = m_selGrid.begin(); it != m_selGrid.end(); ++it)
+        if (!moved.contains(it.key()) && targets.contains(it.value()))
+            inTheWay << it.key();
+    std::sort(inTheWay.begin(), inTheWay.end(), [this](int a, int b) {
+        const QPoint pa = m_selGrid.value(a), pb = m_selGrid.value(b);
+        return pa.y() != pb.y() ? pa.y() < pb.y() : pa.x() < pb.x();
+    });
+    for (int i = 0; i < inTheWay.size() && i < freed.size(); ++i)
+        m_selGrid[inTheWay[i]] = freed[i];
+    for (auto it = moved.begin(); it != moved.end(); ++it)
+        m_selGrid[it.key()] = it.value();
+    emit changed(ProgrammerPart);
+}
+
+void Show::resetGrid()
+{
+    m_selGrid.clear();
+    for (int i = 0; i < m_selection.size(); ++i)
+        m_selGrid.insert(m_selection[i], QPoint(i, 0));
+    m_gridCursor = QPoint(int(m_selection.size()), 0);
+    emit changed(ProgrammerPart);
 }
 
 void Show::setAttribute(const QString &attribute, double value)
@@ -893,7 +1201,10 @@ void Show::clearSelection()
     m_selection.clear();
     m_stepList.clear();
     m_stepIndex = -1;
-    m_activeSpread = Spread();   // spread belong to the selection
+    m_activeSpread = Spread();   // spreads belong to the selection
+    m_activeSpreadY = Spread::none(Spread::Axis::Y);
+    m_selGrid.clear();
+    m_gridCursor = QPoint();
     emit changed(ProgrammerPart);
 }
 
@@ -911,6 +1222,9 @@ void Show::clearAll()
     m_stepList.clear();
     m_stepIndex = -1;
     m_activeSpread = Spread();
+    m_activeSpreadY = Spread::none(Spread::Axis::Y);
+    m_selGrid.clear();
+    m_gridCursor = QPoint();
     m_programmer.clear();
     m_progEffects.clear();
     emit changed(ProgrammerPart | EffectsPart);
@@ -1200,6 +1514,8 @@ bool Show::storeCue(int sequenceId, double number, StoreMode mode, double *store
     } else {
         cue.number = number;
         cue.name = tr("Cue %1").arg(cue.displayNumber());
+        cue.fade = m_defaultCueFade;
+        cue.delay = m_defaultCueDelay;
     }
     for (auto f = m_programmer.begin(); f != m_programmer.end(); ++f)
         for (auto a = f->begin(); a != f->end(); ++a)
@@ -1227,6 +1543,8 @@ bool Show::addEmptyCue(int sequenceId, double number, double *storedNumber)
     Cue cue;
     cue.number = number;
     cue.name = tr("Cue %1").arg(cue.displayNumber());
+    cue.fade = m_defaultCueFade;
+    cue.delay = m_defaultCueDelay;
     s.insertSorted(cue);
     if (storedNumber)
         *storedNumber = number;
@@ -1258,6 +1576,8 @@ bool Show::addBlueprintLine(int sequenceId, double number, const BlueprintLine &
         Cue c;
         c.number = number;
         c.name = tr("Cue %1").arg(c.displayNumber());
+        c.fade = m_defaultCueFade;
+        c.delay = m_defaultCueDelay;
         s.insertSorted(c);
         idx = s.indexOf(number);
     }
@@ -1266,18 +1586,25 @@ bool Show::addBlueprintLine(int sequenceId, double number, const BlueprintLine &
     return true;
 }
 
-QVector<int> Show::blueprintFixtures(const BlueprintLine &line) const
+QVector<int> Show::blueprintFixtures(const BlueprintLine &line, QVector<QPoint> *grid) const
 {
     QVector<int> out;
+    QVector<QPoint> places;
     const Group *g = group(line.groupId);
     if (!g)
         return out;
+    const bool hasGrid = g->grid.size() == g->fixtures.size();
     const int every = std::max(1, line.every);
     for (int i = 0; i < g->fixtures.size(); ++i)
-        if (i % every == line.offset % every && hasFixture(g->fixtures[i]))
+        if (i % every == line.offset % every && hasFixture(g->fixtures[i])) {
             out.append(g->fixtures[i]);
+            places << (hasGrid ? g->grid[i] : QPoint(int(places.size()), 0));
+        }
+    // The line's spread works along its axis of the group's layout.
     if (const Spread *m = spread(line.spreadId))
-        out = m->apply(out);
+        out = applySpreads(m->onX ? m : nullptr, m->onY ? m : nullptr, out, &places);
+    if (grid)
+        *grid = places;
     return out;
 }
 
@@ -1288,9 +1615,10 @@ TimingTable Show::cueTiming(const Cue &cue) const
         if (line.fadeTimes.isEmpty() && line.delayTimes.isEmpty())
             continue;
         const Spread *m = spread(line.spreadId);
-        const QVector<int> fids = blueprintFixtures(line);
-        // In the group's order, or the line's spread's layout (blocks, wings, direction).
-        const QVector<double> frac = m ? m->timeFractions(int(fids.size())) : evenFractions(int(fids.size()));
+        QVector<QPoint> grid;
+        const QVector<int> fids = blueprintFixtures(line, &grid);
+        // Across the group's layout, or down it, by the line's spread (blocks, wings, direction).
+        const QVector<double> frac = gridTimeFractions(m && m->onX ? m : nullptr, m && m->onY ? m : nullptr, fids, grid);
         QStringList attrs;
         for (const PresetRef &ref : line.presets)
             if (const Preset *p = preset(ref.first, ref.second))
@@ -1817,9 +2145,14 @@ bool Show::applyEffect(int effectId, double rate, double size, double spread)
     EffectInstance inst;
     inst.effectId = effectId;
     inst.fixtures = sel;
-    if (!m_activeSpread.isDefault()) {   // the spread lays the effect out
+    inst.grid = selectionGrid(sel);
+    if (const Spread *x = liveSpread(Spread::Axis::X)) {   // the spreads lay the effect out
         inst.hasLayout = true;
-        inst.layout = m_activeSpread;
+        inst.layout = *x;
+    }
+    if (const Spread *y = liveSpread(Spread::Axis::Y)) {
+        inst.hasLayoutY = true;
+        inst.layoutY = *y;
     }
     inst.rate = rate;
     inst.size = size;
@@ -1869,9 +2202,14 @@ bool Show::applyEffectInstance(const EffectInstance &spec, const QVector<int> &f
     inst.fixtures = fids;
     inst.scope = EffectInstance::Universal;
     inst.types.clear();
-    if (!inst.hasLayout && !m_activeSpread.isDefault()) {   // the preset's own spread wins
+    inst.grid = selectionGrid(fids);
+    if (const Spread *x = liveSpread(Spread::Axis::X); x && !inst.hasLayout) {   // the preset's own spread wins
         inst.hasLayout = true;
-        inst.layout = m_activeSpread;
+        inst.layout = *x;
+    }
+    if (const Spread *y = liveSpread(Spread::Axis::Y); y && !inst.hasLayoutY) {
+        inst.hasLayoutY = true;
+        inst.layoutY = *y;
     }
     m_progEffects.append(inst);
     emit changed(ProgrammerPart | EffectsPart);
@@ -1917,10 +2255,30 @@ QVector<EffectInstance> Show::cueEffects(const Cue &cue) const
 {
     QVector<EffectInstance> out = cue.effects;
     for (const BlueprintLine &line : cue.blueprints) {
-        const QVector<int> fids = blueprintFixtures(line);
+        QVector<QPoint> lineGrid;
+        const QVector<int> fids = blueprintFixtures(line, &lineGrid);
         if (fids.isEmpty())
             continue;
         const Spread *m = spread(line.spreadId);
+        auto placeOf = [&](const QVector<int> &these) {
+            QVector<QPoint> out;
+            for (int fid : these)
+                out << lineGrid.value(int(fids.indexOf(fid)));
+            return out;
+        };
+        auto layOut = [&](EffectInstance &inst) {
+            inst.grid = placeOf(inst.fixtures);
+            if (!m)
+                return;
+            if (m->onY) {
+                inst.hasLayoutY = true;
+                inst.layoutY = *m;
+            }
+            if (m->onX) {
+                inst.hasLayout = true;
+                inst.layout = *m;
+            }
+        };
         // Effects stored in the line's presets play on the line's fixtures (as far as each
         // preset's layer reaches), with their own spread unless the line gives one.
         for (const auto &ref : line.presets) {
@@ -1934,10 +2292,7 @@ QVector<EffectInstance> Show::cueEffects(const Cue &cue) const
                     continue;
                 inst.scope = EffectInstance::Universal;
                 inst.types.clear();
-                if (m) {
-                    inst.hasLayout = true;
-                    inst.layout = *m;
-                }
+                layOut(inst);
                 out.append(inst);
             }
         }
@@ -1945,10 +2300,7 @@ QVector<EffectInstance> Show::cueEffects(const Cue &cue) const
             EffectInstance inst;
             inst.effectId = id;
             inst.fixtures = fids;
-            if (m) {   // the line's spread lays the effect out
-                inst.hasLayout = true;
-                inst.layout = *m;
-            }
+            layOut(inst);   // on the group's layout, by the line's spread
             out.append(inst);
         }
     }
@@ -2091,6 +2443,16 @@ void Show::resetRateMaster(int id)
     }
 }
 
+void Show::pressRateMasterKey(int id)
+{
+    if (const RateMaster *m = rateMaster(id)) {
+        if (m->keyLearns())
+            tapRateMaster(id);
+        else
+            resetRateMaster(id);
+    }
+}
+
 void Show::toggleRateMasterFreeze(int id)
 {
     if (const RateMaster *cur = rateMaster(id)) {
@@ -2143,7 +2505,9 @@ bool Show::setExecutorKind(int page, int number, ExecKind kind)
         return true;
     e.kind = kind;
     if (kind == ExecKind::Fader) {
-        e.buttons[0] = ButtonFn::Go;   // a fader has one key
+        e.buttons[0] = ButtonFn::Go;   // a fader's three keys
+        e.buttons[1] = ButtonFn::GoBack;
+        e.buttons[2] = ButtonFn::Off;
     } else {
         e.buttons[0] = kind == ExecKind::Button ? ButtonFn::Go : ButtonFn::Toggle;
         if (kind == ExecKind::Button) {
@@ -2205,6 +2569,9 @@ void Show::startFade(Executor &e, int targetIndex, double fade, double delay, bo
     pb.to = to;
     pb.fromCueIndex = pb.cueIndex;
     pb.cueIndex = targetIndex;
+    // The cue's macro runs as it starts.
+    if (const int m = s->cues[targetIndex].macro; m > 0 && macro(m))
+        QMetaObject::invokeMethod(this, [this, m]() { goMacro(m); }, Qt::QueuedConnection);
     pb.fadeTime = std::max(0.0, fade);
     pb.delayTime = std::max(0.0, delay);
     pb.timing = individual ? cueTiming(s->cues[targetIndex]) : TimingTable();
@@ -2261,6 +2628,14 @@ void Show::gotoCue(Executor &e, int index, bool useFade)
     if (!s || index < 0 || index >= s->cues.size())
         return;
     startFade(e, index, useFade ? s->cues[index].fade : 0.0, useFade ? s->cues[index].delay : 0.0, useFade);
+}
+
+void Show::gotoCue(Executor &e, int index, double fade)
+{
+    const Sequence *s = sequence(e.sequenceId);
+    if (!s || index < 0 || index >= s->cues.size())
+        return;
+    startFade(e, index, std::max(0.0, fade), 0.0, false);
 }
 
 void Show::off(Executor &e, bool immediately)
@@ -2375,6 +2750,10 @@ void Show::pressButton(Executor &e, int button, bool down)
     case ButtonFn::Top:   // back to the first cue, in its fade
         if (down) gotoCue(e, 0, true);
         break;
+    case ButtonFn::Goto:   // the screens show the cue list to pick from
+        if (down && sequence(e.sequenceId))
+            emit gotoRequested(e.page, e.number);
+        break;
     case ButtonFn::Select:
         if (down) {
             QVector<int> fids;
@@ -2483,6 +2862,21 @@ void Show::setHighlight(bool on)
     emit changed(SettingsPart);
 }
 
+void Show::setDefaultCueTimes(double fade, double delay)
+{
+    m_defaultCueFade = std::clamp(fade, 0.0, 3600.0);
+    m_defaultCueDelay = std::clamp(delay, 0.0, 3600.0);
+    emit changed(SettingsPart);
+}
+
+void Show::setProgFade(bool on, double seconds)
+{
+    m_progFadeOn = on;
+    if (seconds >= 0)
+        m_progFadeTime = std::min(seconds, 600.0);
+    emit changed(SettingsPart);
+}
+
 // ===========================================================================
 // Persistence
 // ===========================================================================
@@ -2533,7 +2927,7 @@ QJsonObject Show::toJson() const
         spreads.append(m.toJson());
     QJsonArray rateMasters;
     for (const RateMaster &m : m_rateMasters)
-        if (m.mode != RateMode::Rate || !m.name.isEmpty() || m.frozen || m.button || std::fabs(m.value - m.defaultValue()) > 1e-9)
+        if (m.toJson() != RateMaster::defaultFor(m.id).toJson())   // only what differs from a new show
             rateMasters.append(m.toJson());
 
     QJsonArray macros;
@@ -2556,7 +2950,9 @@ QJsonObject Show::toJson() const
         {"effects", effects}, {"shapes", shapes}, {"pages", pages},
         {"views", views}, {"spreads", spreads}, {"parked", parked}, {"rateMasters", rateMasters}, {"macros", macros}, {"plots", plots},
         {"settings", QJsonObject{{"page", m_page}, {"grandMaster", m_grandMaster},
-                                 {"selectedSequence", m_selectedSequence}}},
+                                 {"selectedSequence", m_selectedSequence},
+                                 {"progFade", m_progFadeOn}, {"progFadeTime", m_progFadeTime},
+                                 {"cueFade", m_defaultCueFade}, {"cueDelay", m_defaultCueDelay}}},
     };
     for (auto it = m_extra.begin(); it != m_extra.end(); ++it)
         o[it.key()] = it.value();
@@ -2683,6 +3079,10 @@ bool Show::fromJson(const QJsonObject &o, QString *error)
     m_page = settings["page"].toInt(1);
     m_grandMaster = settings["grandMaster"].toDouble(1.0);
     m_selectedSequence = settings["selectedSequence"].toInt(1);
+    m_progFadeOn = settings["progFade"].toBool(false);
+    m_progFadeTime = settings["progFadeTime"].toDouble(2.0);
+    m_defaultCueFade = settings["cueFade"].toDouble(2.0);
+    m_defaultCueDelay = settings["cueDelay"].toDouble(0.0);
     static const QStringList known = {"format", "version", "name", "fixtureTypes", "patch", "groups",
                                       "presets", "sequences", "executors", "settings", "effects", "shapes", "macros", "plots",
                                       "pages", "defaults", "views", "spreads", "parked", "rateMasters"};
@@ -2716,16 +3116,44 @@ void Show::deleteSpread(int id)
         emit changed(SpreadsPart | SequencesPart);
 }
 
-bool Show::storeSpread(int id, const QString &name)
+bool Show::storeSpread(int id, const QString &name, int axis, int *secondId)
 {
     if (id < 1)
         return false;
-    Spread m = m_activeSpread;
+    if (secondId)
+        *secondId = 0;
+    if (axis < 0 && liveSpread(Spread::Axis::X) && liveSpread(Spread::Axis::Y)) {
+        auto layout = [](Spread m) {
+            m.id = 0;
+            m.name.clear();
+            m.onX = m.onY = false;
+            return m.toJson();
+        };
+        if (layout(m_activeSpread) == layout(m_activeSpreadY))
+            return storeSpread(id, name, 2);
+        int second = id + 1;
+        while (m_spreads.contains(second))
+            ++second;
+        storeSpread(id, name, 0);
+        storeSpread(second, name.isEmpty() ? QString() : name + QStringLiteral(" Y"), 1);
+        if (secondId)
+            *secondId = second;
+        return true;
+    }
+    // The slot asked for (0 X, 1 Y, 2 X's settings for both); otherwise the one in use (X first).
+    const bool y = axis == 1 || (axis < 0 && !liveSpread(Spread::Axis::X) && liveSpread(Spread::Axis::Y));
+    Spread m = y ? m_activeSpreadY : m_activeSpread;
+    m.onX = axis == 2 || !y;
+    m.onY = axis == 2 || y;
     m.id = id;
     m.name = !name.isEmpty() ? name : m_spreads.contains(id) ? m_spreads[id].name : QString();
     if (m.name.isEmpty())
         m.name = m.isDefault() ? tr("Spread %1").arg(id) : m.summary();
     setSpread(m);
+    // What's on the selection now is this pool spread (editing it in the modifier edits the pool).
+    Spread &slot = y ? m_activeSpreadY : m_activeSpread;
+    slot.id = id;
+    slot.name = m.name;
     return true;
 }
 
@@ -2735,24 +3163,72 @@ bool Show::recallSpread(int id)
     if (!m)
         return false;
     setActiveSpread(*m);
+    if (m->onX)
+        setSpreadAxisOn(Spread::Axis::X, true);
+    if (m->onY)
+        setSpreadAxisOn(Spread::Axis::Y, true);
     return true;
 }
 
 void Show::setActiveSpread(const Spread &m)
 {
-    m_activeSpread = m;
+    // Into the slot for each axis it works on: an X spread and a Y spread stack.
+    if (m.onY) {
+        m_activeSpreadY = m;
+        m_activeSpreadY.onX = false;
+        m_activeSpreadY.onY = true;
+    }
+    if (m.onX || !m.onY) {
+        m_activeSpread = m;
+        m_activeSpread.onX = true;
+        m_activeSpread.onY = false;
+    }
     emit changed(ProgrammerPart | SpreadsPart);
+}
+
+void Show::setActiveSpread(Spread::Axis axis, const Spread &m)
+{
+    Spread one = m;
+    one.onX = axis == Spread::Axis::X;
+    one.onY = axis == Spread::Axis::Y;
+    (axis == Spread::Axis::Y ? m_activeSpreadY : m_activeSpread) = one;
+    emit changed(ProgrammerPart | SpreadsPart);
+}
+
+void Show::setSpreadAxisOn(Spread::Axis axis, bool on)
+{
+    (axis == Spread::Axis::Y ? m_spreadYOn : m_spreadXOn) = on;
+    emit changed(ProgrammerPart | SpreadsPart);
+}
+
+const Spread *Show::liveSpread(Spread::Axis axis) const
+{
+    const Spread &m = activeSpread(axis);
+    return spreadAxisOn(axis) && !m.isDefault() ? &m : nullptr;
+}
+
+QString Show::activeSpreadSummary() const
+{
+    QStringList parts;
+    const Spread *x = liveSpread(Spread::Axis::X);
+    const Spread *y = liveSpread(Spread::Axis::Y);
+    if (x)   // with a Y spread running too, say which this one is
+        parts << ((y && !x->onY) ? QStringLiteral("X: ") + x->summary() : x->summary());
+    if (y)
+        parts << y->summary();
+    return parts.join(QStringLiteral(" · "));
 }
 
 QVector<int> Show::workingSelection() const
 {
-    return m_activeSpread.apply(m_selection);
+    QVector<QPoint> grid = selectionGrid(m_selection);
+    return applySpreads(liveSpread(Spread::Axis::X), liveSpread(Spread::Axis::Y), m_selection, &grid);
 }
 
 int Show::setProgrammerTiming(bool delay, const QVector<double> &points, int feature, const QString &attribute)
 {
     const QVector<int> fids = workingSelection();
-    const QVector<double> frac = m_activeSpread.timeFractions(int(fids.size()));
+    const QVector<double> frac = gridTimeFractions(liveSpread(Spread::Axis::X), liveSpread(Spread::Axis::Y), fids, selectionGrid(fids));
     int n = 0;
     for (int i = 0; i < fids.size(); ++i) {
         auto f = m_programmer.find(fids[i]);
@@ -3089,6 +3565,15 @@ bool Show::setAppearance(const QString &what, int id, const QString &color)
             return false;
         seq->color = color;
         emit changed(SequencesPart | ExecutorsPart);
+        return true;
+    }
+    if (what == QLatin1String("ratemaster")) {
+        const RateMaster *cur = rateMaster(id);
+        if (!cur)
+            return false;
+        RateMaster m = *cur;
+        m.color = color;
+        setRateMaster(m);
         return true;
     }
     if (what == QLatin1String("macro")) {

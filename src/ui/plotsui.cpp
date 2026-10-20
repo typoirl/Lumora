@@ -2,6 +2,7 @@
 #include "plotsui.h"
 
 #include "appcontext.h"
+#include "macros.h"
 #include "colorpicker.h"
 #include "fixturesheet.h"
 #include "quickedit.h"
@@ -9,8 +10,15 @@
 
 #include <QApplication>
 #include <QContextMenuEvent>
+#include <QCursor>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QGuiApplication>
+#include <QScreen>
+#include <QLineEdit>
+#include <QListWidget>
+#include <QPushButton>
+#include <QTabBar>
 #include <QHBoxLayout>
 #include <QImage>
 #include <QInputDialog>
@@ -186,13 +194,11 @@ PlotCanvas::PlotCanvas(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ct
             m_imageCache.clear();
         update();
     });
-    // Fixtures follow the output live.
-    auto *live = new QTimer(this);
-    connect(live, &QTimer::timeout, this, [this]() {
+    // Fixtures follow the output live: every frame sent.
+    connect(ctx->engine, &Engine::frameDone, this, [this]() {
         if (isVisible())
             update();
     });
-    live->start(80);
 }
 
 const Plot *PlotCanvas::plot() const
@@ -243,6 +249,7 @@ void PlotCanvas::setZoomLocked(bool on)
     if (m_views[m_plotId].locked == on)
         return;
     m_views[m_plotId].locked = on;
+    m_views[m_plotId].set = true;
     emit zoomChanged();
     emit viewChanged();
 }
@@ -250,8 +257,9 @@ void PlotCanvas::setZoomLocked(bool on)
 QJsonObject PlotCanvas::saveViews() const
 {
     QJsonObject o;
+    // Only what was set by hand: framing a plot on first sight, or editing it, doesn't change the view.
     for (auto it = m_views.begin(); it != m_views.end(); ++it)
-        if (m_ctx->show->plot(it.key()))
+        if (it->set && m_ctx->show->plot(it.key()))
             o[QString::number(it.key())] = QJsonObject{{"zoom", it->zoom}, {"x", it->panX}, {"y", it->panY}, {"locked", it->locked}};
     return o;
 }
@@ -266,6 +274,7 @@ void PlotCanvas::loadViews(const QJsonObject &o)
         st.panX = v["x"].toDouble();
         st.panY = v["y"].toDouble();
         st.locked = v["locked"].toBool();
+        st.set = true;
         m_views.insert(it.key().toInt(), st);
     }
     update();
@@ -299,7 +308,7 @@ void PlotCanvas::commit(const Plot &p)
     m_ctx->show->setPlot(p);
 }
 
-void PlotCanvas::setView(double zoom, double panX, double panY)
+void PlotCanvas::setView(double zoom, double panX, double panY, bool byUser)
 {
     if (!m_ctx->show->plot(m_plotId))
         return;
@@ -308,9 +317,11 @@ void PlotCanvas::setView(double zoom, double panX, double panY)
     v.zoom = std::clamp(zoom, 0.1, 8.0);
     v.panX = panX;
     v.panY = panY;
+    v.set = v.set || byUser;
     update();
     emit zoomChanged();
-    emit viewChanged();
+    if (byUser)
+        emit viewChanged();
 }
 
 void PlotCanvas::zoomBy(double factor)
@@ -323,7 +334,7 @@ void PlotCanvas::zoomBy(double factor)
     setView(z, c.x() - width() / 2.0 / z, c.y() - height() / 2.0 / z);
 }
 
-void PlotCanvas::fit()
+void PlotCanvas::fit(bool byUser)
 {
     const Plot *p = m_ctx->show->plot(m_plotId);
     if (!p || zoomLocked())
@@ -333,7 +344,7 @@ void PlotCanvas::fit()
         b = QRectF(0, 0, 400, 300);
     b.adjust(-24, -24, 24, 24);
     const double z = std::clamp(std::min(width() / b.width(), height() / b.height()), 0.1, 8.0);
-    setView(z, b.center().x() - width() / 2.0 / z, b.center().y() - height() / 2.0 / z);
+    setView(z, b.center().x() - width() / 2.0 / z, b.center().y() - height() / 2.0 / z, byUser);
 }
 
 QPixmap PlotCanvas::renderImage(const QByteArray &bytes, const QSize &size, const QString &tint)
@@ -456,6 +467,8 @@ void PlotCanvas::paintEvent(QPaintEvent *)
         p.drawText(rect(), Qt::AlignCenter, tr("No plot. Tap one in the Plots pool, or right-click an empty slot there to make one."));
         return;
     }
+    if (!pl->backgroundColor.isEmpty())
+        p.fillRect(rect(), QColor(pl->backgroundColor));   // a solid background: the whole sheet
     // A faint grid while editing, so things line up.
     if (m_editing) {
         const double step = kGrid * 4 * view().zoom;
@@ -508,17 +521,21 @@ void PlotCanvas::paintEvent(QPaintEvent *)
             c = m_imageCache.insert(key, renderImage(it.image, size, it.color));
         p.drawPixmap(r.topLeft(), *c);
     };
-    // Backgrounds first.
-    for (int i = 0; i < pl->items.size(); ++i)
-        if (pl->items[i].kind == PlotItem::Image && pl->items[i].background)
-            drawImage(pl->items[i], i);
+    // The background behind everything: a picture where it was put, or the sheet in a color.
+    if (!pl->backgroundImage.isEmpty()) {
+        PlotItem bg;
+        bg.kind = PlotItem::Image;
+        bg.image = pl->backgroundImage;
+        bg.imageName = pl->backgroundName;
+        bg.rect = pl->backgroundRect;
+        drawImage(bg, -1);
+    }
     for (int i = 0; i < pl->items.size(); ++i) {
         const PlotItem &it = pl->items[i];
         const QRectF r = toWidget(it.rect);
         switch (it.kind) {
         case PlotItem::Image:
-            if (!it.background)
-                drawImage(it, i);
+            drawImage(it, i);
             break;
         case PlotItem::Text: {
             QFont f = theme::uiFont(9, QFont::DemiBold);
@@ -649,17 +666,10 @@ int PlotCanvas::itemAt(const QPointF &w, bool includeBackground) const
     const Plot *pl = plot();
     if (!pl)
         return -1;
-    for (int i = int(pl->items.size()) - 1; i >= 0; --i) {
-        const PlotItem &it = pl->items[i];
-        if (it.kind == PlotItem::Image && it.background && !includeBackground)
-            continue;
-        if (toWidget(it.rect).adjusted(-2, -2, 2, 2).contains(w))
+    Q_UNUSED(includeBackground)
+    for (int i = int(pl->items.size()) - 1; i >= 0; --i)
+        if (toWidget(pl->items[i].rect).adjusted(-2, -2, 2, 2).contains(w))
             return i;
-    }
-    if (includeBackground)
-        for (int i = int(pl->items.size()) - 1; i >= 0; --i)
-            if (pl->items[i].kind == PlotItem::Image && pl->items[i].background && toWidget(pl->items[i].rect).contains(w))
-                return i;
     return -1;
 }
 
@@ -689,8 +699,16 @@ void PlotCanvas::tapObject(const QString &object)
             m_ctx->run(QStringLiteral("Effect %1").arg(n));
     } else if (k == QLatin1String("Spread")) {
         const Spread *sp = show->spread(n);
-        const bool on = sp && show->activeSpread().toJson() == sp->toJson();
-        m_ctx->run(on ? QStringLiteral("Spread Off") : QStringLiteral("Spread %1").arg(n));
+        // Its axes: on if it's what's on them now; tapping again takes it off.
+        const Spread::Axis axis = sp && sp->onY && !sp->onX ? Spread::Axis::Y : Spread::Axis::X;
+        const Spread &active = show->activeSpread(axis);
+        const bool on = sp && show->spreadAxisOn(axis) && active.id == sp->id && !active.isDefault();
+        if (!on)
+            m_ctx->run(QStringLiteral("Spread %1").arg(n));
+        else {
+            if (sp->onX) m_ctx->run(QStringLiteral("Spread X Off"));
+            if (sp->onY) m_ctx->run(QStringLiteral("Spread Y Off"));
+        }
     } else if (k == QLatin1String("Macro")) {
         m_ctx->run(QStringLiteral("Go Macro %1").arg(n));
     } else if (k == QLatin1String("Executor")) {
@@ -838,7 +856,7 @@ void PlotCanvas::mouseReleaseEvent(QMouseEvent *ev)
         return;
     if (m_editing) {
         for (int i = 0; i < pl->items.size(); ++i)
-            if (!(pl->items[i].kind == PlotItem::Image && pl->items[i].background) && box.intersects(toWidget(pl->items[i].rect)))
+            if (box.intersects(toWidget(pl->items[i].rect)))
                 for (int j : pl->groupOf(i))
                     if (!m_picked.contains(j))
                         m_picked << j;
@@ -931,37 +949,6 @@ void PlotCanvas::contextMenuEvent(QContextMenuEvent *ev)
     itemMenu(hit, ev->globalPos());
 }
 
-QString PlotCanvas::normalizeLink(const QString &text) const
-{
-    // "Fixture 21.3", "F 101", "101" (a fixture), "Group 3", "Color.1", "Preset 4.1", "Macro 2"…
-    QString t = text.simplified();
-    if (t.isEmpty())
-        return QString();
-    static const QRegularExpression poolDot(QStringLiteral("^([A-Za-z]+)\\.(\\d+)$"));
-    if (const auto mt = poolDot.match(t); mt.hasMatch())
-        if (const int type = presetTypeFromName(mt.captured(1)))
-            return QStringLiteral("Preset %1.%2").arg(type).arg(mt.captured(2));
-    QStringList parts = t.split(' ');
-    if (parts.size() == 1)
-        parts.prepend(QStringLiteral("Fixture"));
-    static const QStringList kinds = {"Fixture", "Group", "Preset", "Sequence", "Executor", "Macro", "Effect",
-                                      "View", "Spread", "Plot", "RateMaster"};
-    QString kind;
-    for (const QString &k : kinds)
-        if (k.startsWith(parts[0], Qt::CaseInsensitive) && parts[0].size() >= 1)
-            if (kind.isEmpty() || parts[0].compare(k, Qt::CaseInsensitive) == 0)
-                kind = k;
-    if (parts[0].compare(QLatin1String("f"), Qt::CaseInsensitive) == 0 || parts[0].compare(QLatin1String("fix"), Qt::CaseInsensitive) == 0)
-        kind = QStringLiteral("Fixture");
-    if (kind.isEmpty() || parts.size() != 2)
-        return QString();
-    if (kind == QLatin1String("Fixture"))
-        return m_ctx->show->parseId(parts[1]) ? QStringLiteral("Fixture %1").arg(parts[1]) : QString();
-    bool ok = false;
-    parts[1].section('.', -1).toInt(&ok);
-    return ok ? kind + ' ' + parts[1] : QString();
-}
-
 void PlotCanvas::tapLink(const QString &link)
 {
     if (link.startsWith(QLatin1String("Fixture "), Qt::CaseInsensitive)) {
@@ -997,7 +984,7 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
     case PlotItem::Fixture: title = tr("Fixture %1").arg(show->idText(it.fid)); break;
     case PlotItem::Object: title = it.object; break;
     case PlotItem::Text: title = tr("Text"); break;
-    case PlotItem::Image: title = it.background ? tr("Background") : tr("Picture"); break;
+    case PlotItem::Image: title = tr("Picture"); break;
     }
     auto *ed = new QuickEditor(title, this);
     if (it.kind == PlotItem::Text) {
@@ -1015,9 +1002,6 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
                     x.rect.setHeight(x.rect.width());
             });
         });
-    if (it.kind == PlotItem::Image)
-        ed->addSegmented(tr("Layer"), {tr("Picture"), tr("Background")}, it.background ? 1 : 0,
-                         [change](int i) { change([i](PlotItem &x) { x.background = i == 1; }); });
     if (it.kind == PlotItem::Text || it.kind == PlotItem::Image)
         ed->addAction(it.kind == PlotItem::Text ? tr("Color…") : tr("Tint (one-color icons)…"), [this, change, it]() {
             if (const auto c = pickAppearanceColor(this, tr("Color"), it.color))
@@ -1026,21 +1010,9 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
     if (it.kind != PlotItem::Object) {
         // Linked: tapped, it acts like the fixture or pool object it stands for.
         ed->addAction(it.link.isEmpty() ? tr("Link to a fixture or pool object…") : tr("Linked to %1: change…").arg(it.link),
-                      [this, change, current = it.link]() {
-            bool ok = false;
-            const QString t = QInputDialog::getText(this, tr("Link"),
-                                                    tr("Tapping it acts like: a fixture (Fixture 21.3, or just 101) or a pool object "
-                                                       "(Group 3, Color.1, Preset 4.1, Sequence 2, Executor 1.201, Macro 1, Effect 5, "
-                                                       "View 2, Spread 1, Plot 2, RateMaster 3). Empty: no link."),
-                                                    QLineEdit::Normal, current, &ok);
-            if (!ok)
-                return;
-            const QString link = normalizeLink(t);
-            if (!t.trimmed().isEmpty() && link.isEmpty()) {
-                emit m_ctx->status(tr("Not a fixture or pool object: %1").arg(t.trimmed()));
-                return;
-            }
-            change([link](PlotItem &x) { x.link = link; });
+                      [this, change, current = it.link, global]() {
+            pickPoolObject(m_ctx, this, global, tr("Target"), current, true,
+                           [change](const QString &link) { change([link](PlotItem &x) { x.link = link; }); });
         });
         if (!it.link.isEmpty())
             ed->addAction(tr("Unlink"), [change]() { change([](PlotItem &x) { x.link.clear(); }); });
@@ -1074,7 +1046,7 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
                 if (in(order[k]) && !in(order[k - 1]))
                     std::swap(order[k], order[k - 1]);
             break;
-        case 3: {   // to back (backgrounds stay behind regardless)
+        case 3: {   // to back (still in front of the plot's background)
             QVector<int> rest, mine;
             for (int i : order) (in(i) ? mine : rest) << i;
             order = mine + rest;
@@ -1150,6 +1122,177 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
         show->setPlot(p);
     }, QIcon(), true);
     ed->popup(global);
+}
+
+// ===========================================================================
+// Picking a fixture or pool object (for links, and Add → Pool object)
+// ===========================================================================
+
+namespace {
+// A drop-down like the blueprint preset picker: tabs per kind, a search, and a list. Tap one to
+// pick it. Nothing to tick: it's one thing.
+class PoolObjectPicker : public QFrame {
+public:
+    PoolObjectPicker(AppContext *ctx, const QString &title, const QString &current, bool offerNone, QWidget *parent,
+                     std::function<void(const QString &)> chosen)
+        : QFrame(parent, Qt::Popup), m_chosen(std::move(chosen))
+    {
+        setAttribute(Qt::WA_DeleteOnClose);
+        setObjectName("objectDrop");
+        setStyleSheet(QStringLiteral("QFrame#objectDrop { background: %1; border: 1px solid #4a5260; }").arg(theme::panel.name()));
+        resize(800, 440);
+        auto *v = new QVBoxLayout(this);
+        v->setContentsMargins(6, 6, 6, 6);
+        v->setSpacing(4);
+        auto *head = new QLabel(title, this);
+        head->setStyleSheet(QStringLiteral("font-weight: 600;"));
+        v->addWidget(head);
+        m_tabs = new QTabBar(this);
+        m_tabs->setExpanding(false);
+        m_tabs->setDrawBase(false);
+        m_tabs->setStyleSheet(QStringLiteral("QTabBar::tab { background: transparent; color: %1; padding: 5px 9px; border: none;"
+                                             " border-radius: 4px; margin-right: 2px; }"
+                                             "QTabBar::tab:selected { background: %2; color: %3; }"
+                                             "QTabBar::tab:hover:!selected { color: %3; }")
+                                  .arg(theme::muted.name(), theme::raised.name(), theme::text.name()));
+        v->addWidget(m_tabs);
+        m_search = new QLineEdit(this);
+        m_search->setPlaceholderText(tr("Search: a name or a number"));
+        m_search->setClearButtonEnabled(true);
+        v->addWidget(m_search);
+        m_list = new QListWidget(this);
+        m_list->setIconSize(QSize(18, 18));
+        v->addWidget(m_list, 1);
+        auto *buttons = new QHBoxLayout;
+        if (offerNone) {
+            auto *none = new QPushButton(tr("No link"), this);
+            buttons->addWidget(none);
+            connect(none, &QPushButton::clicked, this, [this]() { pick(QString()); });
+        }
+        buttons->addStretch(1);
+        auto *cancel = new QPushButton(tr("Cancel"), this);
+        buttons->addWidget(cancel);
+        connect(cancel, &QPushButton::clicked, this, &QWidget::close);
+        v->addLayout(buttons);
+
+        Show *show = ctx->show;
+        const QStringList kinds = {tr("All"), tr("Fixtures"), tr("Groups"), tr("Presets"), tr("Sequences"), tr("Executors"),
+                                   tr("Effects"), tr("Macros"), tr("Masters"), tr("Spreads"), tr("Views"), tr("Plots")};
+        for (const QString &k : kinds)
+            m_tabs->addTab(k);
+        auto add = [this](int kind, const QString &link, const QString &shown, const QString &name, const QColor &color = QColor()) {
+            auto *it = new QListWidgetItem(name.isEmpty() ? shown : QStringLiteral("%1     %2").arg(shown, name), m_list);
+            it->setData(Qt::UserRole, kind);
+            it->setData(Qt::UserRole + 1, link);
+            if (color.isValid()) {
+                QPixmap dot(12, 12);
+                dot.fill(Qt::transparent);
+                QPainter p(&dot);
+                p.setRenderHint(QPainter::Antialiasing);
+                p.setPen(Qt::NoPen);
+                p.setBrush(color);
+                p.drawEllipse(1, 1, 10, 10);
+                it->setIcon(QIcon(dot));
+            }
+        };
+        for (auto it = show->fixtures().begin(); it != show->fixtures().end(); ++it) {
+            const QString id = show->idText(it.key());
+            add(1, QStringLiteral("Fixture %1").arg(id), tr("Fixture %1").arg(id), it->name);
+        }
+        for (const Group &g : show->groups())
+            add(2, QStringLiteral("Group %1").arg(g.id), tr("Group %1").arg(g.id), g.name);
+        for (int t = 1; t <= kPresetTypeAll; ++t)
+            for (const Preset &pr : show->presets(t))
+                add(3, QStringLiteral("Preset %1.%2").arg(t).arg(pr.id), presetRef(t, pr.id), pr.name, theme::presetTypeColor(t));
+        for (const Sequence &q : show->sequences())
+            add(4, QStringLiteral("Sequence %1").arg(q.id), tr("Sequence %1").arg(q.id), q.name,
+                q.color.isEmpty() ? QColor() : QColor(q.color));
+        for (Executor *e : show->allExecutors()) {
+            if (e->isEmpty())
+                continue;
+            QString name;
+            if (const Sequence *q = show->sequence(e->sequenceId))
+                name = q->name;
+            else if (const RateMaster *rm = show->rateMaster(e->rateMaster))
+                name = rm->displayName();
+            add(5, QStringLiteral("Executor %1.%2").arg(e->page).arg(e->number), tr("Executor %1.%2").arg(e->page).arg(e->number), name);
+        }
+        for (const Effect &e : show->effects())
+            add(6, QStringLiteral("Effect %1").arg(e.id), tr("Effect %1").arg(e.id), e.name);
+        for (const Macro &m : show->macros())
+            add(7, QStringLiteral("Macro %1").arg(m.id), tr("Macro %1").arg(m.id), m.name, m.color.isEmpty() ? QColor() : QColor(m.color));
+        for (int id = 1; id <= RateMaster::kCount; ++id)
+            if (const RateMaster *rm = show->rateMaster(id))
+                add(8, QStringLiteral("RateMaster %1").arg(id), tr("Master %1").arg(id), rm->name,
+                    rm->color.isEmpty() ? QColor() : QColor(rm->color));
+        for (const Spread &sp : show->spreads())
+            add(9, QStringLiteral("Spread %1").arg(sp.id), tr("Spread %1").arg(sp.id), sp.name);
+        for (const StoredView &sv : show->views())
+            add(10, QStringLiteral("View %1").arg(sv.id), tr("View %1").arg(sv.id), sv.name);
+        for (const Plot &pl : show->plots())
+            add(11, QStringLiteral("Plot %1").arg(pl.id), tr("Plot %1").arg(pl.id), pl.name);
+
+        connect(m_list, &QListWidget::itemClicked, this, [this](QListWidgetItem *it) { pick(it->data(Qt::UserRole + 1).toString()); });
+        connect(m_list, &QListWidget::itemActivated, this, [this](QListWidgetItem *it) { pick(it->data(Qt::UserRole + 1).toString()); });
+        connect(m_tabs, &QTabBar::currentChanged, this, [this]() { filter(); });
+        connect(m_search, &QLineEdit::textChanged, this, [this]() { filter(); });
+        connect(m_search, &QLineEdit::returnPressed, this, [this]() {
+            for (int i = 0; i < m_list->count(); ++i)
+                if (!m_list->item(i)->isHidden()) {
+                    pick(m_list->item(i)->data(Qt::UserRole + 1).toString());
+                    return;
+                }
+        });
+        // Open on the kind already linked, with it marked.
+        for (int i = 0; i < m_list->count(); ++i)
+            if (!current.isEmpty() && m_list->item(i)->data(Qt::UserRole + 1).toString() == current) {
+                m_tabs->setCurrentIndex(m_list->item(i)->data(Qt::UserRole).toInt());
+                m_list->setCurrentRow(i);
+            }
+        filter();
+    }
+    void popupAt(const QPoint &global)
+    {
+        QPoint at = global;
+        if (const QScreen *sc = QGuiApplication::screenAt(global)) {
+            const QRect avail = sc->availableGeometry();
+            at.setX(std::clamp(at.x(), avail.left(), avail.right() - width()));
+            at.setY(std::clamp(at.y(), avail.top(), avail.bottom() - height()));
+        }
+        move(at);
+        show();
+        m_search->setFocus();
+    }
+
+private:
+    void filter()
+    {
+        const int kind = m_tabs->currentIndex();
+        const QString q = m_search->text().trimmed();
+        for (int i = 0; i < m_list->count(); ++i) {
+            QListWidgetItem *it = m_list->item(i);
+            it->setHidden((kind && it->data(Qt::UserRole).toInt() != kind) || (!q.isEmpty() && !it->text().contains(q, Qt::CaseInsensitive)));
+        }
+    }
+    void pick(const QString &link)
+    {
+        auto chosen = m_chosen;
+        close();
+        if (chosen)
+            chosen(link);
+    }
+    QTabBar *m_tabs;
+    QLineEdit *m_search;
+    QListWidget *m_list;
+    std::function<void(const QString &)> m_chosen;
+};
+} // namespace
+
+void pickPoolObject(AppContext *ctx, QWidget *parent, const QPoint &global, const QString &title, const QString &current,
+                    bool offerNone, std::function<void(const QString &)> chosen)
+{
+    auto *picker = new PoolObjectPicker(ctx, title, current, offerNone, parent, std::move(chosen));
+    picker->popupAt(global);
 }
 
 // ===========================================================================
@@ -1309,8 +1452,7 @@ void PlotCanvas::align(Align how, AlignTo to)
             break;
         case WholePlot: {
             for (const PlotItem &it : p.items)
-                if (!(it.kind == PlotItem::Image && it.background))
-                    anchor = anchor.isNull() ? it.rect : anchor.united(it.rect);
+                anchor = anchor.isNull() ? it.rect : anchor.united(it.rect);
             break;
         }
         }
@@ -1465,7 +1607,7 @@ void PlotView::follow()
     // A plot this window shows for the first time (and never zoomed) starts with everything in view.
     if (fresh)
         if (const Plot *p = m_ctx->show->plot(id); p && p->zoom == 1.0 && p->panX == 0 && p->panY == 0 && !p->items.isEmpty())
-            QTimer::singleShot(0, this, [this]() { m_canvas->fit(); });
+            QTimer::singleShot(0, this, [this]() { m_canvas->fit(false); });
 }
 
 void PlotView::refreshHeader()
@@ -1539,6 +1681,7 @@ void PlotView::backgroundMenu(const QPoint &global)
         fillAddMenu(menu.addMenu(tr("Add")));
         if (m_canvas->editing())
             fillAlignMenu(menu.addMenu(tr("Align")));
+        fillBackgroundMenu(menu.addMenu(tr("Background")));
     }
     menu.addSeparator();
     const bool locked = m_canvas->zoomLocked();
@@ -1579,13 +1722,10 @@ void PlotView::fillAddMenu(QMenu *menuPtr)
         m_ctx->run(QStringLiteral("Assign Fixture %1 At Plot %2").arg(ids.join(QStringLiteral(" + "))).arg(id));
     });
     menu.addAction(tr("Pool object…"), this, [this, id]() {
-        bool ok = false;
-        const QString object = QInputDialog::getText(this, tr("Add a pool object"),
-                                                     tr("As the command line writes it: Group 3, Preset 4.1 (or Color.1), Sequence 2, "
-                                                        "Macro 1, Effect 5, View 2, Spread 1, Plot 2, Executor 1.201, RateMaster 3"),
-                                                     QLineEdit::Normal, QString(), &ok);
-        if (ok && !object.trimmed().isEmpty())
-            m_ctx->run(QStringLiteral("Assign %1 At Plot %2").arg(object.trimmed()).arg(id));
+        pickPoolObject(m_ctx, this, QCursor::pos(), tr("Add to the plot"), QString(), false, [this, id](const QString &object) {
+            if (!object.isEmpty())   // a fixture goes on as a fixture, anything else as its tile
+                m_ctx->run(QStringLiteral("Assign %1 At Plot %2").arg(object).arg(id));
+        });
     });
     menu.addAction(tr("Text"), this, [this, id]() {
         bool ok = false;
@@ -1623,7 +1763,65 @@ void PlotView::fillAddMenu(QMenu *menuPtr)
         });
     }
     menu.addAction(tr("Picture or SVG file…"), this, [this]() { addPicture(false); });
-    menu.addAction(tr("Background (SVG or picture)…"), this, [this]() { addPicture(true); });
+    // One background at a time: adding one replaces the one there.
+    QMenu *bg = menu.addMenu(tr("Background"));
+    bg->addAction(tr("Image (SVG or picture)…"), this, [this]() { addPicture(true); });
+    bg->addAction(tr("Solid color…"), this, [this]() { setBackgroundColor(); });
+}
+
+void PlotView::fillBackgroundMenu(QMenu *menu)
+{
+    const Plot *p = m_ctx->show->plot(m_canvas->plotId());
+    menu->addAction(p && !p->backgroundImage.isEmpty() ? tr("Change image…") : tr("Image (SVG or picture)…"), this,
+                    [this]() { addPicture(true); });
+    menu->addAction(p && !p->backgroundColor.isEmpty() ? tr("Change color…") : tr("Solid color…"), this,
+                    [this]() { setBackgroundColor(); });
+    menu->addAction(tr("Fit the image to the plot"), this, [this]() { fitBackground(); })
+        ->setEnabled(p && !p->backgroundImage.isEmpty());
+    menu->addSeparator();
+    menu->addAction(tr("Remove the background"), this, [this]() { removeBackground(); })->setEnabled(p && p->hasBackground());
+}
+
+void PlotView::setBackgroundColor()
+{
+    const Plot *cur = m_ctx->show->plot(m_canvas->plotId());
+    if (!cur)
+        return;
+    const auto c = pickAppearanceColor(this, tr("Background color"), cur->backgroundColor);
+    if (!c)
+        return;
+    Plot p = *m_ctx->show->plot(cur->id);
+    if (c->isEmpty())
+        p.clearBackground();
+    else
+        p.setBackgroundColor(*c);
+    m_ctx->show->setPlot(p);
+}
+
+void PlotView::fitBackground()
+{
+    const Plot *cur = m_ctx->show->plot(m_canvas->plotId());
+    if (!cur || cur->backgroundImage.isEmpty())
+        return;
+    // As big as what's on the plot, keeping the picture's shape.
+    Plot p = *cur;
+    QRectF b = p.bounds();
+    if (b.isNull())
+        b = QRectF(0, 0, 800, 600);
+    const QSizeF natural = p.backgroundRect.size().isEmpty() ? QSizeF(800, 600) : p.backgroundRect.size();
+    const double k = std::max(b.width() / natural.width(), b.height() / natural.height());
+    p.backgroundRect = QRectF(b.left(), b.top(), natural.width() * k, natural.height() * k);
+    m_ctx->show->setPlot(p);
+}
+
+void PlotView::removeBackground()
+{
+    const Plot *cur = m_ctx->show->plot(m_canvas->plotId());
+    if (!cur || !cur->hasBackground())
+        return;
+    Plot p = *cur;
+    p.clearBackground();
+    m_ctx->show->setPlot(p);
 }
 
 void PlotView::addPicture(bool background)
@@ -1662,15 +1860,13 @@ void PlotView::addPicture(bool background)
     it.kind = PlotItem::Image;
     it.image = bytes;
     it.imageName = QFileInfo(path).fileName();
-    it.background = background;
     if (background) {
-        // Under everything already there, as big as it.
+        // Behind everything, as big as what's there; it replaces the background there was.
         QRectF b = p.bounds();
         if (b.isNull())
             b = QRectF(0, 0, 800, 600);
         const double k = std::max(b.width() / natural.width(), b.height() / natural.height());
-        it.rect = QRectF(b.left(), b.top(), natural.width() * k, natural.height() * k);
-        p.items.prepend(it);
+        p.setBackgroundImage(bytes, it.imageName, QRectF(b.left(), b.top(), natural.width() * k, natural.height() * k));
     } else {
         const double k = std::min(1.0, 240.0 / std::max(natural.width(), natural.height()));
         const QPointF c = m_canvas->viewCenter();
@@ -1708,6 +1904,19 @@ void PlotView::buildOptions(QuickEditor *editor)
     editor->addSegmented(tr("Top bar"), {tr("Show"), tr("Hide")}, m_barHidden ? 1 : 0, [this](int i) { setBarHidden(i == 1); });
     editor->addSegmented(tr("Zoom"), {tr("Free"), tr("Locked")}, m_canvas->zoomLocked() ? 1 : 0,
                          [this](int i) { m_canvas->setZoomLocked(i == 1); });
+    // The plot's background: change it, or take it away.
+    if (const Plot *p = m_ctx->show->plot(m_canvas->plotId())) {
+        editor->addSection(tr("Background"));
+        editor->addAction(!p->backgroundImage.isEmpty() ? tr("Image: %1 (change…)").arg(p->backgroundName.isEmpty() ? tr("picture") : p->backgroundName)
+                                                        : tr("Image (SVG or picture)…"),
+                          [this]() { addPicture(true); });
+        editor->addAction(!p->backgroundColor.isEmpty() ? tr("Color: %1 (change…)").arg(p->backgroundColor.toUpper()) : tr("Solid color…"),
+                          [this]() { setBackgroundColor(); });
+        if (!p->backgroundImage.isEmpty())
+            editor->addAction(tr("Fit the image to the plot"), [this]() { fitBackground(); });
+        if (p->hasBackground())
+            editor->addAction(tr("Remove the background"), [this]() { removeBackground(); }, QIcon(), true);
+    }
 }
 
 } // namespace lumora

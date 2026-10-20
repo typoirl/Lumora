@@ -5,7 +5,9 @@
 #include "dmxoutput.h"
 #include "engine.h"
 #include "midi.h"
+#include "osc.h"
 #include "show.h"
+#include "undo.h"
 
 #include <QDateTime>
 #include <QJsonObject>
@@ -34,9 +36,14 @@ class AppContext : public QObject {
 public:
     explicit AppContext(QObject *parent = nullptr)
         : QObject(parent), show(new Show(this)), engine(new Engine(show, this)),
-          outputs(new OutputManager(this)), midi(new MidiManager(show, this)), commands(show)
+          outputs(new OutputManager(this)), midi(new MidiManager(show, this)), osc(new OscManager(show, this)), undo(new UndoManager(show, this)), commands(show)
     {
         engine->setOutputs(outputs);
+        // OSC: command lines and keys go through the command line like typed ones; what it shows
+        // goes back out as feedback.
+        connect(osc, &OscManager::commandRequested, this, [this](const QString &cmd, bool) { run(cmd); });
+        connect(osc, &OscManager::keyRequested, this, [this](const QString &key) { pressKey(key); });
+        osc->setCommandLineSource([this]() { return m_commandLine; });
         connect(show, &Show::message, this, &AppContext::status);
         // The history keeps every command and every edit that reports itself.
         connect(this, &AppContext::commandRan, this, [this](const QString &line, bool ok, const QString &msg) {
@@ -67,6 +74,8 @@ public:
     Engine *engine;
     OutputManager *outputs;
     MidiManager *midi;
+    OscManager *osc;
+    UndoManager *undo;
     CommandLine commands;
 
     // ---- Command history (this session) ----
@@ -100,7 +109,7 @@ public:
     int executorCount() const { return uiValue("executors", 10).toInt(10); }
     void setExecutorCount(int n)
     {
-        setUiValue("executors", qBound(1, n, 60), true);
+        setUiValue("executors", qBound(1, n, 99), true);
         emit interfaceChanged();
     }
     // ---- Command line and keys ----
@@ -151,11 +160,28 @@ public:
     // Runs a command line and reports the result in the status area.
     CommandResult run(const QString &line)
     {
+        // Undo and Redo (also Ctrl+Z, Ctrl+Y): the last command or edit. In a plot, Ctrl+Z
+        // takes back the plot's last edit instead (undoStep(true)).
+        const QString word = line.trimmed().toLower();
+        if (word == QLatin1String("undo") || word == QLatin1String("oops") || word == QLatin1String("redo")) {
+            CommandResult r = undoStep(false, word == QLatin1String("redo"));
+            emit commandRan(line, r.ok, r.message);
+            return r;
+        }
+        undo->beginAction(line);
         m_inCommand = true;
         CommandResult r = commands.execute(line);
         m_inCommand = false;
         emit commandRan(line, r.ok, r.message);
         return r;
+    }
+
+    CommandResult undoStep(bool plots, bool redo = false)
+    {
+        const QString what = redo ? undo->redo(plots) : undo->undo(plots);
+        if (what.isEmpty())
+            return {false, redo ? tr("Nothing to redo") : plots ? tr("Nothing to undo in the plots") : tr("Nothing to undo")};
+        return {true, redo ? tr("Redone: %1").arg(what) : tr("Undone: %1").arg(what)};
     }
 
 signals:

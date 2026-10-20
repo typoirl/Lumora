@@ -34,7 +34,7 @@
 namespace lumora {
 
 namespace {
-enum CueColumn { CueNumber, CueName, CueFade, CueDelay, CueTriggerCol, CueWait, CueNotes, CueContents };
+enum CueColumn { CueNumber, CueName, CueFade, CueDelay, CueTriggerCol, CueWait, CueMacro, CueNotes, CueContents };
 enum LineColumn { LineName, LineGroup, LinePresets, LineEvery, LineOffset, LineSpread, LineFade, LineDelay, LineFixtures };
 QString presetList(Show *show, const QVector<PresetRef> &refs)
 {
@@ -161,18 +161,27 @@ public:
             }
         if (m_list->count() == 0)
             new QListWidgetItem(tr("No presets yet: set values, press Store and tap a preset slot."), m_list);
+        // Ticking the box toggles it; clicking the preset's name toggles it too. A click on the box
+        // shows up as a change and then a click: the click mustn't toggle it back.
+        connect(m_list, &QListWidget::itemPressed, this, [this](QListWidgetItem *) { m_toggledByBox = nullptr; });
         connect(m_list, &QListWidget::itemChanged, this, [this](QListWidgetItem *it) {
             if (m_syncing)
                 return;
+            m_toggledByBox = it;
             const PresetRef ref{it->data(Qt::UserRole).toInt(), it->data(Qt::UserRole + 1).toInt()};
             m_selected.removeAll(ref);
             if (it->checkState() == Qt::Checked)
                 m_selected.append(ref);
             sync();
         });
-        connect(m_list, &QListWidget::itemClicked, this, [](QListWidgetItem *it) {
+        connect(m_list, &QListWidget::itemClicked, this, [this](QListWidgetItem *it) {
+            if (m_toggledByBox == it) {   // the box took the click already
+                m_toggledByBox = nullptr;
+                return;
+            }
             if (it->flags() & Qt::ItemIsUserCheckable)
                 it->setCheckState(it->checkState() == Qt::Checked ? Qt::Unchecked : Qt::Checked);
+            m_toggledByBox = nullptr;
         });
         connect(m_tabs, &QTabBar::currentChanged, this, [this]() { filter(); });
         connect(m_search, &QLineEdit::textChanged, this, [this]() { filter(); });
@@ -236,6 +245,7 @@ private:
     QVector<PresetRef> m_original;
     std::function<void(const QVector<PresetRef> &)> m_apply;
     bool m_syncing = false;
+    QListWidgetItem *m_toggledByBox = nullptr;
 };
 
 QWidget *makePresetPicker(Show *show, const QVector<QPair<int, int>> &current, QWidget *parent)
@@ -284,7 +294,7 @@ CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
     head->addWidget(m_priority);
     rv->addLayout(head);
 
-    m_cues = makeTable(right, {tr("Cue"), tr("Name"), tr("Fade"), tr("Delay"), tr("Trigger"), tr("Wait"), tr("Notes"), tr("Contents")});
+    m_cues = makeTable(right, {tr("Cue"), tr("Name"), tr("Fade"), tr("Delay"), tr("Trigger"), tr("Wait"), tr("Macro"), tr("Notes"), tr("Contents")});
     m_cues->setSelectionMode(QAbstractItemView::ExtendedSelection);   // several cues change together
     m_cues->setColumnWidth(CueNumber, 60);
     m_cues->setColumnWidth(CueName, 200);
@@ -292,6 +302,7 @@ CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
     m_cues->setColumnWidth(CueDelay, 84);
     m_cues->setColumnWidth(CueTriggerCol, 84);
     m_cues->setColumnWidth(CueWait, 56);
+    m_cues->setColumnWidth(CueMacro, 120);
     m_cues->setColumnWidth(CueNotes, 200);
     auto *times = new TimeRangeDelegate(m_cues);
     for (int c : {CueFade, CueDelay, CueWait})
@@ -300,6 +311,7 @@ CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
         tr("How the cue starts. Go: on a Go. Wait: its wait time after the cue before it started. Follow: as soon as the cue "
            "before it has finished. Click (or right-click) to choose; select several cues to change them together."));
     m_cues->horizontalHeaderItem(CueWait)->setToolTip(tr("Seconds, for a Wait trigger. Typing one makes the cue a Wait."));
+    m_cues->horizontalHeaderItem(CueMacro)->setToolTip(tr("A macro that runs as the cue starts. Type its number (0 for none), or right-click to pick one."));
     // One column for the cue's time and its individual times: a cue whose values fade on
     // times of their own shows the range they span.
     m_cues->horizontalHeaderItem(CueFade)->setToolTip(
@@ -457,6 +469,8 @@ CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
                 c.name = text;
             else if (col == CueNotes)
                 c.notes = text;
+            else if (col == CueMacro)
+                c.macro = text.trimmed().isEmpty() ? 0 : std::max(0, text.section(' ', 0, 0).toInt());
             else if (col == CueNumber && ok && s.indexOf(v) < 0) {
                 Cue moved = c;
                 moved.number = v;
@@ -469,7 +483,11 @@ CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
     m_cues->viewport()->installEventFilter(this);
     connect(m_cues, &QTableWidget::itemSelectionChanged, this, &CueView::refreshBlueprints);
     enableRightClickEdit(m_cues, [this](int row, int col, const QPoint &global) {
-        if (col != 4)
+        if (col == CueMacro) {
+            macroMenu(row, global);
+            return true;
+        }
+        if (col != CueTriggerCol)
             return false;
         triggerMenu(row, global);
         return true;
@@ -806,6 +824,38 @@ void CueView::triggerMenu(int row, const QPoint &globalPos)
     });
 }
 
+void CueView::macroMenu(int row, const QPoint &globalPos)
+{
+    const Sequence *s = m_ctx->show->sequence(m_ctx->show->selectedSequence());
+    if (!s || row >= s->cues.size())
+        return;
+    if (!m_cues->selectionModel()->isRowSelected(row, QModelIndex()))
+        m_cues->selectRow(row);
+    const QVector<int> rows = selectedCueRows();
+    QMenu menu(this);
+    menu.addSection(rows.size() > 1 ? tr("Macro for %1 cues").arg(rows.size()) : tr("Macro as the cue starts"));
+    QAction *none = menu.addAction(tr("None"));
+    none->setData(0);
+    menu.addSeparator();
+    for (const Macro &m : m_ctx->show->macros()) {
+        QAction *a = menu.addAction(QStringLiteral("%1  %2").arg(m.id).arg(m.displayName()));
+        a->setData(m.id);
+        a->setCheckable(true);
+        a->setChecked(std::all_of(rows.begin(), rows.end(), [&](int r) { return r < s->cues.size() && s->cues[r].macro == m.id; }));
+    }
+    if (m_ctx->show->macros().isEmpty())
+        menu.addAction(tr("No macros yet: make one in the Macros pool"))->setEnabled(false);
+    QAction *chosen = menu.exec(globalPos);
+    if (!chosen)
+        return;
+    const int id = chosen->data().toInt();
+    editSequence([rows, id](Sequence &seq) {
+        for (int r : rows)
+            if (r < seq.cues.size())
+                seq.cues[r].macro = id;
+    });
+}
+
 bool CueView::eventFilter(QObject *obj, QEvent *ev)
 {
     if (obj == m_cues->viewport() && ev->type() == QEvent::MouseButtonPress) {
@@ -902,6 +952,10 @@ void CueView::refreshCues()
             }
             set(CueTriggerCol, cueTriggerName(c.trigger) + QStringLiteral("  ▾"), false);
             set(CueWait, c.trigger == CueTrigger::Wait ? formatSeconds(c.wait) : QString());
+            {
+                const Macro *mc = c.macro ? show->macro(c.macro) : nullptr;
+                set(CueMacro, !c.macro ? QString() : mc ? QStringLiteral("%1 %2").arg(c.macro).arg(mc->displayName()) : tr("%1 (missing)").arg(c.macro));
+            }
             set(CueNotes, c.notes);
             set(CueContents, content.isEmpty() ? tr("Empty") : content.join(", "), false);
         }
@@ -922,6 +976,7 @@ void CueView::refreshCues()
         off(CueDelay, formatSeconds(s->offDelay), true);
         off(CueTriggerCol, cueTriggerName(s->offTrigger) + QStringLiteral("  ▾"), false);
         off(CueWait, s->offTrigger == CueTrigger::Wait ? formatSeconds(s->offWait) : QString(), true);
+        off(CueMacro, QString(), false);
         off(CueNotes, QString(), false);
         off(CueContents, s->offTrigger == CueTrigger::Go ? tr("Turning the executor off fades out with these times")
                                                : tr("Turns itself off after the last cue, with these times"),

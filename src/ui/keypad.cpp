@@ -107,7 +107,8 @@ CommandKeypad::CommandKeypad(AppContext *ctx, bool embedded, QWidget *parent)
     words->setSpacing(5);
     const QList<QPair<QString, KeyKind>> rows[] = {
         {{"Store", KeyKind::Edit}, {"Update", KeyKind::Edit}, {"Delete", KeyKind::Edit}, {"Remove", KeyKind::Edit},
-         {"Copy", KeyKind::Edit}, {"Move", KeyKind::Edit}, {"Label", KeyKind::Edit}, {"Assign", KeyKind::Edit}},
+         {"Copy", KeyKind::Edit}, {"Move", KeyKind::Edit}, {"Label", KeyKind::Edit}, {"Assign", KeyKind::Edit},
+         {"NextY", KeyKind::Action}},
         {{"Fixture", KeyKind::Object}, {"Group", KeyKind::Object}, {"Preset", KeyKind::Object}, {"Sequence", KeyKind::Object},
          {"Cue", KeyKind::Object}, {"Executor", KeyKind::Object}, {"Page", KeyKind::Object}, {"Attribute", KeyKind::Object},
          {"Default", KeyKind::Object}},
@@ -122,7 +123,8 @@ CommandKeypad::CommandKeypad(AppContext *ctx, bool embedded, QWidget *parent)
         for (int c = 0; c < rows[r].size(); ++c) {
             const QString key = rows[r][c].first;
             // Back and Next step through the selection one fixture at a time.
-            const QString label = key == QLatin1String("Prev") ? tr("‹ Back") : key == QLatin1String("Next") ? tr("Next ›") : key;
+            const QString label = key == QLatin1String("Prev") ? tr("‹ Back") : key == QLatin1String("Next") ? tr("Next ›")
+                                  : key == QLatin1String("NextY") ? tr("Next Y") : key;
             QPushButton *b = makeKey(label, key, rows[r][c].second, this, &hints);
             connect(b, &QPushButton::clicked, this, [this, key]() { m_ctx->pressKey(key); });
             words->addWidget(b, r, c);

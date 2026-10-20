@@ -323,15 +323,14 @@ void EffectsPanel::refreshRunning()
 EffectPreview::EffectPreview(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
 {
     setMinimumHeight(140);
-    auto *t = new QTimer(this);
-    connect(t, &QTimer::timeout, this, [this]() {
+    // Every frame of output, so the preview runs with the lights.
+    connect(ctx->engine, &Engine::frameDone, this, [this]() {
         if (!isVisible())
             return;
         const double cycle = std::max(0.05, m_effect.cycle);
         m_playhead = std::fmod(QDateTime::currentMSecsSinceEpoch() / 1000.0 / cycle, 1.0);
         update();
     });
-    t->start(40);
 }
 
 void EffectPreview::setEffect(const Effect &e)
@@ -742,9 +741,31 @@ EffectEditor::EffectEditor(AppContext *ctx, QWidget *parent) : QWidget(parent), 
                             "Effects sharing a spread change together when you edit it."));
     general->addWidget(muted(tr("Spread"), m_body), 1, 0);
     general->addWidget(m_spread, 1, 1, 1, 3);
+    // Which way it runs over the selection matrix: across, down, or both (diagonally).
+    m_axisX = new QCheckBox(QStringLiteral("X"), m_body);
+    m_axisY = new QCheckBox(QStringLiteral("Y"), m_body);
+    m_axisX->setToolTip(tr("The phase runs along the selection matrix's X"));
+    m_axisY->setToolTip(tr("The phase runs along its Y. With X too, it runs diagonally."));
+    auto *axes = new QHBoxLayout;
+    axes->addWidget(m_axisX);
+    axes->addWidget(m_axisY);
+    general->addWidget(muted(tr("Runs"), m_body), 1, 4);
+    general->addLayout(axes, 1, 5, 1, 2);
     auto *hint = muted(tr("A spread on the selection when you run it, or on a blueprint line, lays it out instead."), m_body);
     hint->setWordWrap(true);
-    general->addWidget(hint, 1, 4, 1, 5);
+    general->addWidget(hint, 1, 7, 1, 2);
+    connect(m_axisX, &QCheckBox::toggled, this, [this](bool on) {
+        if (m_loading)
+            return;
+        m_effect.axisX = on;
+        commit();
+    });
+    connect(m_axisY, &QCheckBox::toggled, this, [this](bool on) {
+        if (m_loading)
+            return;
+        m_effect.axisY = on;
+        commit();
+    });
     general->setColumnStretch(1, 1);
     general->setColumnStretch(3, 1);
     bv->addLayout(general);
@@ -922,6 +943,8 @@ void EffectEditor::loadEffect()
     for (const RateMaster &rm : m_ctx->show->rateMasters())
         m_rateMaster->addItem(QStringLiteral("%1  %2  ·  %3").arg(rm.id).arg(rm.displayName(), rm.valueText()), rm.id);
     m_rateMaster->setCurrentIndex(std::clamp(m_effect.rateMaster, 0, RateMaster::kCount));
+    m_axisX->setChecked(m_effect.axisX);
+    m_axisY->setChecked(m_effect.axisY);
     m_layer = std::clamp(m_layer, 0, std::max(0, int(m_effect.layers.size()) - 1));
     m_loading = false;
     refreshLayers();

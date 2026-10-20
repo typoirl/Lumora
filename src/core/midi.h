@@ -57,12 +57,15 @@ struct MidiSource {
 struct MidiTarget {
     // Encoder: the nth encoder on the encoder bar, whatever it shows (Pan on Position, Dimmer on
     // Dimmer). EncoderPush: that encoder's ranges, as a right-click shows them.
-    enum Kind { ExecutorFader, ExecutorButton, GrandMaster, PageNext, PagePrev, ClearProgrammer, Blackout, Encoder, EncoderPush };
+    // RateMasterFader / RateMasterKey: a rate master's fader and its Learn (tap tempo) key.
+    enum Kind { ExecutorFader, ExecutorButton, GrandMaster, PageNext, PagePrev, ClearProgrammer, Blackout, Encoder, EncoderPush,
+                RateMasterFader, RateMasterKey };
     Kind kind = ExecutorFader;
     int page = 0;        // 0 = follow the current page
     int executor = 201;
     int button = 0;      // 0..2
     int encoder = 1;     // Encoder, EncoderPush: 1 = the first on the bar
+    int master = 1;      // RateMasterFader, RateMasterKey: rate master 1–10
 
     bool operator==(const MidiTarget &o) const;
     QString describe() const;

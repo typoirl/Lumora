@@ -1,0 +1,19 @@
+{
+  "name": "2-Cell Blinder",
+  "shortName": "Blinder",
+  "manufacturer": "Generic",
+  "categories": ["Blinder", "Dimmer"],
+  "matrix": { "pixelCount": [2, 1, 1] },
+  "templateChannels": {
+    "Dimmer $pixelKey": { "capability": { "type": "Intensity" } }
+  },
+  "modes": [
+    {
+      "name": "2-channel",
+      "shortName": "2ch",
+      "channels": [
+        { "insert": "matrixChannels", "repeatFor": "eachPixelABC", "channelOrder": "perPixel", "templateChannels": ["Dimmer $pixelKey"] }
+      ]
+    }
+  ]
+}

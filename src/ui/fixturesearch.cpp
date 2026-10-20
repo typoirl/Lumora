@@ -11,6 +11,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QLocale>
+#include <QTabBar>
 #include <QTimer>
 #include <QTreeWidget>
 #include <QVBoxLayout>
@@ -20,7 +21,8 @@
 namespace lumora {
 
 namespace {
-constexpr int kLibrary = -1;
+constexpr int kLibrary = -1;   // ready to patch: in the show, or in the shipped library
+constexpr int kBuiltIn = -3;   // the filter for the library Lumora ships with
 constexpr int kOnlineLimit = 250;   // rows per search: refine the search for more
 enum Role { TypeIdRole = Qt::UserRole, SourceRole, EntryRole };
 
@@ -39,13 +41,19 @@ FixtureSearch::FixtureSearch(AppContext *ctx, QWidget *parent)
     auto *v = new QVBoxLayout(this);
     v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(6);
+    m_tabs = new QTabBar(this);
+    m_tabs->setDocumentMode(true);
+    m_tabs->setExpanding(false);
+    m_tabs->addTab(tr("In Show"));
+    m_tabs->addTab(tr("All fixtures"));
+    v->addWidget(m_tabs);
     auto *row = new QHBoxLayout;
     m_search = new QLineEdit(this);
     m_search->setPlaceholderText(tr("Search every fixture: name or manufacturer"));
     m_search->setClearButtonEnabled(true);
     m_filter = new QComboBox(this);
     m_filter->addItem(tr("All sources"), -2);
-    m_filter->addItem(tr("In library"), kLibrary);
+    m_filter->addItem(tr("Built in"), kBuiltIn);
     for (int s = 0; s < FixtureSources::SourceCount; ++s)
         m_filter->addItem(FixtureSources::sourceName(s), s);
     row->addWidget(m_search, 1);
@@ -71,6 +79,26 @@ FixtureSearch::FixtureSearch(AppContext *ctx, QWidget *parent)
     connect(m_debounce, &QTimer::timeout, this, &FixtureSearch::populate);
     connect(m_search, &QLineEdit::textChanged, m_debounce, qOverload<>(&QTimer::start));
     connect(m_filter, &QComboBox::currentIndexChanged, this, &FixtureSearch::populate);
+    connect(m_tabs, &QTabBar::currentChanged, this, [this](int tab) {
+        m_filter->setVisible(tab == 1);
+        m_search->setPlaceholderText(tab == 0 ? tr("Search the fixtures in this show") : tr("Search every fixture: name or manufacturer"));
+        populate();
+    });
+    connect(m_tabs, &QTabBar::tabBarClicked, this, [this]() { m_tabPicked = true; });
+    // In Show, unless the show has no fixture types yet (a new show starts on All fixtures).
+    auto pickTab = [this]() {
+        if (!m_tabPicked)
+            m_tabs->setCurrentIndex(m_ctx->show->typeIdsInShow().isEmpty() ? 1 : 0);
+    };
+    connect(m_ctx->show, &Show::changed, this, [this, pickTab](int parts) {
+        if (!(parts & Show::PatchPart))
+            return;
+        pickTab();
+        if (m_tabs->currentIndex() == 0)
+            m_debounce->start();
+    });
+    pickTab();
+    m_filter->setVisible(m_tabs->currentIndex() == 1);
     connect(m_list, &QTreeWidget::currentItemChanged, this, &FixtureSearch::currentChanged);
     connect(m_src, &FixtureSources::indexChanged, this, &FixtureSearch::populate);
     connect(m_src, &FixtureSources::imported, this, [this](int source, int entry, const QString &typeId) {
@@ -80,14 +108,14 @@ FixtureSearch::FixtureSearch(AppContext *ctx, QWidget *parent)
             if (it->data(0, SourceRole).toInt() == source && it->data(0, EntryRole).toInt() == entry) {
                 it->setData(0, TypeIdRole, typeId);
                 it->setData(0, SourceRole, kLibrary);
-                it->setText(2, tr("In library"));
+                it->setText(2, tr("In show"));
                 it->setForeground(2, theme::live);
             }
         }
         if (source == m_pendingSource && entry == m_pendingEntry) {
             m_pendingSource = m_pendingEntry = -1;
             const FixtureSources::Entry &e = m_src->entries(source)[entry];
-            setStatus(tr("%1 %2 is in your library now").arg(e.manufacturer, e.name));
+            setStatus(tr("%1 %2 is downloaded: patch it to bring it into the show").arg(e.manufacturer, e.name));
             selectType(typeId);
             currentChanged();
         }
@@ -147,53 +175,79 @@ void FixtureSearch::populate()
     m_list->clear();
     QList<QTreeWidgetItem *> rows;
 
-    // Your library first.
-    if (filter == -2 || filter == kLibrary) {
-        QList<FixtureType> types = lib.all();
-        std::sort(types.begin(), types.end(), [](const FixtureType &a, const FixtureType &b) {
-            return QString::compare(a.manufacturer + a.name, b.manufacturer + b.name, Qt::CaseInsensitive) < 0;
-        });
-        for (const FixtureType &t : types) {
-            if (!matches(words, t.manufacturer + ' ' + t.name))
-                continue;
-            auto *it = new QTreeWidgetItem({t.name, t.manufacturer, tr("In library")});
-            it->setData(0, TypeIdRole, t.id);
-            it->setData(0, SourceRole, kLibrary);
-            it->setForeground(2, theme::live);
-            QStringList modes;
-            for (const FixtureMode &m : t.modes)
-                modes << QStringLiteral("%1 (%2 ch)").arg(m.name).arg(m.footprint);
-            it->setToolTip(0, modes.join('\n'));
-            rows << it;
-        }
-    }
-
-    // Then everything you could have, once there's something to search for.
+    const bool inShowTab = m_tabs->currentIndex() == 0;
+    const QStringList showIds = m_ctx->show->typeIdsInShow();
+    auto libraryRow = [&](const FixtureType &t, const QString &from) {
+        auto *it = new QTreeWidgetItem({t.name, t.manufacturer, from});
+        it->setData(0, TypeIdRole, t.id);
+        it->setData(0, SourceRole, kLibrary);
+        it->setForeground(2, theme::live);
+        QStringList modes;
+        for (const FixtureMode &m : t.modes)
+            modes << QStringLiteral("%1 (%2 ch)").arg(m.name).arg(m.footprint);
+        it->setToolTip(0, modes.join('\n'));
+        return it;
+    };
+    auto byName = [](const FixtureType &a, const FixtureType &b) {
+        return QString::compare(a.manufacturer + a.name, b.manufacturer + b.name, Qt::CaseInsensitive) < 0;
+    };
     int online = 0, more = 0, available = 0;
-    const bool searchOnline = filter >= 0 || (filter == -2 && m_search->text().trimmed().size() >= 2);
-    for (int s = 0; s < FixtureSources::SourceCount; ++s) {
-        if (filter != -2 && filter != s)
-            continue;
-        const QVector<FixtureSources::Entry> &entries = m_src->entries(s);
-        available += entries.size();
-        if (!searchOnline)
-            continue;
-        for (int i = 0; i < entries.size(); ++i) {
-            const FixtureSources::Entry &e = entries[i];
-            if (lib.find(e.typeId) || !matches(words, e.manufacturer + ' ' + e.name + ' ' + e.details))
-                continue;
-            if (online >= kOnlineLimit) {
-                ++more;
-                continue;
+    bool searchOnline = false;
+
+    if (inShowTab) {
+        // The types this show holds.
+        QList<FixtureType> types;
+        for (const QString &id : showIds)
+            if (const FixtureType *t = lib.find(id))
+                types << *t;
+        std::sort(types.begin(), types.end(), byName);
+        for (const FixtureType &t : types)
+            if (matches(words, t.manufacturer + ' ' + t.name))
+                rows << libraryRow(t, tr("In show"));
+    } else {
+        // Everything Lumora can get, once there's something to search for (or one source picked).
+        searchOnline = filter != -2 || m_search->text().trimmed().size() >= 2;
+        const QSet<QString> inShow(showIds.begin(), showIds.end());
+        if (filter == -2 || filter == kBuiltIn) {
+            QList<FixtureType> types = lib.shippedTypes();
+            available += types.size();
+            if (searchOnline) {
+                std::sort(types.begin(), types.end(), byName);
+                for (const FixtureType &t : types)
+                    if (matches(words, t.manufacturer + ' ' + t.name))
+                        rows << libraryRow(lib.isShowType(t.id) ? *lib.find(t.id) : t, inShow.contains(t.id) ? tr("In show") : tr("Built in"));
             }
-            auto *it = new QTreeWidgetItem({e.name, e.manufacturer, FixtureSources::sourceName(s)});
-            it->setData(0, SourceRole, s);
-            it->setData(0, EntryRole, i);
-            it->setToolTip(0, e.details.isEmpty() ? tr("Not downloaded yet: pick it to get it")
-                                                  : tr("%1\nNot downloaded yet: pick it to get it").arg(e.details));
-            it->setForeground(2, theme::muted);
-            rows << it;
-            ++online;
+        }
+        for (int s = 0; s < FixtureSources::SourceCount; ++s) {
+            if (filter != -2 && filter != s)
+                continue;
+            const QVector<FixtureSources::Entry> &entries = m_src->entries(s);
+            available += entries.size();
+            if (!searchOnline)
+                continue;
+            for (int i = 0; i < entries.size(); ++i) {
+                const FixtureSources::Entry &e = entries[i];
+                if (!matches(words, e.manufacturer + ' ' + e.name + ' ' + e.details))
+                    continue;
+                if (const FixtureType *t = lib.find(e.typeId)) {   // downloaded already: patch it as it is
+                    if (!lib.shippedTypes().isEmpty() && (filter == -2 || filter == kBuiltIn) && !lib.isShowType(t->id))
+                        continue;   // listed above as built in
+                    rows << libraryRow(*t, inShow.contains(t->id) ? tr("In show") : FixtureSources::sourceName(s));
+                    continue;
+                }
+                if (online >= kOnlineLimit) {
+                    ++more;
+                    continue;
+                }
+                auto *it = new QTreeWidgetItem({e.name, e.manufacturer, FixtureSources::sourceName(s)});
+                it->setData(0, SourceRole, s);
+                it->setData(0, EntryRole, i);
+                it->setToolTip(0, e.details.isEmpty() ? tr("Not downloaded yet: pick it to get it")
+                                                      : tr("%1\nNot downloaded yet: pick it to get it").arg(e.details));
+                it->setForeground(2, theme::muted);
+                rows << it;
+                ++online;
+            }
         }
     }
     for (QTreeWidgetItem *it : rows)
@@ -201,8 +255,13 @@ void FixtureSearch::populate()
     m_list->addTopLevelItems(rows);
     m_list->blockSignals(false);
 
-    if (!searchOnline && filter == -2)
-        setStatus(tr("Type to search %1 more fixtures on GDTF Share, the Open Fixture Library and QLC+.")
+    if (inShowTab && rows.isEmpty())
+        setStatus(showIds.isEmpty() ? tr("No fixture types in this show yet: find them under All fixtures.")
+                                    : tr("Nothing in this show matches."));
+    else if (inShowTab)
+        setStatus(QString());
+    else if (!searchOnline)
+        setStatus(tr("Type to search %1 fixtures: built in, GDTF Share, the Open Fixture Library and QLC+.")
                       .arg(QLocale().toString(available)));
     else if (more)
         setStatus(tr("%1 more match: add a word to narrow it down.").arg(more));

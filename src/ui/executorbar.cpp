@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "executorbar.h"
+#include "colorpicker.h"
 #include "cueview.h"
 
 #include "appcontext.h"
@@ -79,7 +80,11 @@ QSize ExecutorStrip::minimumSizeHint() const
     return {92, 220};
 }
 
-int ExecutorStrip::buttonCount() const { return 1; }   // every executor has one key (Go by default)
+int ExecutorStrip::buttonCount() const
+{
+    // Faders have three keys (Go, GoBack, Off unless changed); button and encoder executors one.
+    return kind() == ExecKind::Fader ? 3 : 1;
+}
 
 QRect ExecutorStrip::headerRect() const { return {kPad, kPad, width() - 2 * kPad, kHeaderH}; }
 
@@ -105,8 +110,12 @@ QRect ExecutorStrip::buttonRect(int i) const
     }
     case ExecKind::Fader: break;
     }
-    const int top = kPad + kHeaderH + 8;
-    return {kPad, top + i * (kButtonH + kButtonGap), width() - 2 * kPad, kButtonH};
+    // A fader's three keys: a little shorter, so the fader keeps its travel.
+    // When the strip is short (a set grid in a small window) the keys give way before the fader.
+    const int top = kPad + kHeaderH + 6;
+    const int gap = kButtonGap - 1;
+    const int h = std::clamp((height() - top - kPad - 10 - 40 - 2 * gap) / 3, 14, kButtonH - 4);
+    return {kPad, top + i * (h + gap), width() - 2 * kPad, h};
 }
 
 QRect ExecutorStrip::faderRect() const
@@ -123,7 +132,7 @@ QRect ExecutorStrip::faderRect() const
     case ExecKind::Fader: break;
     }
     const int top = buttonRect(buttonCount() - 1).bottom() + 10;
-    return {kPad, top, width() - 2 * kPad, height() - top - kPad};
+    return {kPad, top, width() - 2 * kPad, std::max(28, height() - top - kPad)};
 }
 
 QRect ExecutorStrip::trackRect() const
@@ -190,9 +199,11 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
     p.setBrush(theme::panel);
     p.drawRoundedRect(card, 8, 8);
 
-    // The sequence's appearance: a stripe along the top of the card.
-    if (seq && !seq->color.isEmpty()) {
-        const QColor sc(seq->color);
+    // The sequence's (or rate master's) appearance: a stripe along the top of the card.
+    const RateMaster *rateShown = e && e->rateMaster ? show->rateMaster(e->rateMaster) : nullptr;
+    const QString appearance = seq ? seq->color : rateShown ? rateShown->color : QString();
+    if (!appearance.isEmpty()) {
+        const QColor sc(appearance);
         p.setPen(Qt::NoPen);
         p.setBrush(sc);
         QPainterPath top;
@@ -292,7 +303,8 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
     const int nButtons = buttonCount();
     for (int i = 0; i < nButtons; ++i) {
         QRect b = buttonRect(i);
-        const ButtonFn fn = e ? e->buttons[i] : k == ExecKind::Encoder ? ButtonFn::Toggle : ButtonFn::Go;
+        static const ButtonFn faderKeys[3] = {ButtonFn::Go, ButtonFn::GoBack, ButtonFn::Off};
+        const ButtonFn fn = e ? e->buttons[i] : k == ExecKind::Encoder ? ButtonFn::Toggle : k == ExecKind::Fader ? faderKeys[i] : ButtonFn::Go;
         const bool lit = rate ? (i == 2 ? rate->frozen : e->buttonDown[i]) : e && executorButtonLit(*e, i);
         const bool down = m_pressed == i;
         p.setPen(QPen(lit ? theme::live : theme::line, 1));
@@ -366,7 +378,8 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
     const double fillH = (tr.height() - 4) * level;
     QRectF fill(tr.left() + 2, tr.bottom() - 2 - fillH, tr.width() - 4, fillH);
     p.setPen(Qt::NoPen);
-    p.setBrush(rate ? QColor(0x2c, 0x33, 0x3e) : !seq ? QColor(0x1d, 0x21, 0x28)
+    p.setBrush(rate ? (rate->color.isEmpty() ? QColor(0x2c, 0x33, 0x3e) : theme::mix(QColor(0x2c, 0x33, 0x3e), QColor(rate->color), 0.28))
+                    : !seq ? QColor(0x1d, 0x21, 0x28)
                     : seq->color.isEmpty() ? QColor(0x2c, 0x33, 0x3e) : theme::mix(QColor(0x2c, 0x33, 0x3e), QColor(seq->color), 0.28));
     p.drawRoundedRect(fill, 4, 4);
     if (glow > 0.001) {
@@ -572,6 +585,10 @@ void ExecutorStrip::mousePressEvent(QMouseEvent *ev)
         if (!words.isEmpty() && words[0].size() >= 2)
             for (const QString &v : verbs)
                 waiting = waiting || v.startsWith(words[0].toLower());
+        // Off (the O shortcut), On, Go, GoBack, Pause, Top or Goto, then a tap: that executor.
+        static const QStringList playback = {"off", "on", "go", "goback", "pause", "top", "goto"};
+        if (words.size() == 1 && playback.contains(words[0].toLower()))
+            waiting = true;
         if (region == Header || assigningFn || waiting) {
             const Executor *ex = show->executor(show->currentPage(), m_number);
             const Sequence *sq = ex ? show->sequence(ex->sequenceId) : nullptr;
@@ -722,6 +739,14 @@ void ExecutorStrip::contextMenuEvent(QContextMenuEvent *ev)
             }
         });
         menu.addAction(tr("Appearance…"), this, [this, show, seqId]() { editAppearance(this, show, seqId); });
+        menu.addSeparator();
+    } else if (ex && ex->rateMaster && show->rateMaster(ex->rateMaster)) {
+        const int rm = ex->rateMaster;
+        menu.addAction(tr("Appearance…"), this, [this, show, rm]() {
+            const RateMaster *m = show->rateMaster(rm);
+            if (const auto c = pickAppearanceColor(this, tr("Appearance · %1").arg(m->displayName()), m->color))
+                show->setAppearance(QStringLiteral("ratemaster"), rm, *c);
+        });
         menu.addSeparator();
     }
 
@@ -945,18 +970,30 @@ void ExecutorBar::syncSizes()
     }
     const int head = m_head->isHidden() ? 0 : 38;
     const int margins = m_mode == Mode::Learn ? 18 : 0;
+    if (fixedGrid()) {   // shrinks with the window; the executors scale down
+        int small = 0;
+        for (int r = 0; r < rowHeights.size(); ++r)
+            small += std::min(rowHeights[r], 96) + (r ? 8 : 0);
+        tallest = small;
+    }
     setMinimumHeight(tallest + head + margins + (m_mode == Mode::Learn ? 12 : 0));
+}
+
+bool ExecutorBar::fixedGrid() const
+{
+    // A grid size set in the window's options (wide and tall), rather than one that fits.
+    return m_mode == Mode::Panel && m_wide > 0 && m_tall > 1;
 }
 
 int ExecutorBar::rowEnd() const
 {
-    return (m_first / 100) * 100 + kExecutorsPerRow;   // 101–160, 201–260…
+    return (m_first / 100) * 100 + kExecutorsPerRow;   // 101–199, 201–299…
 }
 
 QSize ExecutorBar::gridSize() const
 {
     // Wide × tall; 0 fits as many as there's room for. One row by default, as wide as the
-    // Interface settings say.
+    // Config says.
     int wide = m_wide, tall = m_tall;
     if (wide <= 0 && tall == 1 && !m_fitWide)
         wide = m_ctx->executorCount();
@@ -982,12 +1019,16 @@ void ExecutorBar::rebuild()
             if (number > rowEnd())
                 break;
             auto *strip = new ExecutorStrip(m_ctx, number, this);
+            if (fixedGrid())   // a set grid follows the window: executors grow and shrink with it
+                strip->setMinimumSize(48, std::min(strip->minimumSizeHint().height(), 96));
             m_grid->addWidget(strip, r, c);
             m_strips << strip;
             ++n;
         }
-    for (int c = 0; c < g.width(); ++c)
-        m_grid->setColumnStretch(c, 1);
+    for (int c = 0; c < m_grid->columnCount(); ++c)
+        m_grid->setColumnStretch(c, c < g.width() ? 1 : 0);
+    for (int r = 0; r < m_grid->rowCount(); ++r)
+        m_grid->setRowStretch(r, r < g.height() && fixedGrid() ? 1 : 0);
     m_kinds.clear();
     if (m_head)
         syncSizes();
@@ -1054,13 +1095,13 @@ void ExecutorBar::buildOptions(QuickEditor *ed)
         rebuild();
     });
     // Executors are numbered by row: 101… buttons, 201… faders, 301… encoders, 401… any of them,
-    // up to 60 in a row (101–160).
+    // up to 99 in a row (101–199).
     ed->addSegmented(tr("Row"), {QStringLiteral("101"), QStringLiteral("201"), QStringLiteral("301"), QStringLiteral("401")},
                      m_first % 100 == 1 ? m_first / 100 - 1 : -1, [this](int i) {
                          m_first = (i + 1) * 100 + 1;
                          rebuild();
                      });
-    ed->addNumber(tr("First executor"), 101, 460, m_first, [this](int n) {
+    ed->addNumber(tr("First executor"), 101, 499, m_first, [this](int n) {
         if (n % 100 == 0 || n % 100 > kExecutorsPerRow)
             n = (n / 100) * 100 + 1;
         m_first = n;

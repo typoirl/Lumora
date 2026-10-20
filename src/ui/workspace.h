@@ -2,6 +2,7 @@
 #pragma once
 
 #include "paneloptions.h"
+#include "midi.h"
 #include "poolgrid.h"
 
 #include <QJsonArray>
@@ -107,6 +108,7 @@ private:
     QRect keyRect() const;
     QRect trackRect() const;
     void setFromY(int y);
+    MidiTarget target(bool key) const;   // this master's fader, or its Learn key, for MIDI
     AppContext *m_ctx = nullptr;
     int m_id = 1;
     bool m_dragging = false;

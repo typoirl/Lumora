@@ -27,6 +27,8 @@ public:
     void refresh();   // repaint if what it shows has changed (playbacks move values too)
     void turn(double delta);
     void setSlot(int n) { m_slot = n; }   // its place on the encoder bar, for MIDI (0: not on the bar)
+    QString attribute() const { return m_attr; }
+    QString valueText() const;   // as it shows it: degrees, percent, or the channel's own range
     void showRanges(const QPoint &global);   // the right-click menu: value, ranges, Default…
 
 protected:
@@ -143,9 +145,12 @@ private:
     bool m_main = true;
     bool m_hidden = false;
     Feature m_preferred = Feature::Dimmer;   // a window's chosen category
-    int m_perPage = 0;            // a window's own encoder count (0: Interface settings)
+    int m_perPage = 0;            // a window's own encoder count (0: Config)
     QWidget *m_body = nullptr;
-    QLabel *m_tucked = nullptr;
+    QWidget *m_tucked = nullptr;           // the strip left when the bar is tucked away
+    QLabel *m_tuckedSelection = nullptr;   // the selection, beside "Encoders" there
+    QString m_selText;
+    void showSelectionText();
     QToolButton *m_arrow = nullptr;
     QList<EncoderDial *> m_dials;   // the page's encoders, in order
     QStringList attributesFor(Feature f) const;

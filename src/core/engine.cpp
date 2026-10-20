@@ -20,6 +20,7 @@ Engine::Engine(Show *show, QObject *parent) : QObject(parent), m_show(show)
         if (dt > 0)
             m_fps = m_fps * 0.9 + (1.0 / dt) * 0.1;
         tick(dt);
+        emit frameDone();
     });
 }
 
@@ -203,6 +204,93 @@ void overlay(RawTable &out, const RawTable &src)
 }
 } // namespace
 
+RawTable Engine::fadedProgrammer(const RawTable &under, double dt)
+{
+    const RawTable target = m_show->programmerOutput();
+    const double dur = m_show->progFadeOn() ? m_show->progFadeTime() : 0.0;
+    if (dur <= 0.0 && m_progFades.isEmpty())
+        return target;   // the usual case: nothing fading
+    auto underValue = [&](int fid, const QString &a) {
+        const auto f = under.constFind(fid);
+        if (f != under.constEnd() && f->contains(a))
+            return f->value(a);
+        return isIntensity(a) ? 0.0 : m_show->defaultValue(fid, a);
+    };
+    auto step = [&](ProgFade &lf) {
+        lf.elapsed += dt;
+        const double p = lf.duration > 1e-9 ? std::clamp(lf.elapsed / lf.duration, 0.0, 1.0) : 1.0;
+        lf.shown = lf.from + (lf.to - lf.from) * p;
+        return p;
+    };
+    if (dur > 0.0 && !m_progFadeWasOn) {
+        // Switched on with values already programmed: they're on stage already, nothing to fade.
+        for (auto f = target.begin(); f != target.end(); ++f)
+            for (auto a = f->begin(); a != f->end(); ++a) {
+                ProgFade lf;
+                lf.from = lf.to = lf.shown = a.value();
+                lf.duration = dur;
+                lf.elapsed = dur;
+                m_progFades[f.key()].insert(a.key(), lf);
+            }
+    }
+    m_progFadeWasOn = dur > 0.0;
+    RawTable out;
+    // What's programmed: fade to it from what was on stage (or from where it had got to).
+    for (auto f = target.begin(); f != target.end(); ++f)
+        for (auto a = f->begin(); a != f->end(); ++a) {
+            QHash<QString, ProgFade> &fx = m_progFades[f.key()];
+            auto it = fx.find(a.key());
+            if (it == fx.end()) {
+                ProgFade lf;
+                lf.from = lf.shown = underValue(f.key(), a.key());
+                lf.to = a.value();
+                lf.duration = dur;
+                it = fx.insert(a.key(), lf);
+            } else if (it->releasing || std::fabs(it->to - a.value()) > 1e-6) {
+                it->from = it->shown;
+                it->to = a.value();
+                it->elapsed = 0;
+                it->duration = dur;
+                it->releasing = false;
+            }
+            step(*it);
+            out[f.key()][a.key()] = it->shown;
+        }
+    // What's been cleared: back to what's underneath, then gone.
+    for (auto f = m_progFades.begin(); f != m_progFades.end();) {
+        const auto t = target.constFind(f.key());
+        for (auto a = f->begin(); a != f->end();) {
+            if (t != target.constEnd() && t->contains(a.key())) {
+                ++a;
+                continue;
+            }
+            if (!a->releasing) {
+                a->releasing = true;
+                a->from = a->shown;
+                a->elapsed = 0;
+                a->duration = dur;
+            }
+            a->to = underValue(f.key(), a.key());   // follows the playbacks while it fades
+            if (step(*a) >= 1.0) {
+                a = f->erase(a);
+                continue;
+            }
+            out[f.key()][a.key()] = a->shown;
+            ++a;
+        }
+        if (f->isEmpty())
+            f = m_progFades.erase(f);
+        else
+            ++f;
+    }
+    // Programmer fade off: the programmer as it is, and nothing left over.
+    if (dur <= 0.0) {
+        m_progFades.clear();
+        return target;
+    }
+    return out;
+}
+
 double Engine::effectPhase(const QString &key, const EffectInstance &inst, double dt)
 {
     const Effect *e = m_show->effect(inst.effectId);
@@ -306,8 +394,8 @@ void Engine::render(double dt, QList<Executor *> execs)
     for (int i = 0; i < sources.size(); ++i)
         if (sources[i].level < int(SeqPriority::Ultra))
             merge(sources[i].lead->pb().current, i, sources[i].master, owner);
-    // 3. Programmer, then Ultra sequences over it.
-    overlay(out, m_show->programmerOutput());
+    // 3. Programmer (fading in and out with Programmer fade), then Ultra sequences over it.
+    overlay(out, fadedProgrammer(out, dt));
     for (int i = 0; i < sources.size(); ++i)
         if (sources[i].level == int(SeqPriority::Ultra))
             merge(sources[i].lead->pb().current, i, sources[i].master, owner);

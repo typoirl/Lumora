@@ -8,6 +8,7 @@
 
 #include <QJsonArray>
 #include <QObject>
+#include <QPoint>
 #include <QSet>
 
 #include <functional>
@@ -76,6 +77,9 @@ public:
     bool importFixtureFile(const QString &path, QString *error = nullptr, QString *typeId = nullptr);
     // Copies a type from the shipped library into the show (patching does this).
     void adoptType(const QString &typeId);
+    // The fixture types this show holds: patched, imported, downloaded or edited (not the
+    // library Lumora ships with, until something from it is patched).
+    QStringList typeIdsInShow() const;
     void removeFixture(int fid);
     // Gives fixtures new IDs (old -> new) all at once. Groups, presets, cues, defaults, effects
     // and the programmer follow. Fails, changing nothing, if a new ID is taken or used twice.
@@ -154,6 +158,20 @@ public:
     const ValueTable &programmerValues() const { return m_programmer; }
     void select(const QVector<int> &fids, SelectMode mode = SelectMode::Replace);
     void selectGroup(int id, SelectMode mode = SelectMode::Replace);
+    // ---- The selection matrix: where each selected fixture sits, X across and Y down. Selecting
+    // adds along X; nextY() starts a new row; a group with a layout keeps it.
+    QPoint gridPosition(int fid) const { return m_selGrid.value(fid); }
+    QVector<QPoint> selectionGrid(const QVector<int> &fids) const;   // positions for these (selected) fixtures
+    void nextY();
+    QPoint gridCursor() const { return m_gridCursor; }
+    void setGridCursor(const QPoint &at);              // Grid 2/1: where the next selected fixtures go
+    void placeInGrid(const QVector<int> &fids, const QPoint &at);   // along X from there (Fixture 5 Grid 3/2)
+    void fillGridArea(const QPoint &from, const QPoint &to);        // the selection, X then Y, inside the area
+    void setGridPosition(int fid, const QPoint &at);   // swaps with a fixture already there
+    // Moves these fixtures by an offset, keeping their shape; fixtures in the way take the
+    // cells they left. Nothing goes below X 0 or Y 0.
+    void moveInGrid(const QVector<int> &fids, const QPoint &offset);
+    void resetGrid();                                  // one row, in selection order
     void setAttribute(const QString &attribute, double value);              // for the selection
     void setAttribute(int fid, const QString &attribute, double value);
     // Relative, for encoders: delta is a share of the attribute's range (0.01 = 1%, or 5.4° of
@@ -219,7 +237,8 @@ public:
     // Which preset each tracked value came from at that cue (blueprint lines and preset-referenced
     // values); hard values are (0, 0).
     QMap<int, QHash<QString, PresetRef>> trackedPresets(const Sequence &s, int index) const;
-    QVector<int> blueprintFixtures(const BlueprintLine &line) const;
+    // The line's fixtures (with their places on the group's matrix layout, when asked).
+    QVector<int> blueprintFixtures(const BlueprintLine &line, QVector<QPoint> *grid = nullptr) const;
     // The cue's individual fade and delay times: its values' own, and those of blueprint lines
     // whose spread has a fade or delay range, laid out across the line's fixtures.
     TimingTable cueTiming(const Cue &cue) const;
@@ -282,6 +301,7 @@ public:
     bool assignRateMaster(int id, int page, int number);
     void tapRateMaster(int id);          // Learn: tap tempo
     void resetRateMaster(int id);        // 100% / 120 BPM / ×1
+    void pressRateMasterKey(int id);     // the key on its strip: tap (Learn) or Reset
     void toggleRateMasterFreeze(int id);
     // ---- Plots: fixtures and pool objects laid out on a sheet, with text and pictures ----
     const Plot *plot(int id) const;
@@ -336,6 +356,7 @@ public:
     int lastGoSequence() const { return m_lastGoSequence; }
     void goBack(Executor &e);
     void gotoCue(Executor &e, int index, bool useFade = true);
+    void gotoCue(Executor &e, int index, double fade);   // in this fade, for every value (no delay)
     // Off: with the sequence's off fade and delay unless `immediately` (a flash let go, a
     // fader pulled to zero).
     void off(Executor &e, bool immediately = false);
@@ -350,11 +371,23 @@ public:
     const Spread *spread(int id) const;
     void setSpread(const Spread &m);
     void deleteSpread(int id);
-    bool storeSpread(int id, const QString &name = QString());   // the active one into the pool
-    bool recallSpread(int id);                                   // a pool item onto the selection
-    // The spread on the programmer's selection (cleared with the selection).
-    const Spread &activeSpread() const { return m_activeSpread; }
-    void setActiveSpread(const Spread &m);
+    // The active spread on an axis into the pool (or the one in use, X first, when not given).
+    // axis -1: what's on (X and Y the same: one spread for both; different: X into id, Y into the
+    // next free slot after it, reported in *secondId).
+    bool storeSpread(int id, const QString &name = QString(), int axis = -1, int *secondId = nullptr);
+    bool recallSpread(int id);                                   // a pool item onto the selection, on its axis
+    // The spreads on the programmer's selection: one across (X), one down (Y), each switched on
+    // or off; they stack. Cleared with the selection.
+    const Spread &activeSpread() const { return m_activeSpread; }     // X
+    const Spread &activeSpreadY() const { return m_activeSpreadY; }
+    const Spread &activeSpread(Spread::Axis axis) const { return axis == Spread::Axis::Y ? m_activeSpreadY : m_activeSpread; }
+    void setActiveSpread(const Spread &m);   // into the slot of each axis it works on
+    void setActiveSpread(Spread::Axis axis, const Spread &m);   // into this axis's slot only
+    // storeSpread's axis: 0 the X slot, 1 the Y slot, 2 the X slot's settings working both ways.
+    bool spreadAxisOn(Spread::Axis axis) const { return axis == Spread::Axis::Y ? m_spreadYOn : m_spreadXOn; }
+    void setSpreadAxisOn(Spread::Axis axis, bool on);
+    const Spread *liveSpread(Spread::Axis axis) const;   // the one in use on that axis, or nullptr
+    QString activeSpreadSummary() const;                  // "Every 2 · Y: Blocks 2", or empty
     // The selection as values and effects see it: thinned by the active spread' interleave.
     QVector<int> workingSelection() const;
     // Individual fade or delay times on the selection's programmer values (all, one feature or
@@ -385,6 +418,14 @@ public:
     void setBlackout(bool on);
     bool highlight() const { return m_highlight; }
     void setHighlight(bool on);
+    // Programmer fade: while on, programmer changes fade in (and Clear fades them out) over this time.
+    bool progFadeOn() const { return m_progFadeOn; }
+    double progFadeTime() const { return m_progFadeTime; }
+    void setProgFade(bool on, double seconds = -1);   // seconds < 0: keep the time
+    // The fade (and delay) new cues get, in seconds (Show → Config).
+    double defaultCueFade() const { return m_defaultCueFade; }
+    double defaultCueDelay() const { return m_defaultCueDelay; }
+    void setDefaultCueTimes(double fade, double delay);
 
     // Engine writes its last merged output here so fades can start from what's on stage.
     void setLastOutput(const RawTable &t) { m_lastOutput = t; }
@@ -404,11 +445,53 @@ public:
     }
     void removeExtra(const QString &key) { m_extra.remove(key); }
 
+    // ---- Undo ------------------------------------------------------------
+    // A copy of the show's data. Cheap: Qt's containers share their data until one side changes.
+    // Restoring leaves what's running alone (playbacks, fader levels, page, masters); plots have
+    // their own undo, so they're not in it.
+    struct Snapshot {
+        FixtureLibrary library;
+        QString name;
+        QMap<int, Fixture> fixtures;
+        QMap<int, Group> groups;
+        QMap<int, QMap<int, Preset>> presets;
+        QMap<int, Sequence> sequences;
+        QMap<int, Effect> effects;
+        QMap<int, Shape> shapes;
+        QVector<EffectInstance> progEffects;
+        QMap<int, Executor> executors;
+        QVector<RateMaster> rateMasters;
+        QMap<int, Macro> macros;
+        QVector<int> selection;
+        RawTable parked;
+        ValueTable programmer;
+        ValueTable defaults;
+        QJsonObject extra;
+        QMap<int, QString> pageNames;
+        QMap<int, StoredView> views;
+        QMap<int, Spread> spreads;
+        Spread activeSpread, activeSpreadY;
+        bool spreadXOn = true, spreadYOn = true;
+        QHash<int, QPoint> selGrid;
+        QPoint gridCursor;
+        bool progFadeOn = false;
+        double progFadeTime = 2.0, cueFade = 2.0, cueDelay = 0.0;
+        // Nothing changed since o (as far as can be told without comparing contents: the
+        // containers still share their data).
+        bool sameData(const Snapshot &o) const;
+    };
+    Snapshot snapshot() const;
+    void restore(const Snapshot &s);
+    QMap<int, Plot> plotsSnapshot() const { return m_plots; }
+    void restorePlots(const QMap<int, Plot> &plots);
+
 signals:
     void changed(lumora::Show::Parts parts);
     void message(const QString &text);   // short status feedback for the UI
     void viewRecallRequested(int id);
     void plotRequested(int id);   // "Plot 3": show it in the plot windows
+    void gotoRequested(int page, int executor);   // a Goto button, or "Goto Executor 201": pick a cue
+    void oscSendRequested(int line, const QString &message);   // SendOSC 1 "/address,i,5"
 
 private:
     void startFade(Executor &e, int targetIndex, double fade, double delay, bool individual = true);
@@ -460,6 +543,10 @@ private:
     QMap<int, StoredView> m_views;
     QMap<int, Spread> m_spreads;
     Spread m_activeSpread;
+    Spread m_activeSpreadY;
+    bool m_spreadXOn = true, m_spreadYOn = true;
+    QHash<int, QPoint> m_selGrid;   // the selection matrix
+    QPoint m_gridCursor;            // where the next selected fixture goes
     QString m_colorName;
     QHash<QString, double> m_colorSnapshot;
     QHash<QString, double> colorSnapshot() const;
@@ -468,6 +555,10 @@ private:
     double m_grandMaster = 1.0;
     bool m_blackout = false;
     bool m_highlight = false;
+    bool m_progFadeOn = false;
+    double m_progFadeTime = 2.0;
+    double m_defaultCueFade = 2.0;
+    double m_defaultCueDelay = 0.0;
     quint64 m_stamp = 0;
 };
 

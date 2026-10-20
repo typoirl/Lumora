@@ -9,6 +9,9 @@
 #include "cueview.h"
 #include "effectsui.h"
 #include "executorbar.h"
+#include "controlview.h"
+#include "helpview.h"
+#include "matrixui.h"
 #include "media.h"
 #include "midiview.h"
 #include "patchview.h"
@@ -26,6 +29,8 @@
 #include <algorithm>
 #include <QStyle>
 #include <QApplication>
+#include <QDialog>
+#include <QPainterPath>
 #include <QContextMenuEvent>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -159,6 +164,14 @@ void spreadFields(QuickEditor *ed, const Spread &start, std::function<void(const
         change(*m);
         apply(*m);
     };
+    // Which way it works on the selection matrix: X, Y, or both.
+    ed->addSegmented(QObject::tr("Works along"), {QStringLiteral("X"), QStringLiteral("Y"), QObject::tr("X and Y")},
+                     m->onX && m->onY ? 2 : m->onY ? 1 : 0, [set](int i) {
+                         set([i](Spread &x) {
+                             x.onX = i != 1;
+                             x.onY = i != 0;
+                         });
+                     });
     ed->addSection(QObject::tr("Which fixtures"));
     ed->addNumber(QObject::tr("Every Nth fixture (interleave)"), 1, 64, m->every, [set](int v) { set([v](Spread &x) { x.every = v; }); });
     ed->addNumber(QObject::tr("Starting at"), 1, 64, m->offset + 1, [set](int v) { set([v](Spread &x) { x.offset = v - 1; }); });
@@ -184,6 +197,8 @@ bool sameLayout(const Spread &a, const Spread &b)
     Spread x = a, y = b;
     x.id = y.id = 0;
     x.name = y.name = QString();
+    x.onX = y.onX = true;   // the selection keeps a copy per axis
+    x.onY = y.onY = false;
     return x.toJson() == y.toJson();
 }
 } // namespace
@@ -191,18 +206,20 @@ bool sameLayout(const Spread &a, const Spread &b)
 SpreadsPanel::SpreadsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Spreads"), parent), m_ctx(ctx)
 {
     Show *show = ctx->show;
-    // The active spread, in the header: tap to edit it.
+    // The spreads on the selection, in the header: tap to open the Spreads modifier. Clearing
+    // the selection resets them.
     m_active = new QToolButton(this);
-    m_active->setToolTip(tr("The spread on the selection. Tap to change it; Off clears it."));
-    auto *off = new QToolButton(this);
-    off->setText(tr("Off"));
+    m_active->setToolTip(tr("The spreads on the selection, across (X) and down (Y). Tap to change them in the Spreads modifier."));
     headerLayout()->addWidget(m_active);
-    headerLayout()->addWidget(off);
-    connect(off, &QToolButton::clicked, this, [this]() { m_ctx->run(QStringLiteral("Spread Off")); });
-    connect(m_active, &QToolButton::clicked, this, [this, show]() {
-        auto *ed = new QuickEditor(tr("Spread on the selection"), this);
-        spreadFields(ed, show->activeSpread(), [show](const Spread &m) { show->setActiveSpread(m); });
-        ed->popup(m_active->mapToGlobal(QPoint(0, m_active->height())));
+    connect(m_active, &QToolButton::clicked, this, [this]() {
+        auto *d = new QDialog(this, Qt::Tool);
+        d->setAttribute(Qt::WA_DeleteOnClose);
+        d->setWindowTitle(tr("Spreads modifier"));
+        auto *v = new QVBoxLayout(d);
+        v->setContentsMargins(0, 0, 0, 0);
+        v->addWidget(new SpreadModifierPanel(m_ctx, d));
+        d->resize(460, 420);
+        d->show();
     });
 
     connect(tiles(), &PoolTiles::tileClicked, this, [this, show](int id, bool occupied, Qt::KeyboardModifiers) {
@@ -217,9 +234,21 @@ SpreadsPanel::SpreadsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Spr
             emit m_ctx->status(tr("Empty spread slot: set the spread (tap the header), press Store, then tap it"));
             return;
         }
-        // Tap again to take it off.
-        const bool on = sameLayout(show->activeSpread(), *show->spread(id)) && !show->activeSpread().isDefault();
-        m_ctx->run(on ? QStringLiteral("Spread Off") : QStringLiteral("Spread %1").arg(id));
+        // Tap again to take it off (on its axes only: an X and a Y spread stack).
+        const Spread &sp = *show->spread(id);
+        auto onAxis = [&](Spread::Axis a) {
+            const Spread &active = show->activeSpread(a);
+            return sp.on(a) && sameLayout(active, sp) && !active.isDefault() && show->spreadAxisOn(a);
+        };
+        const bool on = (sp.onX && onAxis(Spread::Axis::X)) || (sp.onY && onAxis(Spread::Axis::Y));
+        if (!on) {
+            m_ctx->run(QStringLiteral("Spread %1").arg(id));
+        } else {
+            if (sp.onX)
+                m_ctx->run(QStringLiteral("Spread X Off"));
+            if (sp.onY)
+                m_ctx->run(QStringLiteral("Spread Y Off"));
+        }
     });
     connect(tiles(), &PoolTiles::tileMenu, this, [this, show](int id, bool occupied, const QPoint &pos) {
         auto *ed = new QuickEditor(tr("Spread %1").arg(id), this);
@@ -259,15 +288,20 @@ SpreadsPanel::SpreadsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Spr
 
 void SpreadsPanel::refresh()
 {
-    const Spread &active = m_ctx->show->activeSpread();
-    m_active->setText(tr("Active: %1").arg(active.summary()));
+    Show *show = m_ctx->show;
+    const QString summary = show->activeSpreadSummary();
+    m_active->setText(summary.isEmpty() ? tr("On the selection: none") : tr("On the selection: %1").arg(summary));
     QVector<PoolItem> items;
-    for (const Spread &m : m_ctx->show->spreads()) {
+    for (const Spread &m : show->spreads()) {
         PoolItem it;
         it.id = m.id;
-        it.label = m.name;
-        it.tag = theme::featureColor(Feature::Position);
-        it.active = !active.isDefault() && sameLayout(active, m);
+        it.label = m.name + (m.onX && m.onY ? QStringLiteral("  XY") : m.onY ? QStringLiteral("  Y") : QString());
+        it.tag = theme::featureColor(m.onY && !m.onX ? Feature::Beam : Feature::Position);
+        auto onAxis = [&](Spread::Axis a) {
+            const Spread &active = show->activeSpread(a);
+            return m.on(a) && !active.isDefault() && show->spreadAxisOn(a) && sameLayout(active, m);
+        };
+        it.active = onAxis(Spread::Axis::X) || onAxis(Spread::Axis::Y);
         it.tooltip = tr("Spread %1 \"%2\": %3").arg(m.id).arg(m.name, m.summary());
         items << it;
     }
@@ -340,12 +374,14 @@ void rateMasterMenu(AppContext *ctx, QWidget *parent, int id, const QPoint &pos)
         fn(m);
         show->setRateMaster(m);
     };
-    auto *ed = new QuickEditor(QObject::tr("Rate master %1").arg(id), parent);
+    auto *ed = new QuickEditor(QObject::tr("Master %1").arg(id), parent);
     ed->addNameField(QObject::tr("Name"), cur->name, [change](const QString &n) {
         change([n](RateMaster &m) { m.name = n.trimmed(); });
-    }, true, QObject::tr("Rate %1").arg(id));
+    }, true, QObject::tr("Master %1").arg(id));
     ed->addSegmented(QObject::tr("Show it as"), {QObject::tr("Fader"), QObject::tr("Button")}, cur->button ? 1 : 0,
                      [change](int i) { change([i](RateMaster &m) { m.button = i == 1; }); });
+    ed->addSegmented(QObject::tr("Its key"), {QObject::tr("Learn (tap tempo)"), QObject::tr("Reset")}, cur->keyLearns() ? 0 : 1,
+                     [change](int i) { change([i](RateMaster &m) { m.key = i == 0 ? RateMaster::Key::Learn : RateMaster::Key::Reset; }); });
     ed->addSegmented(QObject::tr("Mode"), {QObject::tr("Rate"), QObject::tr("BPM"), QObject::tr("Ratio")}, int(cur->mode),
                      [change](int i) {
                          change([i](RateMaster &m) {
@@ -372,6 +408,34 @@ void rateMasterMenu(AppContext *ctx, QWidget *parent, int id, const QPoint &pos)
                                                   : cur->mode == RateMode::Ratio ? QObject::tr("×1") : QObject::tr("100%")),
                   [show, id]() { show->resetRateMaster(id); });
     ed->addAction(cur->frozen ? QObject::tr("Unfreeze") : QObject::tr("Freeze"), [show, id]() { show->toggleRateMasterFreeze(id); });
+    {
+        // MIDI: the fader and the Learn key, like an executor's fader and button.
+        MidiManager *midi = ctx->midi;
+        MidiTarget fader, key;
+        fader.kind = MidiTarget::RateMasterFader;
+        key.kind = MidiTarget::RateMasterKey;
+        fader.master = key.master = id;
+        auto learn = [ctx, midi](const MidiTarget &t) {
+            midi->arm(t);
+            emit ctx->status(QObject::tr("Move a control on your MIDI device to map %1").arg(t.describe()));
+        };
+        ed->addSection(QObject::tr("MIDI"));
+        ed->addAction(QObject::tr("MIDI learn: fader"), [learn, fader]() { learn(fader); });
+        ed->addAction(QObject::tr("MIDI learn: button"), [learn, key]() { learn(key); });
+        if (!midi->bindingsFor(fader).isEmpty() || !midi->bindingsFor(key).isEmpty())
+            ed->addAction(QObject::tr("Forget MIDI mappings"), [midi, fader, key]() {
+                midi->removeBindingsFor(fader);
+                midi->removeBindingsFor(key);
+            });
+        ed->addSection(QString());
+    }
+    ed->addAction(QObject::tr("Appearance…"), [show, id, parent]() {
+        const RateMaster *m = show->rateMaster(id);
+        if (!m)
+            return;
+        if (const auto c = pickAppearanceColor(parent, QObject::tr("Appearance · %1").arg(m->displayName()), m->color))
+            show->setAppearance(QStringLiteral("ratemaster"), id, *c);
+    });
     ed->popup(pos);
 }
 constexpr int kRmPad = 6;
@@ -417,6 +481,16 @@ void RateMasterStrip::paintEvent(QPaintEvent *)
     p.setPen(QPen(live ? theme::mix(theme::line, theme::live, 0.35) : theme::line, 1));
     p.setBrush(theme::panel);
     p.drawRoundedRect(card, 8, 8);
+    if (!m->color.isEmpty()) {
+        // Its appearance: a stripe along the top, as on an executor.
+        QPainterPath top;
+        top.addRoundedRect(card.adjusted(1, 1, -1, 0), 7, 7);
+        QPainterPath clip;
+        clip.addRect(QRectF(card.left(), card.top(), card.width(), 4));
+        p.setPen(Qt::NoPen);
+        p.setBrush(QColor(m->color));
+        p.drawPath(top.intersected(clip));
+    }
 
     const QRect h(kRmPad, kRmPad, width() - 2 * kRmPad, kRmHeaderH);
     p.setFont(theme::uiFont(8));
@@ -433,16 +507,38 @@ void RateMasterStrip::paintEvent(QPaintEvent *)
     const QString sub = following ? tr("%1 · %n fx", nullptr, following).arg(m->valueText()) : m->valueText();
     p.drawText(line, Qt::AlignLeft | Qt::AlignVCenter, p.fontMetrics().elidedText(sub, Qt::ElideRight, line.width()));
 
-    // The Learn key: tap it in time.
+    // The key: Learn (tap it in time) on a BPM master, Reset on the others, unless set otherwise.
     const QRect k = keyRect();
     p.setPen(QPen(m_keyDown ? theme::live : theme::line, 1));
     p.setBrush(m_keyDown ? QColor(0x3a, 0x32, 0x20) : theme::raised);
     p.drawRoundedRect(QRectF(k).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
     p.setFont(theme::uiFont(m->button && k.height() > 44 ? 11 : 9, QFont::Medium));
     p.setPen(m_keyDown ? theme::live : theme::text);
-    p.drawText(k, Qt::AlignCenter, m->button && k.height() > 60 ? tr("Learn\n%1").arg(m->valueText()) : tr("Learn"));
+    drawFittedLines(p, k.adjusted(4, 0, -4, 0),
+                    m->button && k.height() > 60 ? QStringList{m->keyLearns() ? tr("Learn") : tr("Reset"), m->valueText()}
+                                                 : QStringList{m->keyLearns() ? tr("Learn") : tr("Reset")});
+    // Learn MIDI: what can be mapped is outlined; what's waiting for a control pulses. A dot marks
+    // what's mapped already.
+    MidiManager *midi = m_ctx->midi;
+    auto outline = [&](const QRect &r, bool key) {
+        const bool armed = midi->isArmed() && midi->armedTarget() == target(key);
+        if (!midi->bindingsFor(target(key)).isEmpty()) {
+            p.setPen(Qt::NoPen);
+            p.setBrush(theme::learn);
+            p.drawEllipse(QPointF(r.right() - 5, r.top() + 5), 2.5, 2.5);
+        }
+        if (!midi->learnMode() && !armed)
+            return;
+        QColor c = theme::learn;
+        c.setAlphaF(armed ? float(0.55 + 0.45 * std::sin(QDateTime::currentMSecsSinceEpoch() / 160.0)) : 0.45f);
+        p.setPen(QPen(c, armed ? 2 : 1, armed ? Qt::SolidLine : Qt::DashLine));
+        p.setBrush(Qt::NoBrush);
+        p.drawRoundedRect(QRectF(r).adjusted(-1.5, -1.5, 1.5, 1.5), 5, 5);
+    };
+    outline(k, true);
     if (m->button)
         return;
+    outline(trackRect().adjusted(-8, -2, 8, 2), false);
 
     const QRect track = trackRect();
     const double level = m->faderPosition();
@@ -452,7 +548,7 @@ void RateMasterStrip::paintEvent(QPaintEvent *)
     const double fillH = (track.height() - 4) * level;
     const QRectF fill(track.left() + 2, track.bottom() - 2 - fillH, track.width() - 4, fillH);
     p.setPen(Qt::NoPen);
-    p.setBrush(QColor(0x2c, 0x33, 0x3e));
+    p.setBrush(m->color.isEmpty() ? QColor(0x2c, 0x33, 0x3e) : theme::mix(QColor(0x2c, 0x33, 0x3e), QColor(m->color), 0.28));
     p.drawRoundedRect(fill, 4, 4);
     if (live) {
         QLinearGradient g(fill.bottomLeft(), fill.topLeft());
@@ -480,6 +576,14 @@ void RateMasterStrip::paintEvent(QPaintEvent *)
                p.fontMetrics().elidedText(m->frozen ? tr("Frozen") : m->valueText(), Qt::ElideRight, width() - 2 * kRmPad));
 }
 
+MidiTarget RateMasterStrip::target(bool key) const
+{
+    MidiTarget t;
+    t.kind = key ? MidiTarget::RateMasterKey : MidiTarget::RateMasterFader;
+    t.master = m_id;
+    return t;
+}
+
 void RateMasterStrip::setFromY(int y)
 {
     const QRect tr = trackRect();
@@ -494,12 +598,20 @@ void RateMasterStrip::mousePressEvent(QMouseEvent *ev)
     if (ev->button() != Qt::LeftButton)
         return;
     const RateMaster *m = m_ctx->show->rateMaster(m_id);
+    // Learn MIDI: the key or the fader waits for a control.
+    if (m_ctx->midi->learnMode() && m) {
+        const bool key = m->button || ev->pos().y() <= keyRect().bottom();
+        m_ctx->midi->arm(target(key));
+        emit m_ctx->status(tr("Move a control on your MIDI device to map %1").arg(target(key).describe()));
+        update();
+        return;
+    }
     // Assign / Label / … waiting for a target take the tap.
     if (m_ctx->tapTarget(QStringLiteral("RateMaster %1").arg(m_id), m ? m->name : QString()))
         return;
     if (keyRect().contains(ev->pos())) {
         m_keyDown = true;
-        m_ctx->show->tapRateMaster(m_id);
+        m_ctx->show->pressRateMasterKey(m_id);
         update();
         return;
     }
@@ -529,7 +641,7 @@ void RateMasterStrip::contextMenuEvent(QContextMenuEvent *ev)
 
 RateMastersPanel::RateMastersPanel(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
 {
-    setWindowTitle(tr("Rate masters"));
+    setWindowTitle(tr("Masters"));
     auto *h = new QHBoxLayout(this);
     h->setContentsMargins(4, 4, 4, 4);
     h->setSpacing(4);
@@ -543,6 +655,19 @@ RateMastersPanel::RateMastersPanel(AppContext *ctx, QWidget *parent) : QWidget(p
             for (RateMasterStrip *s : m_strips)
                 s->update();
     });
+    auto repaint = [this]() {
+        for (RateMasterStrip *s : m_strips)
+            s->update();
+    };
+    connect(ctx->midi, &MidiManager::learnStateChanged, this, repaint);
+    connect(ctx->midi, &MidiManager::bindingsChanged, this, repaint);
+    // The armed control pulses.
+    auto *pulse = new QTimer(this);
+    connect(pulse, &QTimer::timeout, this, [this, repaint]() {
+        if (isVisible() && m_ctx->midi->isArmed())
+            repaint();
+    });
+    pulse->start(80);
 }
 
 // ===========================================================================
@@ -635,15 +760,17 @@ PresetsPanel::PresetsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Pre
 {
     m_type = 4;   // Color until the view says otherwise
     for (int type = 1; type <= kPresetTypeAll; ++type) {
-        auto *b = new QToolButton(this);
-        b->setText(presetTypeName(type));
+        auto *b = new FittingToolButton(presetTypeName(type), this);
+        static const char *shortNames[] = {"", "Dim", "Pos", "Gobo", "Col", "Beam", "Foc", "Ctl", "All"};
+        if (type < int(std::size(shortNames)))
+            b->setShortText(tr(shortNames[type]));
         b->setCheckable(true);
         b->setAutoExclusive(true);
         b->setChecked(type == m_type);
         const QColor c = theme::presetTypeColor(type);
         b->setStyleSheet(QStringLiteral(
             "QToolButton { background: transparent; border: none; border-bottom: 2px solid transparent; border-radius: 0;"
-            " padding: 3px 7px; color: %1; }"
+            " padding: 3px 5px; color: %1; }"
             "QToolButton:hover { color: %2; }"
             "QToolButton:checked { color: %3; border-bottom-color: %3; background: transparent; }")
                              .arg(theme::muted.name(), theme::text.name(), c.name()));
@@ -785,7 +912,10 @@ const QList<PanelType> &panelTypes()
         {"patch", QObject::tr("Patch"), [](AppContext *c, QWidget *p) -> QWidget * { return new PatchView(c, p); }},
         {"outputs", QObject::tr("DMX outputs"), [](AppContext *c, QWidget *p) -> QWidget * { return new OutputView(c, p); }},
         {"encoders", QObject::tr("Encoders"), [](AppContext *c, QWidget *p) -> QWidget * { return new EncoderBar(c, p, false); }},
-        {"midi", QObject::tr("MIDI"), [](AppContext *c, QWidget *p) -> QWidget * { return new MidiView(c, p); }},
+        {"selectionmatrix", QObject::tr("Selection matrix"), [](AppContext *c, QWidget *p) -> QWidget * { return new SelectionMatrixPanel(c, p); }},
+        {"spreadmodifier", QObject::tr("Spreads modifier"), [](AppContext *c, QWidget *p) -> QWidget * { return new SpreadModifierPanel(c, p); }},
+        {"help", QObject::tr("Help"), [](AppContext *c, QWidget *p) -> QWidget * { return new HelpView(c, p); }},
+        {"midi", QObject::tr("Control (MIDI and OSC)"), [](AppContext *c, QWidget *p) -> QWidget * { return new ControlView(c, p); }},
         {"playbackmonitor", QObject::tr("Playback monitor"), [](AppContext *c, QWidget *p) -> QWidget * { return new PlaybackMonitor(c, p); }},
         {"history", QObject::tr("Command history"), [](AppContext *c, QWidget *p) -> QWidget * { return new HistoryView(c, p); }},
         {"keypad", QObject::tr("Command keys"), [](AppContext *c, QWidget *p) -> QWidget * { return new CommandKeypad(c, true, p); }},
@@ -797,7 +927,7 @@ const QList<PanelType> &panelTypes()
          }},
         {"executorpages", QObject::tr("Executor pages"), [](AppContext *c, QWidget *p) -> QWidget * { return new ExecutorPagesPanel(c, p); }},
         {"park", QObject::tr("Park"), [](AppContext *c, QWidget *p) -> QWidget * { return new ParkView(c, p); }},
-        {"ratemasters", QObject::tr("Rate masters"), [](AppContext *c, QWidget *p) -> QWidget * { return new RateMastersPanel(c, p); }},
+        {"ratemasters", QObject::tr("Masters"), [](AppContext *c, QWidget *p) -> QWidget * { return new RateMastersPanel(c, p); }},
     };
     std::sort(list.begin(), list.end(), [](const PanelType &a, const PanelType &b) {
         return QString::localeAwareCompare(a.title, b.title) < 0;

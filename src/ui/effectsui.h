@@ -144,6 +144,8 @@ private:
     QLabel *m_bpm = nullptr;
     QComboBox *m_rateMaster = nullptr;
     QComboBox *m_spread = nullptr;
+    QCheckBox *m_axisX = nullptr;   // runs across the selection matrix
+    QCheckBox *m_axisY = nullptr;   // runs down it
     QListWidget *m_layers = nullptr;
     QScrollArea *m_scroll = nullptr;
     QWidget *m_details = nullptr;

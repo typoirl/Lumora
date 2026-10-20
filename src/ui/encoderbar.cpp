@@ -171,6 +171,22 @@ void EncoderDial::paintEvent(QPaintEvent *)
     }
 }
 
+QString EncoderDial::valueText() const
+{
+    bool programmed = false;
+    QString setName;
+    int fid = 0;
+    const double raw = currentValue(&programmed, &setName, &fid);
+    if (!fid)
+        return QString();
+    if (!setName.isEmpty())
+        return setName;
+    if (isAngle(m_attr))
+        return QString::number(raw, 'f', 1) + QChar(0x00b0);
+    const ChannelDef *ch = m_ctx->show->channelOf(fid, m_attr);
+    return QString::number(ch ? ch->toPhysical(raw) : raw * 100.0, 'f', 1);
+}
+
 void EncoderDial::refresh()
 {
     bool programmed = false;
@@ -770,9 +786,20 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
     outer->addWidget(m_body);
     if (!m_main)
         outer->addStretch(1);
-    m_tucked = new QLabel(tr("Encoders"), this);
-    m_tucked->setProperty("role", "muted");
-    m_tucked->setContentsMargins(12, 0, 0, 0);
+    m_tucked = new QWidget(this);
+    {
+        auto *th = new QHBoxLayout(m_tucked);
+        th->setContentsMargins(12, 0, 40, 0);
+        th->setSpacing(16);
+        auto *word = new QLabel(tr("Encoders"), m_tucked);
+        word->setProperty("role", "muted");
+        m_tuckedSelection = new QLabel(m_tucked);
+        m_tuckedSelection->setProperty("role", "muted");
+        m_tuckedSelection->setMinimumWidth(10);
+        m_tuckedSelection->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+        th->addWidget(word);
+        th->addWidget(m_tuckedSelection, 1);
+    }
     m_tucked->hide();
     outer->addWidget(m_tucked);
     auto *h = new QHBoxLayout(m_body);
@@ -780,10 +807,14 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
     h->setSpacing(14);
 
     // Categories
+    // The selection sits just above the categories, at the bottom by the command line. It has the
+    // categories' width whatever it says (long text is cut short), so nothing moves.
     auto *left = new QVBoxLayout;
     left->setSpacing(6);
+    left->addStretch(1);
     m_selection = new QLabel(m_body);
     m_selection->setProperty("role", "muted");
+    m_selection->setFixedWidth(92 * 2 + 4);
     left->addWidget(m_selection);
     auto *grid = new QGridLayout;
     grid->setSpacing(4);
@@ -818,7 +849,6 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
         m_categories << b;
     }
     left->addLayout(grid);
-    left->addStretch(1);
     h->addLayout(left);
 
     auto *divider = new QFrame(m_body);
@@ -873,8 +903,7 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
     h->addLayout(right);
 
     // Follow playbacks: a running cue or fader moves the dials just like the programmer does.
-    auto *live = new QTimer(this);
-    connect(live, &QTimer::timeout, this, [this]() {
+    connect(ctx->engine, &Engine::frameDone, this, [this]() {   // every frame of output
         if (!isVisible())
             return;
         for (EncoderDial *d : m_dialArea->findChildren<EncoderDial *>())
@@ -884,7 +913,6 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
         for (ShaperView *v : m_dialArea->findChildren<ShaperView *>())
             v->refresh();
     });
-    live->start(100);
 
     connect(m_prev, &QToolButton::clicked, this, [this]() {
         m_page = std::max(0, m_page - 1);
@@ -936,6 +964,14 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
         // MIDI: encoders by their place on the bar, whatever it shows.
         connect(ctx->midi, &MidiManager::encoderTurned, this, &EncoderBar::midiTurn);
         connect(ctx->midi, &MidiManager::encoderPushed, this, &EncoderBar::midiPush);
+        // OSC turns them the same way (/encoder/1 3), and hears back what they are (/out/encoder/…).
+        connect(ctx->osc, &OscManager::encoderTurned, this, &EncoderBar::midiTurn);
+        ctx->osc->setEncoderSource([this]() {
+            QVector<QPair<QString, QString>> out;
+            for (EncoderDial *d : std::as_const(m_dials))
+                out.append({attributeLabel(d->attribute()), d->valueText()});
+            return out;
+        });
         connect(ctx->midi, &MidiManager::learnStateChanged, this, [this]() {
             for (EncoderDial *d : std::as_const(m_dials))
                 d->update();
@@ -954,12 +990,23 @@ void EncoderBar::setHidden(bool hidden)
     m_hidden = hidden;
     m_body->setVisible(!hidden);
     m_tucked->setVisible(hidden);
+    QTimer::singleShot(0, this, [this]() { showSelectionText(); });   // once the strip has its width
     setFixedHeight(hidden ? 20 : 156);
     m_arrow->setText(hidden ? QStringLiteral("▴") : QStringLiteral("▾"));
     m_arrow->setToolTip(hidden ? tr("Show the encoders") : tr("Hide the encoders"));
     if (m_ctx->uiValue("encoderBarHidden", false).toBool() != hidden)
         m_ctx->setUiValue("encoderBarHidden", hidden);
     placeArrow();
+}
+
+void EncoderBar::showSelectionText()
+{
+    m_selection->setText(m_selection->fontMetrics().elidedText(m_selText, Qt::ElideRight, m_selection->width()));
+    m_selection->setToolTip(m_selText);
+    if (m_tuckedSelection) {
+        m_tuckedSelection->setText(m_tuckedSelection->fontMetrics().elidedText(m_selText, Qt::ElideRight, std::max(10, m_tuckedSelection->width())));
+        m_tuckedSelection->setToolTip(m_selText);
+    }
 }
 
 void EncoderBar::placeArrow()
@@ -1006,7 +1053,7 @@ void EncoderBar::loadOptions(const QJsonObject &o)
 
 void EncoderBar::buildOptions(QuickEditor *editor)
 {
-    editor->addNumber(tr("Encoders per page (0: Interface settings)"), 0, 20, m_perPage, [this](int n) {
+    editor->addNumber(tr("Encoders per page (0: as in Config)"), 0, 20, m_perPage, [this](int n) {
         m_perPage = n;
         rebuild(true);
         panelStateChanged(this);
@@ -1047,6 +1094,7 @@ int EncoderBar::dialsPerPage() const
 
 void EncoderBar::resizeEvent(QResizeEvent *)
 {
+    showSelectionText();
     placeArrow();
     rebuild();   // only rebuilds when the number of encoders that fit changes
 }
@@ -1056,10 +1104,10 @@ void EncoderBar::rebuild(bool force)
     Show *show = m_ctx->show;
     const int count = int(show->selection().size());
     QString selText = count ? countOf(count, tr("fixture selected"), tr("fixtures selected")) : tr("Nothing selected");
-    if (count && !show->activeSpread().isDefault())
-        selText += tr(" · Spread: %1").arg(show->activeSpread().summary());
-    m_selection->setText(selText);
-    m_selection->setToolTip(selText);
+    if (count && !show->activeSpreadSummary().isEmpty())
+        selText += tr(" · Spread: %1").arg(show->activeSpreadSummary());
+    m_selText = selText;
+    showSelectionText();
 
     QSet<Feature> present;
     for (int fid : show->selection())

@@ -28,10 +28,13 @@
 #include "types.h"
 
 #include <QJsonObject>
+#include <QPoint>
 #include <functional>
 #include <QString>
 #include <QStringList>
 #include <QVector>
+
+#include <array>
 
 namespace lumora {
 
@@ -158,6 +161,10 @@ struct Effect {
     int wings = 1;               // mirror the spread in this many wings
     SpreadDirection direction = SpreadDirection::Forward;
     int rateMaster = 0;          // 0 = its own speed; 1–10 = runs at that rate master's speed
+    // Which way it runs over the selection matrix: across (X, columns), down (Y, rows), or both
+    // (diagonally: the phase adds up from both). Neither: every fixture together.
+    bool axisX = true;
+    bool axisY = false;
     // The spread from the pool that lays it out (phase, blocks, groups, wings, direction), so
     // effects share layouts and editing the spread changes them all. 0: its own layout above;
     // -1: not chosen yet (a new or older effect: Show::setEffect gives it the matching spread).
@@ -184,6 +191,13 @@ struct Spread {
     SpreadDirection direction = SpreadDirection::Forward;
     double phaseFrom = 0.0;     // degrees: the first fixture's phase…
     double phaseTo = 360.0;     // …and the spread to the last (360 = one full chase, 0 = together)
+    // Which way it works on the selection matrix: along X, along Y, or both (each on by itself).
+    // On the selection, an X spread and a Y spread stack: one for each axis.
+    enum class Axis { X, Y };   // the selection's two spread slots
+    bool onX = true;
+    bool onY = false;
+    bool on(Axis a) const { return a == Axis::Y ? onY : onX; }
+    static Spread none(Axis a) { Spread s; s.onX = a == Axis::X; s.onY = a == Axis::Y; return s; }
 
     bool isDefault() const;
     QString summary() const;                               // "Every 2 · Wings 2", or "Off"
@@ -193,6 +207,21 @@ struct Spread {
     QJsonObject toJson() const;
     static Spread fromJson(const QJsonObject &o);
 };
+
+// ---- The selection matrix ----------------------------------------------------------------
+// Fixtures' columns and rows on the matrix as indices (0 the first used column or row), with how
+// many there are. Without a grid: one row, in order.
+struct GridIndex {
+    QVector<int> col, row;
+    int cols = 1, rows = 1;
+};
+GridIndex gridIndex(const QVector<int> &fids, const QVector<QPoint> &grid);
+// The spreads' interleave on the matrix: X keeps columns, Y keeps rows; a fixture stays only if
+// both keep it. `grid` (parallel to fids, may be empty) comes back for what's kept.
+QVector<int> applySpreads(const Spread *x, const Spread *y, const QVector<int> &fids, QVector<QPoint> *grid);
+// 0 (first) .. 1 (last) per fixture, for individual times: across the columns by the X spread's
+// layout (or evenly), down the rows by the Y spread's; with both, halfway between.
+QVector<double> gridTimeFractions(const Spread *x, const Spread *y, const QVector<int> &fids, const QVector<QPoint> &grid);
 
 // A value along points spread evenly from 0 to 1: {0, 5} at 0.5 is 2.5; {0, 5, 0} at 0.5 is 5
 // ("0 Thru 5 Thru 0").
@@ -210,7 +239,12 @@ struct EffectInstance {
     double spread = -1.0;        // (shows from before spread) degrees, or < 0 to use the effect's
     // How the phase spreads across the fixtures. Without spread: the effect's own layout.
     bool hasLayout = false;
-    Spread layout;
+    Spread layout;               // across (X)
+    bool hasLayoutY = false;
+    Spread layoutY;              // down (Y)
+    // Where each fixture sits on the selection matrix (parallel to fixtures); empty: one row,
+    // in order.
+    QVector<QPoint> grid;
     // Stored in a preset, which fixtures it plays on, like the preset's values: Universal (any
     // fixture it's applied to), Global (fixtures of these types) or Selective (these fixtures).
     enum Scope { Universal = 0, Global = 1, Selective = 2 };
@@ -240,6 +274,13 @@ struct RateMaster {
     double value = 1.0;        // Rate, Ratio: multiplier; BPM: beats per minute
     bool frozen = false;       // Freeze: effects that follow it stand still
     bool button = false;       // in the Rate masters window: a Learn key instead of a fader
+    QString color;             // its appearance, like a sequence's ("#rrggbb"; empty: none)
+    // The key above its fader: Learn (tap tempo) or Reset (back to 100% / 120 BPM / ×1).
+    // Auto: Learn on a BPM master, Reset on the others.
+    enum class Key { Auto, Learn, Reset };
+    Key key = Key::Auto;
+    bool keyLearns() const { return key == Key::Learn || (key == Key::Auto && mode == RateMode::BPM); }
+    static RateMaster defaultFor(int id);   // a new show's: 1 BPM, 2 Ratio, the rest Rate
 
     QString displayName() const;
     QString valueText() const;           // "100%", "120 BPM", "×1/2"
@@ -278,6 +319,10 @@ RawAttr colorAttributes(const Show &show, int fid, double r, double g, double b,
 // green and blue for the rest; or hue, saturation and brightness on a virtual-color fixture.
 // `allowed`: only these attributes may be used (the rest of the color goes to RGB).
 RawAttr emitterMix(const FixtureMode *m, double r, double g, double b, const QStringList *allowed = nullptr);
+// The colors a fixture mode can make on its own, as linear RGB triples: its LED emitters (red,
+// green, blue, whites, amber, lime…), or for CMY and virtual-color fixtures the RGB primaries, or
+// its color wheel's slots and white. A fixture with none of these makes white only.
+QVector<std::array<double, 3>> emitterColors(const FixtureMode *m);
 
 // Ready-made effects to load into the pool.
 QVector<Effect> effectTemplates();

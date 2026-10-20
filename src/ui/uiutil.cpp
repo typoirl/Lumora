@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "uiutil.h"
 
+#include <QEvent>
+#include <QSignalBlocker>
+#include <QPainter>
+#include <QResizeEvent>
+
+#include <algorithm>
+
 #include "fixturesheet.h"
 #include "model.h"
 
@@ -99,6 +106,106 @@ bool TimeRangeDelegate::eventFilter(QObject *obj, QEvent *ev)
         }
     }
     return QStyledItemDelegate::eventFilter(obj, ev);
+}
+
+void drawFittedLines(QPainter &p, const QRect &r, const QStringList &lines)
+{
+    const QFontMetrics fm = p.fontMetrics();
+    const int lineH = fm.height();
+    int y = r.top() + (r.height() - lineH * int(lines.size())) / 2;
+    for (const QString &line : lines) {
+        const QRect row(r.left(), y, r.width(), lineH);
+        if (fm.horizontalAdvance(line) <= r.width())
+            p.drawText(row, Qt::AlignCenter, line);
+        else
+            p.drawText(row, Qt::AlignLeft | Qt::AlignVCenter, fm.elidedText(line, Qt::ElideRight, r.width()));
+        y += lineH;
+    }
+}
+
+FittingToolButton::FittingToolButton(const QString &text, QWidget *parent) : QToolButton(parent), m_full(text)
+{
+    setText(text);
+    setToolTip(text);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
+}
+
+void FittingToolButton::setFullText(const QString &text)
+{
+    m_full = text;
+    m_pad = -1;
+    setToolTip(text);
+    fit();
+    updateGeometry();
+}
+
+void FittingToolButton::setShortText(const QString &text)
+{
+    m_short = text;
+    fit();
+}
+
+int FittingToolButton::padding() const
+{
+    // Measured with the whole text: buttons have a minimum width, which a short text would hide.
+    if (m_pad < 0) {
+        auto *self = const_cast<FittingToolButton *>(this);
+        const QString shown = text();
+        const QSignalBlocker block(self);
+        self->QToolButton::setText(m_full);
+        m_pad = std::max(0, QToolButton::sizeHint().width() - fontMetrics().horizontalAdvance(m_full));
+        self->QToolButton::setText(shown);
+    }
+    return m_pad;
+}
+
+QSize FittingToolButton::sizeHint() const
+{
+    QSize s = QToolButton::sizeHint();
+    s.setWidth(padding() + fontMetrics().horizontalAdvance(m_full) + 2);   // a little slack for rounding
+    return s;
+}
+
+QSize FittingToolButton::minimumSizeHint() const
+{
+    QSize s = QToolButton::minimumSizeHint();
+    s.setWidth(std::min(sizeHint().width(), padding() + fontMetrics().horizontalAdvance(m_full.left(2) + QChar(0x2026))));
+    return s;
+}
+
+void FittingToolButton::fit()
+{
+    const QFontMetrics fm = fontMetrics();
+    const int room = std::max(0, width() - padding());
+    QString shown = fm.elidedText(m_full, Qt::ElideRight, room);
+    // Very tight: as many of its first letters as fit beat one letter and "…".
+    if (shown != m_full && shown.size() < 4 && !m_short.isEmpty() && fm.horizontalAdvance(m_short) <= room)
+        shown = m_short;
+    else if (shown != m_full && shown.size() < 4) {
+        const QString &from = m_short.isEmpty() ? m_full : m_short;
+        int n = 0;
+        while (n < from.size() && fm.horizontalAdvance(from.left(n + 1)) <= room)
+            ++n;
+        shown = from.left(n);
+    }
+    if (shown != text())
+        setText(shown);
+}
+
+void FittingToolButton::resizeEvent(QResizeEvent *ev)
+{
+    QToolButton::resizeEvent(ev);
+    fit();
+}
+
+void FittingToolButton::changeEvent(QEvent *ev)
+{
+    QToolButton::changeEvent(ev);
+    if (ev->type() == QEvent::FontChange || ev->type() == QEvent::StyleChange) {
+        m_pad = -1;
+        updateGeometry();   // its size hint changes with the style's padding
+        fit();
+    }
 }
 
 } // namespace lumora

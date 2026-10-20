@@ -396,6 +396,10 @@ QJsonObject Effect::toJson() const
                   {"spread", spread}, {"groups", groups}, {"blocks", blocks}, {"wings", wings}, {"direction", int(direction)}};
     if (rateMaster)
         o["rateMaster"] = rateMaster;
+    if (!axisX)
+        o["axisX"] = false;
+    if (axisY)
+        o["axisY"] = true;
     o["spreadRef"] = std::max(0, spreadId);
     return o;
 }
@@ -428,6 +432,8 @@ Effect Effect::fromJson(const QJsonObject &o)
     e.direction = SpreadDirection(std::clamp(o["direction"].toInt(), 0, 4));
     e.rateMaster = std::clamp(o["rateMaster"].toInt(0), 0, RateMaster::kCount);
     e.spreadId = o.contains("spreadRef") ? std::max(0, o["spreadRef"].toInt()) : -1;
+    e.axisX = o["axisX"].toBool(true);
+    e.axisY = o["axisY"].toBool(false);
     return e;
 }
 
@@ -470,7 +476,16 @@ RateMode rateModeFromName(const QString &n)
 
 QString RateMaster::displayName() const
 {
-    return name.isEmpty() ? QObject::tr("Rate %1").arg(id) : name;
+    return name.isEmpty() ? QObject::tr("Master %1").arg(id) : name;
+}
+
+RateMaster RateMaster::defaultFor(int id)
+{
+    RateMaster m;
+    m.id = id;
+    m.mode = id == 1 ? RateMode::BPM : id == 2 ? RateMode::Ratio : RateMode::Rate;
+    m.value = m.defaultValue();
+    return m;
 }
 
 QString RateMaster::valueText() const
@@ -567,6 +582,10 @@ QJsonObject RateMaster::toJson() const
         o["frozen"] = true;
     if (button)
         o["button"] = true;
+    if (!color.isEmpty())
+        o["color"] = color;
+    if (key != Key::Auto)
+        o["key"] = key == Key::Learn ? QStringLiteral("learn") : QStringLiteral("reset");
     return o;
 }
 
@@ -579,6 +598,9 @@ RateMaster RateMaster::fromJson(const QJsonObject &o)
     m.value = o["value"].toDouble(m.defaultValue());
     m.frozen = o["frozen"].toBool(false);
     m.button = o["button"].toBool(false);
+    m.color = o["color"].toString();
+    const QString k = o["key"].toString();
+    m.key = k == QLatin1String("learn") ? Key::Learn : k == QLatin1String("reset") ? Key::Reset : Key::Auto;
     return m;
 }
 
@@ -590,6 +612,14 @@ QJsonObject EffectInstance::toJson() const
     QJsonObject o{{"effect", effectId}, {"fixtures", f}, {"rate", rate}, {"size", size}, {"spread", spread}};
     if (hasLayout)
         o["layout"] = layout.toJson();
+    if (hasLayoutY)
+        o["layoutY"] = layoutY.toJson();
+    if (!grid.isEmpty()) {
+        QJsonArray g;
+        for (const QPoint &p : grid)
+            g.append(QJsonArray{p.x(), p.y()});
+        o["grid"] = g;
+    }
     if (scope != Universal)
         o["scope"] = scope;
     if (!types.isEmpty())
@@ -610,6 +640,16 @@ EffectInstance EffectInstance::fromJson(const QJsonObject &o)
         i.hasLayout = true;
         i.layout = Spread::fromJson(o["layout"].toObject());
     }
+    if (o.contains("layoutY")) {
+        i.hasLayoutY = true;
+        i.layoutY = Spread::fromJson(o["layoutY"].toObject());
+        i.layoutY.onX = false;
+        i.layoutY.onY = true;
+    }
+    for (const QJsonValue &v : o["grid"].toArray())
+        i.grid << QPoint(v.toArray().at(0).toInt(), v.toArray().at(1).toInt());
+    if (i.grid.size() != i.fixtures.size())
+        i.grid.clear();
     i.scope = std::clamp(o.value("scope").toInt(Universal), 0, 2);
     for (const QJsonValue &t : o.value("types").toArray())
         i.types << t.toString();
@@ -770,7 +810,9 @@ QString Spread::summary() const
         s << spreadDirectionName(direction);
     if (phaseFrom != 0.0 || phaseTo != 360.0)
         s << QObject::tr("Phase %1 to %2").arg(phaseFrom).arg(phaseTo);
-    return s.isEmpty() ? QObject::tr("Off") : s.join(QStringLiteral(" · "));
+    if (s.isEmpty())
+        return QObject::tr("Off");
+    return (onX && onY ? QStringLiteral("XY: ") : onY ? QStringLiteral("Y: ") : QString()) + s.join(QStringLiteral(" · "));
 }
 
 QVector<int> Spread::apply(const QVector<int> &fids) const
@@ -799,6 +841,72 @@ QVector<double> Spread::timeFractions(int count) const
         for (double &v : p)
             v /= top;
     return p;
+}
+
+GridIndex gridIndex(const QVector<int> &fids, const QVector<QPoint> &grid)
+{
+    GridIndex g;
+    const int n = int(fids.size());
+    g.col.resize(n);
+    g.row.resize(n);
+    if (grid.size() != n) {   // one row, in order
+        for (int i = 0; i < n; ++i)
+            g.col[i] = i;
+        g.cols = std::max(1, n);
+        return g;
+    }
+    // Columns and rows in use, in order: a gap in the matrix doesn't count as a step.
+    QVector<int> xs, ys;
+    for (const QPoint &p : grid) {
+        if (!xs.contains(p.x())) xs << p.x();
+        if (!ys.contains(p.y())) ys << p.y();
+    }
+    std::sort(xs.begin(), xs.end());
+    std::sort(ys.begin(), ys.end());
+    for (int i = 0; i < n; ++i) {
+        g.col[i] = int(xs.indexOf(grid[i].x()));
+        g.row[i] = int(ys.indexOf(grid[i].y()));
+    }
+    g.cols = std::max(1, int(xs.size()));
+    g.rows = std::max(1, int(ys.size()));
+    return g;
+}
+
+QVector<int> applySpreads(const Spread *x, const Spread *y, const QVector<int> &fids, QVector<QPoint> *grid)
+{
+    const bool thinX = x && x->every > 1, thinY = y && y->every > 1;
+    if (!thinX && !thinY)
+        return fids;
+    const QVector<QPoint> g = grid ? *grid : QVector<QPoint>();
+    const GridIndex gi = gridIndex(fids, g);
+    QVector<int> out;
+    QVector<QPoint> kept;
+    for (int i = 0; i < fids.size(); ++i) {
+        if (thinX && gi.col[i] % x->every != x->offset % x->every)
+            continue;
+        if (thinY && gi.row[i] % y->every != y->offset % y->every)
+            continue;
+        out << fids[i];
+        if (g.size() == fids.size())
+            kept << g[i];
+    }
+    if (grid)
+        *grid = kept;
+    return out;
+}
+
+QVector<double> gridTimeFractions(const Spread *x, const Spread *y, const QVector<int> &fids, const QVector<QPoint> &grid)
+{
+    const GridIndex gi = gridIndex(fids, grid);
+    const bool useY = y && !y->isDefault();
+    const QVector<double> fx = x ? x->timeFractions(gi.cols) : evenFractions(gi.cols);
+    const QVector<double> fy = y ? y->timeFractions(gi.rows) : evenFractions(gi.rows);
+    QVector<double> out(fids.size());
+    for (int i = 0; i < fids.size(); ++i) {
+        const double a = fx.value(gi.col[i]), b = fy.value(gi.row[i]);
+        out[i] = useY && gi.rows > 1 ? (gi.cols > 1 ? (a + b) / 2.0 : b) : a;
+    }
+    return out;
 }
 
 double alongPoints(const QVector<double> &points, double fraction)
@@ -831,6 +939,8 @@ QJsonObject Spread::toJson() const
     if (direction != SpreadDirection::Forward) o["direction"] = int(direction);
     if (phaseFrom != 0.0) o["phaseFrom"] = phaseFrom;
     if (phaseTo != 360.0) o["phaseTo"] = phaseTo;
+    if (!onX) o["x"] = false;
+    if (onY) o["y"] = true;
     return o;
 }
 
@@ -847,6 +957,12 @@ Spread Spread::fromJson(const QJsonObject &o)
     m.direction = SpreadDirection(std::clamp(o["direction"].toInt(), 0, 4));
     m.phaseFrom = std::clamp(o["phaseFrom"].toDouble(0.0), -720.0, 720.0);
     m.phaseTo = std::clamp(o["phaseTo"].toDouble(360.0), -720.0, 720.0);
+    m.onX = o["x"].toBool(true);
+    m.onY = o["y"].toBool(false);
+    if (o["axis"].toString() == QLatin1String("y")) {   // a build that had one axis per spread
+        m.onX = false;
+        m.onY = true;
+    }
     return m;
 }
 
@@ -937,6 +1053,39 @@ RawAttr emitterMix(const FixtureMode *m, double r, double g, double b, const QSt
     out.insert("ColorAdd_R", t[0]);
     out.insert("ColorAdd_G", t[1]);
     out.insert("ColorAdd_B", t[2]);
+    return out;
+}
+
+QVector<std::array<double, 3>> emitterColors(const FixtureMode *m)
+{
+    QVector<std::array<double, 3>> out;
+    if (!m)
+        return out;
+    // The same emitter colors the mix above works with.
+    static const QList<QPair<const char *, std::array<double, 3>>> emitters = {
+        {"ColorAdd_R", {1.0, 0.0, 0.0}}, {"ColorAdd_G", {0.0, 1.0, 0.0}}, {"ColorAdd_B", {0.0, 0.0, 1.0}},
+        {"ColorAdd_W", {1.0, 1.0, 1.0}}, {"ColorAdd_WW", {1.0, 0.75, 0.45}}, {"ColorAdd_CW", {0.85, 0.92, 1.0}},
+        {"ColorAdd_A", {1.0, 0.55, 0.0}}, {"ColorAdd_O", {1.0, 0.35, 0.0}}, {"ColorAdd_Y", {1.0, 1.0, 0.0}},
+        {"ColorAdd_L", {0.6, 1.0, 0.0}}, {"ColorAdd_Mint", {0.3, 1.0, 0.6}}, {"ColorAdd_C", {0.0, 1.0, 1.0}},
+        {"ColorAdd_I", {0.25, 0.0, 1.0}}, {"ColorAdd_P", {0.6, 0.0, 1.0}}, {"ColorAdd_M", {1.0, 0.0, 1.0}},
+    };
+    for (const auto &e : emitters)
+        if (m->channel(e.first))
+            out << e.second;
+    if (!out.isEmpty())
+        return out;
+    if (m->channel("ColorSub_C") || m->channel("HSB_Hue")) {
+        out << std::array<double, 3>{1.0, 0.0, 0.0} << std::array<double, 3>{0.0, 1.0, 0.0} << std::array<double, 3>{0.0, 0.0, 1.0};
+        return out;
+    }
+    for (const char *wheelAttr : {"Color1", "Color2"})
+        if (const ChannelDef *wheel = m->channel(wheelAttr))
+            for (const ChannelSet &s : wheel->sets) {
+                double sr, sg, sb;
+                if (slotColor(s.name, &sr, &sg, &sb))
+                    out << std::array<double, 3>{srgbToLinear(sr), srgbToLinear(sg), srgbToLinear(sb)};
+            }
+    out << std::array<double, 3>{1.0, 1.0, 1.0};   // open, or a white-only fixture
     return out;
 }
 
@@ -1054,9 +1203,25 @@ void evaluateEffect(const Show &show, const Effect &effect, const EffectInstance
     // The layout: the instance's (a blueprint line's spread, or the one on the selection), else
     // the effect's spread from the pool, else its own.
     const Spread *pool = effect.spreadId > 0 ? show.spread(effect.spreadId) : nullptr;
-    const QVector<double> positions = inst.hasLayout ? inst.layout.phases(n)
-                                      : pool && inst.spread < 0 ? pool->phases(n)
-                                                                 : spreadPositions(effect, n, inst.spread);
+    // Across the matrix's columns (X) and down its rows (Y): each axis laid out by its spread,
+    // the phases adding up when the effect runs both ways (diagonally).
+    const GridIndex gi = gridIndex(inst.fixtures, inst.grid);
+    auto along = [&](bool down, int count) {
+        if (down && inst.hasLayoutY)
+            return inst.layoutY.phases(count);
+        if (!down && inst.hasLayout)
+            return inst.layout.phases(count);
+        return pool && inst.spread < 0 ? pool->phases(count) : spreadPositions(effect, count, inst.spread);
+    };
+    const QVector<double> px = effect.axisX ? along(false, gi.cols) : QVector<double>();
+    const QVector<double> py = effect.axisY ? along(true, gi.rows) : QVector<double>();
+    QVector<double> positions(n, 0.0);
+    for (int i = 0; i < n; ++i)
+        // Both ways: the two phases added, across the effect's range (one sweep corner to corner).
+        positions[i] = effect.axisX && effect.axisY ? (px.value(gi.col[i]) + py.value(gi.row[i])) / 2.0
+                       : effect.axisX              ? px.value(gi.col[i])
+                       : effect.axisY              ? py.value(gi.row[i])
+                                                   : 0.0;
     const double size = std::max(0.0, inst.size);
     // Each fixture's attributes, once for all layers.
     QVector<QStringList> fixtureAttrs(n);

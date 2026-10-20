@@ -1,0 +1,39 @@
+{
+  "name": "Moving Head Wash",
+  "shortName": "Wash",
+  "manufacturer": "Generic",
+  "categories": ["Moving Head", "Color Changer"],
+  "availableChannels": {
+    "Pan": { "fineChannelAliases": ["Pan fine"], "defaultValue": "50%", "capability": { "type": "Pan", "angleStart": "0deg", "angleEnd": "540deg" } },
+    "Tilt": { "fineChannelAliases": ["Tilt fine"], "defaultValue": "50%", "capability": { "type": "Tilt", "angleStart": "0deg", "angleEnd": "270deg" } },
+    "Pan/Tilt Speed": { "capability": { "type": "PanTiltSpeed", "speedStart": "fast", "speedEnd": "slow" } },
+    "Dimmer": { "fineChannelAliases": ["Dimmer fine"], "capability": { "type": "Intensity" } },
+    "Shutter": {
+      "defaultValue": 0,
+      "highlightValue": 0,
+      "capabilities": [
+        { "dmxRange": [0, 31], "type": "ShutterStrobe", "shutterEffect": "Open" },
+        { "dmxRange": [32, 63], "type": "ShutterStrobe", "shutterEffect": "Closed" },
+        { "dmxRange": [64, 255], "type": "ShutterStrobe", "shutterEffect": "Strobe", "speedStart": "slow", "speedEnd": "fast" }
+      ]
+    },
+    "Red": { "capability": { "type": "ColorIntensity", "color": "Red" } },
+    "Green": { "capability": { "type": "ColorIntensity", "color": "Green" } },
+    "Blue": { "capability": { "type": "ColorIntensity", "color": "Blue" } },
+    "White": { "capability": { "type": "ColorIntensity", "color": "White" } },
+    "CTO": { "capability": { "type": "ColorTemperature", "colorTemperatureStart": "6500K", "colorTemperatureEnd": "3200K" } },
+    "Zoom": { "capability": { "type": "Zoom", "angleStart": "8deg", "angleEnd": "50deg" } }
+  },
+  "modes": [
+    {
+      "name": "15-channel",
+      "shortName": "15ch",
+      "channels": ["Pan", "Pan fine", "Tilt", "Tilt fine", "Pan/Tilt Speed", "Dimmer", "Dimmer fine", "Shutter", "Red", "Green", "Blue", "White", "CTO", "Zoom", null]
+    },
+    {
+      "name": "12-channel",
+      "shortName": "12ch",
+      "channels": ["Pan", "Tilt", "Dimmer", "Shutter", "Red", "Green", "Blue", "White", "CTO", "Zoom", "Pan fine", "Tilt fine"]
+    }
+  ]
+}

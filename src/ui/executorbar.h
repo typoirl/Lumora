@@ -16,7 +16,7 @@ class QLabel;
 namespace lumora {
 
 class AppContext;
-constexpr int kExecutorsPerRow = 60;   // 101–160, 201–260…
+constexpr int kExecutorsPerRow = 99;   // 101–199, 201–299…
 
 // One executor. What it looks like follows its number:
 //  * 201–299 faders: header (number, sequence, current cue), three function buttons and a fader
@@ -88,6 +88,7 @@ private:
     void syncSizes();
     QSize gridSize() const;
     int rowEnd() const;
+    bool fixedGrid() const;
     AppContext *m_ctx = nullptr;
     Mode m_mode;
     QGridLayout *m_grid = nullptr;

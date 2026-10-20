@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "appcontext.h"
+#include "colorpicker.h"
 #include "macrosui.h"
 #include "mainwindow.h"
 #include "cueview.h"
@@ -8,11 +9,14 @@
 #include "fixtureeditor.h"
 #include "fixturesearch.h"
 #include "patchview.h"
+#include "plotsui.h"
+#include "presetbuilder.h"
 #include "quickedit.h"
 #include "theme.h"
 #include "workspace.h"
 
 #include <QApplication>
+#include <QDialog>
 #include <QIcon>
 #include <QCommandLineParser>
 #include <QDir>
@@ -28,7 +32,7 @@ using namespace lumora;
 
 int main(int argc, char **argv)
 {
-    // Interface size (Layout → Interface settings) scales everything uniformly.
+    // Interface size (Show → Config) scales everything uniformly.
     {
         const int scale = QSettings(QSettings::NativeFormat, QSettings::UserScope, "Lumora", "Lumora").value("ui/scale", 100).toInt();
         if (scale != 100 && qEnvironmentVariableIsEmpty("QT_SCALE_FACTOR"))
@@ -37,7 +41,7 @@ int main(int argc, char **argv)
     QApplication app(argc, argv);
     QApplication::setOrganizationName("Lumora");
     QApplication::setApplicationName("Lumora");
-    QApplication::setApplicationVersion("a.7.2.1");
+    QApplication::setApplicationVersion("a.7.2.2");
     app.setWindowIcon(QIcon(QStringLiteral(":/icons/lumora.png")));
     theme::apply(app);
 
@@ -48,7 +52,7 @@ int main(int argc, char **argv)
     parser.addPositionalArgument("show", "Show file to open");
     QCommandLineOption demo("demo", "Start with the demo show");
     QCommandLineOption screenshot("screenshot", "Developer: save a window screenshot to <file> and quit", "file");
-    QCommandLineOption page("page", "Developer: page to show (views in rail order, then Patch, Outputs, MIDI)", "index", "0");
+    QCommandLineOption page("page", "Developer: page to show (views in rail order, then Patch, Outputs, Control)", "index", "0");
     QCommandLineOption script("run", "Developer: run command lines (separated by ;) after startup", "commands");
     QCommandLineOption learn("learn-preview", "Developer: start in MIDI learn mode with executor 202's fader armed");
     QCommandLineOption keypad("keypad", "Developer: open the command keypad");
@@ -83,11 +87,22 @@ int main(int argc, char **argv)
             QSettings().setValue("network/outputs", QJsonDocument(ctx.outputs->toJson()).toJson(QJsonDocument::Compact));
         });
     }
+    // OSC is network setup too: its lines (ports, addresses, prefixes) stay on this computer.
+    {
+        const QByteArray saved = QSettings().value("network/osc").toByteArray();
+        if (!saved.isEmpty())
+            ctx.osc->fromJson(QJsonDocument::fromJson(saved).object());
+        auto save = [&ctx]() { QSettings().setValue("network/osc", QJsonDocument(ctx.osc->toJson()).toJson(QJsonDocument::Compact)); };
+        QObject::connect(ctx.osc, &OscManager::linesChanged, &ctx, save);
+        QObject::connect(ctx.osc, &OscManager::statusChanged, &ctx, save);
+    }
 
     MainWindow window(&ctx);
     window.setDeveloperRun(qEnvironmentVariableIsSet("LUMORA_SCREEN_SHOT") || parser.isSet(screenshot) || parser.isSet(libraryShot) || parser.isSet(shapeShot)
                            || qEnvironmentVariableIsSet("LUMORA_PICKER_SHOT") || qEnvironmentVariableIsSet("LUMORA_QE_SHOT")
-                           || qEnvironmentVariableIsSet("LUMORA_EDITOR_SHOT") || qEnvironmentVariableIsSet("LUMORA_MACRO_SHOT"));
+                           || qEnvironmentVariableIsSet("LUMORA_EDITOR_SHOT") || qEnvironmentVariableIsSet("LUMORA_MACRO_SHOT")
+                           || qEnvironmentVariableIsSet("LUMORA_APPEARANCE_SHOT") || qEnvironmentVariableIsSet("LUMORA_LINK_SHOT")
+                           || qEnvironmentVariableIsSet("LUMORA_DIALOG_SHOT"));
     const QString lastShow = QSettings().value("lastShow").toString();
     if (!parser.positionalArguments().isEmpty())
         window.openShow(parser.positionalArguments().first());
@@ -96,7 +111,7 @@ int main(int argc, char **argv)
     else
         window.newDemoShow();
 
-    ctx.engine->start(40);
+    ctx.engine->start(44);   // DMX's full frame rate; live views repaint with every frame
     window.show();
     if (!parser.isSet(screenshot) && !parser.isSet(libraryShot) && !parser.isSet(shapeShot))
         window.restoreScreens();   // the other screens that were open last time
@@ -167,6 +182,19 @@ int main(int argc, char **argv)
         });
     }
 
+    if (qEnvironmentVariableIsSet("LUMORA_APPEARANCE_SHOT")) {
+        // Developer: the appearance (color) dialog
+        const QString file = qEnvironmentVariable("LUMORA_APPEARANCE_SHOT");
+        QTimer::singleShot(600, &window, [&window, file]() {
+            QTimer::singleShot(900, &window, [file]() {
+                if (QWidget *d = QApplication::activeModalWidget())
+                    d->grab().save(file);
+                QApplication::exit(0);
+            });
+            pickAppearanceColor(&window, QStringLiteral("Color of Chorus"), QStringLiteral("#e04050"));
+        });
+    }
+
     if (qEnvironmentVariableIsSet("LUMORA_MACRO_SHOT")) {
         // "macroId|file": the macro editor
         const QStringList parts = qEnvironmentVariable("LUMORA_MACRO_SHOT").split('|');
@@ -189,6 +217,33 @@ int main(int argc, char **argv)
         const QString file = parts.value(1);
         QTimer::singleShot(800, d, [d, file]() {
             d->grab().save(file);
+            QApplication::quit();
+        });
+    }
+
+    if (qEnvironmentVariableIsSet("LUMORA_OPEN_BUILDER"))   // developer: the preset builder (for LUMORA_DIALOG_SHOT)
+        QTimer::singleShot(500, &window, [&ctx, &window]() { openPresetBuilder(&ctx, &window); });
+
+    if (qEnvironmentVariableIsSet("LUMORA_DIALOG_SHOT")) {
+        // Developer: after --run, save whichever dialog is open (Goto, say) and quit.
+        const QString file = qEnvironmentVariable("LUMORA_DIALOG_SHOT");
+        QTimer::singleShot(qEnvironmentVariableIntValue("LUMORA_SHOT_DELAY") + 2500, &window, [file]() {
+            for (QWidget *w : QApplication::topLevelWidgets())
+                if (w->isVisible() && (qobject_cast<QDialog *>(w) || w->windowFlags().testFlag(Qt::Popup))) {
+                    w->grab().save(file);
+                    break;
+                }
+            QApplication::quit();
+        });
+    }
+
+    if (qEnvironmentVariableIsSet("LUMORA_LINK_SHOT")) {
+        // Developer: the picker for linking a plot item to a fixture or pool object
+        const QString file = qEnvironmentVariable("LUMORA_LINK_SHOT");
+        pickPoolObject(&ctx, &window, QPoint(100, 100), QStringLiteral("Target"), QStringLiteral("Group 2"), true, {});
+        QTimer::singleShot(900, &window, [file]() {
+            if (QWidget *w = QApplication::activePopupWidget())
+                w->grab().save(file);
             QApplication::quit();
         });
     }

@@ -10,7 +10,7 @@
 namespace lumora {
 
 // One thing on a plot: a fixture (or subfixture), a pool object (group, preset, sequence,
-// macro…), a line of text, or a picture (SVG or PNG): an icon, or the plot's background.
+// macro…), a line of text, or a picture (SVG or PNG). Everything is in front of the background.
 struct PlotItem {
     enum Kind { Fixture, Object, Text, Image };
     Kind kind = Fixture;
@@ -22,7 +22,6 @@ struct PlotItem {
     double fontSize = 14.0;      // Text
     QByteArray image;            // Image: the file's bytes (SVG or PNG), kept in the show
     QString imageName;           // the file or built-in icon it came from
-    bool background = false;     // Image: behind everything, not picked when tapping
     bool round = false;          // Fixture: drawn as a circle instead of a square
     int group = 0;               // items with the same group number move and are picked together (0: none)
     // Text, pictures and fixtures can stand for something else: tapped, they act like it.
@@ -42,6 +41,16 @@ struct Plot {
     double zoom = 1.0;           // 1 = 100%
     double panX = 0, panY = 0;   // the plot point at the window's top-left
     bool zoomLocked = false;     // zoom and position stay put (+, -, the wheel and dragging don't move it)
+    // Behind everything: a solid color filling the sheet, or a picture (an SVG ground plan, say)
+    // at a place on the plot. One or the other; setting one clears the other.
+    QString backgroundColor;
+    QByteArray backgroundImage;
+    QString backgroundName;
+    QRectF backgroundRect;
+    bool hasBackground() const { return !backgroundColor.isEmpty() || !backgroundImage.isEmpty(); }
+    void setBackgroundColor(const QString &color);
+    void setBackgroundImage(const QByteArray &bytes, const QString &name, const QRectF &rect);
+    void clearBackground();
 
     QString displayName() const;    // its name, or "Plot 3"
     QRectF bounds() const;          // everything on it

@@ -40,7 +40,7 @@ QString canonical(const QString &w)
         {"goto", "goto"}, {"off", "off"}, {"on", "on"}, {"pause", "pause"},
         {"assign", "assign"}, {"as", "assign"}, {"page", "page"}, {"build", "build"}, {"blueprint", "blueprint"}, {"bp", "blueprint"},
         {"fade", "fade"}, {"delay", "delay"}, {"time", "time"}, {"every", "every"}, {"interleave", "every"}, {"offset", "offset"},
-        {"highlight", "highlight"}, {"hl", "highlight"}, {"blackout", "blackout"}, {"bo", "blackout"},
+        {"highlight", "highlight"}, {"hl", "highlight"}, {"progfade", "progfade"}, {"programmerfade", "progfade"}, {"nexty", "nexty"}, {"grid", "grid"}, {"gri", "grid"}, {"sendosc", "sendosc"}, {"x", "x"}, {"y", "y"}, {"blackout", "blackout"}, {"bo", "blackout"},
         {"clear", "clear"}, {"clr", "clear"}, {"clearall", "clearall"},
         {"attribute", "attribute"}, {"attr", "attribute"},
         {"update", "update"}, {"upd", "update"}, {"remove", "remove"}, {"rem", "remove"},
@@ -633,6 +633,7 @@ private:
     CommandResult cmdLabel();
     CommandResult cmdSpread();
     CommandResult cmdAssign();
+    bool gridPoint(QPoint *out);
     CommandResult cmdAssignOther();
     std::optional<CommandResult> toPlot();   // "… At Plot N" after Assign or Store
     CommandResult cmdAssignFunction();
@@ -661,6 +662,21 @@ private:
     int pos = 0;
 };
 
+bool Parser::gridPoint(QPoint *out)
+{
+    // x/y or x y (a slash or a space between them), as on the selection matrix.
+    auto x = number();
+    if (!x)
+        return false;
+    if (peek().kind == Token::Option && peek().text.isEmpty())
+        ++pos;
+    auto y = number();
+    if (!y)
+        return false;
+    *out = QPoint(int(*x), int(*y));
+    return true;
+}
+
 CommandResult Parser::cmdSelectFixtures()
 {
     bool ok_ = false;
@@ -674,6 +690,21 @@ CommandResult Parser::cmdSelectFixtures()
     s->select(add, Show::SelectMode::Add);
     if (!remove.isEmpty())
         s->select(remove, Show::SelectMode::Remove);
+    // Fixture 5 Grid 3/2: placed on the selection matrix there, along X.
+    if (accept("grid")) {
+        QPoint at;
+        if (!gridPoint(&at))
+            return fail(QObject::tr("Usage: Fixture 5 Grid 3/2"));
+        s->placeInGrid(add, at);
+    }
+    // Fixture 1 Thru 4 NextY Fixture 5 Thru 8: the next ones one step down in Y.
+    if (accept("nexty")) {
+        s->nextY();
+        if (accept("fixture") || peek().kind == Token::Number)
+            return cmdSelectFixtures();
+        if (accept("group"))
+            return cmdSelectGroups();
+    }
     return trailingAt(countOf(int(s->selection().size()), QObject::tr("fixture selected"), QObject::tr("fixtures selected")));
 }
 
@@ -775,10 +806,20 @@ CommandResult Parser::cmdStore()
     if (accept("spread")) {
         auto n = number();
         auto name = string();
-        options();
+        const QStringList opts = options().join(' ').toLower().split(' ', Qt::SkipEmptyParts);
         if (!n || *n < 1)
-            return fail(QObject::tr("Usage: Store Spread 3 \"Name\""));
-        s->storeSpread(int(*n), name.value_or(QString()));
+            return fail(QObject::tr("Usage: Store Spread 3 \"Name\" (/x, /y or /both for one direction)"));
+        int axis = -1, second = 0;
+        if (opts.contains("x"))
+            axis = 0;
+        else if (opts.contains("y"))
+            axis = 1;
+        else if (opts.contains("both") || opts.contains("xy"))
+            axis = 2;
+        s->storeSpread(int(*n), name.value_or(QString()), axis, &second);
+        if (second)
+            return ok(QObject::tr("Spread %1 stored: %2; Spread %3: %4")
+                          .arg(int(*n)).arg(s->spread(int(*n))->summary()).arg(second).arg(s->spread(second)->summary()));
         return ok(QObject::tr("Spread %1 stored: %2").arg(int(*n)).arg(s->spread(int(*n))->summary()));
     }
     if (accept("view")) {
@@ -962,13 +1003,27 @@ CommandResult Parser::cmdSpread()
         const int id = int(*number());
         if (!s->recallSpread(id))
             return fail(QObject::tr("Spread %1 doesn't exist").arg(id));
-        return ok(QObject::tr("Spread %1: %2").arg(id).arg(s->activeSpread().summary()));
+        return ok(QObject::tr("Spread %1: %2").arg(id).arg(s->spread(id)->summary()));
     }
-    if (accept("off")) {
-        s->setActiveSpread(Spread());
-        return ok(QObject::tr("Spread off"));
+    // Spread Y …: the one along Y; Spread X … (or no axis): along X.
+    Spread::Axis axis = Spread::Axis::X;
+    bool named = false;
+    if (isWord("y") || isWord("x")) {
+        axis = t[pos].text == QLatin1String("y") ? Spread::Axis::Y : Spread::Axis::X;
+        named = true;
+        ++pos;
     }
-    Spread m = s->activeSpread();
+    if (accept("off")) {   // back to none (clearing the selection does this too)
+        s->setActiveSpread(axis, Spread::none(axis));
+        if (!named)   // Spread Off: both
+            s->setActiveSpread(Spread::Axis::Y, Spread::none(Spread::Axis::Y));
+        return ok(QObject::tr("Spread reset"));
+    }
+    if (accept("on")) {
+        s->setSpreadAxisOn(axis, true);
+        return ok(QObject::tr("Spread %1 on").arg(axis == Spread::Axis::Y ? QStringLiteral("Y") : QStringLiteral("X")));
+    }
+    Spread m = s->activeSpread(axis);
     bool any = false;
     while (!atEnd()) {
         auto count = [&](int *field, int minimum) {
@@ -1021,8 +1076,9 @@ CommandResult Parser::cmdSpread()
     }
     if (!any)
         return fail(QObject::tr("Usage: Spread 3, Spread Off, or Spread Wings 2 Blocks 2…"));
-    s->setActiveSpread(m);
-    return ok(QObject::tr("Spread: %1").arg(m.summary()));
+    s->setActiveSpread(axis, m);
+    s->setSpreadAxisOn(axis, true);
+    return ok(QObject::tr("Spread: %1").arg(s->activeSpread(axis).summary()));
 }
 
 CommandResult Parser::cmdLabel()
@@ -1372,9 +1428,12 @@ CommandResult Parser::cmdPlayback(const QString &verb)
 
 CommandResult Parser::cmdGoto()
 {
+    // Goto Cue 3 Executor 201 [Fade 2]; Goto Executor 201 alone shows its cue list to pick from.
     double cue = -1;
+    double fade = -1;
     Executor *e = nullptr;
-    for (int i = 0; i < 2; ++i) {
+    bool namedExecutor = false;
+    for (int i = 0; i < 3; ++i) {
         if (accept("cue")) {
             auto n = number();
             if (!n)
@@ -1382,18 +1441,36 @@ CommandResult Parser::cmdGoto()
             cue = *n;
         } else if (isWord("executor")) {
             e = resolveExecutorArg();
+            namedExecutor = true;
+        } else if (accept("fade") || accept("time")) {
+            auto n = number();
+            if (!n || *n < 0)
+                return fail(QObject::tr("Expected a fade time in seconds"));
+            fade = *n;
+        } else if (peek().kind == Token::Number && cue < 0) {
+            cue = *number();   // Goto 3: the cue
         }
     }
     if (!e)
         e = s->executorForSequence(s->selectedSequence());
-    if (!e || e->isEmpty() || cue < 0)
-        return fail(QObject::tr("Usage: Goto Cue 3 Executor 201"));
+    if (!e || e->isEmpty())
+        return fail(QObject::tr("Usage: Goto Cue 3 Executor 201 (Fade 2)"));
+    if (cue < 0) {
+        if (namedExecutor) {
+            emit s->gotoRequested(e->page, e->number);
+            return ok(QObject::tr("Goto: pick a cue"));
+        }
+        return fail(QObject::tr("Usage: Goto Cue 3 Executor 201 (Fade 2)"));
+    }
     const Sequence *sq = s->sequence(e->sequenceId);
     int idx = sq ? sq->indexOf(cue) : -1;
     if (idx < 0)
         return fail(QObject::tr("No such cue"));
-    s->gotoCue(*e, idx, true);
-    return ok(QObject::tr("Goto cue"));
+    if (fade >= 0)
+        s->gotoCue(*e, idx, fade);
+    else
+        s->gotoCue(*e, idx, true);
+    return ok(fade >= 0 ? QObject::tr("Goto cue %1 in %2 s").arg(cue).arg(fade) : QObject::tr("Goto cue %1").arg(cue));
 }
 
 CommandResult Parser::cmdExecutor()
@@ -1528,6 +1605,16 @@ CommandResult Parser::cmdCue()
         } else if (accept("note")) {
             auto t = string();
             copy.cues[idx].notes = t.value_or(QString());
+            changed = true;
+        } else if (accept("macro")) {   // Cue 3 Macro 2: runs as the cue starts; Cue 3 Macro Off
+            if (accept("off")) {
+                copy.cues[idx].macro = 0;
+            } else {
+                auto m = number();
+                if (!m || *m < 0)
+                    return fail(QObject::tr("Expected a macro number (or Off) after Macro"));
+                copy.cues[idx].macro = int(*m);
+            }
             changed = true;
         } else if (accept("trigger") || isWord("go") || isWord("wait") || isWord("follow")) {
             // Cue 3 Follow, Cue 3 Wait 5, Cue 3 Go (also Cue 3 Trigger Follow)
@@ -2142,7 +2229,8 @@ CommandResult Parser::run()
         QString what;
         if (accept("sequence")) what = "sequence";
         else if (accept("macro")) what = "macro";
-        else return fail(QObject::tr("Usage: Appearance Sequence 2 \"Red\", or Appearance Macro 3 \"#ff8800\""));
+        else if (accept("ratemaster")) what = "ratemaster";
+        else return fail(QObject::tr("Usage: Appearance Sequence 2 \"Red\", Appearance Macro 3 \"#ff8800\" or Appearance RateMaster 1 \"Blue\""));
         auto n = number();
         if (!n)
             return fail(QObject::tr("Expected a number"));
@@ -2207,6 +2295,52 @@ CommandResult Parser::run()
         s->setHighlight(!s->highlight());
         return ok(s->highlight() ? QObject::tr("Highlight on") : QObject::tr("Highlight off"));
     }
+    if (w == "sendosc") {
+        // SendOSC 1 "/Page1/Fader201,i,50": out on OSC line 1 (as set up on the Control screen).
+        auto line = number();
+        auto text = string();
+        if (!line || !text || !text->startsWith('/'))
+            return fail(QObject::tr("Usage: SendOSC 1 \"/address,i,50\""));
+        emit s->oscSendRequested(int(*line), *text);
+        return ok(QObject::tr("OSC sent on line %1: %2").arg(int(*line)).arg(*text));
+    }
+    if (w == "grid") {
+        // Grid 2/1: the next selected fixtures go there. Grid 0/0 Thru 3/1: the selection laid out
+        // inside that area, along X then the next Y.
+        QPoint a, b;
+        if (!gridPoint(&a))
+            return fail(QObject::tr("Usage: Grid 2/1, or Grid 0/0 Thru 3/1"));
+        if (accept("thru")) {
+            if (!gridPoint(&b))
+                return fail(QObject::tr("Usage: Grid 0/0 Thru 3/1"));
+            s->fillGridArea(a, b);
+            return ok(QObject::tr("Selection laid out from %1/%2 to %3/%4").arg(a.x()).arg(a.y()).arg(b.x()).arg(b.y()));
+        }
+        s->setGridCursor(a);
+        return ok(QObject::tr("Grid %1/%2").arg(a.x()).arg(a.y()));
+    }
+    if (w == "nexty") {   // the selection matrix: what's selected next starts a new row
+        s->nextY();
+        return ok(QObject::tr("Next row"));
+    }
+    if (w == "progfade") {
+        // ProgFade 3 (on, 3 s), ProgFade On / Off, ProgFade alone toggles it.
+        if (accept("off"))
+            s->setProgFade(false);
+        else if (accept("on"))
+            s->setProgFade(true);
+        else if (peek().kind == Token::Number) {
+            const double t = *number();
+            if (t < 0)
+                return fail(QObject::tr("Usage: ProgFade 3, ProgFade On, ProgFade Off"));
+            s->setProgFade(t > 0, t);
+        } else if (atEnd()) {
+            s->setProgFade(!s->progFadeOn());
+        } else {
+            return fail(QObject::tr("Usage: ProgFade 3, ProgFade On, ProgFade Off"));
+        }
+        return ok(s->progFadeOn() ? QObject::tr("Programmer fade on: %1 s").arg(s->progFadeTime()) : QObject::tr("Programmer fade off"));
+    }
     if (w == "blackout") {
         s->setBlackout(!s->blackout());
         return ok(s->blackout() ? QObject::tr("Blackout on") : QObject::tr("Blackout off"));
@@ -2250,7 +2384,7 @@ QStringList CommandLine::keywords()
             "Sequence", "Cue", "Executor", "Go", "GoBack", "Goto", "Off", "On", "Pause", "Assign",
             "Page", "Build", "Blueprint", "Fade", "Delay", "Time", "Every", "Offset", "Highlight", "Blackout",
             "Clear", "ClearAll", "Attribute", "Update", "Remove", "Copy", "Move", "Effect", "Rate", "RateMaster", "Size",
-            "Default", "View", "Button", "Encoder", "Fader", "Top", "Macro", "Plot", "Appearance", "SetVar"};
+            "Default", "View", "Button", "Encoder", "Fader", "Top", "Macro", "Plot", "Appearance", "SetVar", "ProgFade", "NextY", "Grid", "SendOSC", "Undo", "Redo"};
 }
 
 } // namespace lumora

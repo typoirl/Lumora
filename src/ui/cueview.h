@@ -61,6 +61,7 @@ private:
     void editSequence(const std::function<void(Sequence &)> &fn);
     QVector<int> selectedCueRows() const;
     void triggerMenu(int row, const QPoint &globalPos);   // Go, Wait…, Follow for the selected cues
+    void macroMenu(int row, const QPoint &globalPos);     // the macro the selected cues run
 
 protected:
     bool eventFilter(QObject *obj, QEvent *ev) override;

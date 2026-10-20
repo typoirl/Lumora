@@ -22,9 +22,14 @@ SHOTS = {
     'effects': (['--page', '2', '--edit-effect', '1'], {}, None),
     'effect-relative': (['--page', '2', '--edit-effect', '19'], {}, (700, 55, 1500, 735)),
     'playback': (['--page', '3', '--run', 'Go Executor 201'], {'LUMORA_SHOT_DELAY': '4000'}, None),
-    'patch': (['--page', '4'], {}, None),
-    'outputs': (['--page', '5'], {}, None),
-    'midi': (['--page', '6'], {}, (0, 0, 1500, 850)),
+    'patch': (['--page', '5'], {}, None),
+    'outputs': (['--page', '6'], {}, None),
+    'midi': (['--page', '7'], {}, (0, 0, 1500, 850)),
+    'osc': (['--page', '7'], {'LUMORA_CONTROL_TAB': '1'}, (0, 0, 1500, 850)),
+    'selection-matrix': (['--page', '0', '--add-window', 'selectionmatrix', '--run',
+                          'Fixture 1 Thru 4;NextY;Fixture 5 Thru 8;Spread X Every 2;Spread Y Every 2'], {}, (120, 310, 1500, 735)),
+    'spread-modifier': (['--page', '0', '--add-window', 'spreadmodifier', '--run',
+                         'Fixture 1 Thru 4;NextY;Fixture 5 Thru 8;Spread X Every 2;Spread Y Every 2'], {}, (120, 310, 1500, 735)),
     'store': (['--page', '0', '--store'], {}, None),
     'keypad': (['--page', '0', '--keypad'], {}, None),
     'encoders-position': (['--page', '0', '--run', 'Fixture 11 Thru 14;At Position.3'],
@@ -61,6 +66,7 @@ SHOTS = {
     'plot': (['--page', '4', '--run', 'Go Executor 201;Fixture 11 Thru 14;At 80;Color.1;Clear;Fixture 21.1 Thru 21.8;At 100;Color.9'],
              {'LUMORA_SHOT_DELAY': '3500'}, (120, 55, 1500, 735)),
     'macros': (['--page', '0', '--add-window', 'macros', '--run', 'Macro 2'], {}, (120, 310, 1500, 735)),
+    'help': (['--page', '0', '--add-window', 'help'], {}, (120, 310, 1500, 735)),
     'fixture-library': (['--library-shot', '{file}', '--library-search', '1:spot'], {}, None),
     'fixture-library-builtin': (['--library-shot', '{file}', '--library-search', '-1:'], {}, None),
 }
@@ -68,6 +74,9 @@ SPECIAL = {
     'fixture-editor': ({'LUMORA_EDITOR_SHOT': 'generic/moving-spot|{file}'}, ['--page', '0']),
     'preset-picker': ({'LUMORA_PICKER_SHOT': '{file}'}, ['--page', '0']),
     'macro-editor': ({'LUMORA_MACRO_SHOT': '2|{file}'}, ['--page', '0']),
+    'goto': ({'LUMORA_DIALOG_SHOT': '{file}'}, ['--page', '3', '--run', 'Go Executor 201;Go Executor 201;Goto Executor 201']),
+    'link-picker': ({'LUMORA_LINK_SHOT': '{file}'}, ['--page', '0']),
+    'preset-builder': ({'LUMORA_OPEN_BUILDER': '1', 'LUMORA_DIALOG_SHOT': '{file}'}, ['--page', '0']),
 }
 
 
@@ -75,10 +84,11 @@ def run(binary, args, env_extra, file):
     env = dict(os.environ)
     env['QT_QPA_PLATFORM'] = 'offscreen'
     env.setdefault('LUMORA_SHOT_DELAY', '2500')
+    env['LUMORA_WINDOW_SIZE'] = '1500x940'   # the size the crops are for
     env.update({k: v.replace('{file}', file) for k, v in env_extra.items()})
     own = any('{file}' in a for a in args)   # the option saves its own picture
     cmd = [binary, '--demo'] + [a.replace('{file}', file) for a in args]
-    if not own and not any(k in env_extra for k in ('LUMORA_EDITOR_SHOT', 'LUMORA_PICKER_SHOT', 'LUMORA_MACRO_SHOT')):
+    if not own and not any(k in env_extra for k in ('LUMORA_EDITOR_SHOT', 'LUMORA_PICKER_SHOT', 'LUMORA_MACRO_SHOT', 'LUMORA_DIALOG_SHOT', 'LUMORA_LINK_SHOT')):
         cmd += ['--screenshot', file]
     subprocess.run(cmd, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=90)
 

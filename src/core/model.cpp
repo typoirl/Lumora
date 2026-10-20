@@ -61,7 +61,14 @@ QJsonObject Group::toJson() const
     QJsonArray a;
     for (int f : fixtures)
         a.append(f);
-    return {{"id", id}, {"name", name}, {"fixtures", a}};
+    QJsonObject o{{"id", id}, {"name", name}, {"fixtures", a}};
+    if (!grid.isEmpty()) {
+        QJsonArray g;
+        for (const QPoint &p : grid)
+            g.append(QJsonArray{p.x(), p.y()});
+        o["grid"] = g;
+    }
+    return o;
 }
 
 Group Group::fromJson(const QJsonObject &o)
@@ -71,6 +78,10 @@ Group Group::fromJson(const QJsonObject &o)
     g.name = o["name"].toString();
     for (const QJsonValue &v : o["fixtures"].toArray())
         g.fixtures.append(v.toInt());
+    for (const QJsonValue &v : o["grid"].toArray())
+        g.grid << QPoint(v.toArray().at(0).toInt(), v.toArray().at(1).toInt());
+    if (g.grid.size() != g.fixtures.size())
+        g.grid.clear();
     return g;
 }
 
@@ -317,6 +328,8 @@ QJsonObject Cue::toJson() const
                   {"blueprints", rs}, {"values", valueTableToJson(values)}, {"effects", fx}};
     if (!notes.isEmpty())
         o["notes"] = notes;
+    if (macro > 0)
+        o["macro"] = macro;
     if (trigger != CueTrigger::Go)
         o["trigger"] = cueTriggerName(trigger);
     if (trigger == CueTrigger::Wait)
@@ -332,6 +345,7 @@ Cue Cue::fromJson(const QJsonObject &o)
     c.fade = o["fade"].toDouble(2.0);
     c.delay = o["delay"].toDouble(0.0);
     c.notes = o["notes"].toString();
+    c.macro = std::max(0, o["macro"].toInt(0));
     const QString trig = o.value("trigger").toString();
     c.trigger = trig == QLatin1String("Wait") ? CueTrigger::Wait : trig == QLatin1String("Follow") ? CueTrigger::Follow : CueTrigger::Go;
     c.wait = std::max(0.0, o.value("wait").toDouble(0.0));
@@ -434,6 +448,7 @@ const QList<QPair<ButtonFn, QString>> &buttonNames()
         {ButtonFn::Pause, "Pause"}, {ButtonFn::Flash, "Flash"}, {ButtonFn::Temp, "Temp"},
         {ButtonFn::Toggle, "Toggle"}, {ButtonFn::On, "On"}, {ButtonFn::Off, "Off"},
         {ButtonFn::Swop, "Swop"}, {ButtonFn::Select, "Select"}, {ButtonFn::Top, "Top"},
+        {ButtonFn::Goto, "Goto"},
     };
     return names;
 }

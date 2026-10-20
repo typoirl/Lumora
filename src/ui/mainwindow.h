@@ -100,7 +100,6 @@ private:
     EncoderBar *m_encoders = nullptr;
     CommandKeypad *m_keypad = nullptr;
     QLabel *m_showName = nullptr;
-    QLabel *m_fps = nullptr;
     QSlider *m_gm = nullptr;
     QToolButton *m_store = nullptr;
     QToolButton *m_learn = nullptr;

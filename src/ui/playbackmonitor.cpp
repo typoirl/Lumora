@@ -28,7 +28,7 @@ const QColor kNextRow(0x24, 0x2a, 0x33);
 
 QStringList PlaybackMonitor::allColumns()
 {
-    return {"cue", "label", "fade", "delay", "notes", "contents"};
+    return {"cue", "label", "fade", "delay", "trigger", "macro", "notes", "contents"};
 }
 
 QString PlaybackMonitor::columnTitle(const QString &id)
@@ -37,6 +37,8 @@ QString PlaybackMonitor::columnTitle(const QString &id)
     if (id == "label") return tr("Label");
     if (id == "fade") return tr("Fade");
     if (id == "delay") return tr("Delay");
+    if (id == "trigger") return tr("Trigger");
+    if (id == "macro") return tr("Macro");
     if (id == "notes") return tr("Notes");
     if (id == "contents") return tr("Contents");
     return id;
@@ -44,7 +46,7 @@ QString PlaybackMonitor::columnTitle(const QString &id)
 
 PlaybackMonitor::PlaybackMonitor(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
 {
-    m_columns = {"cue", "label", "fade", "delay", "notes"};
+    m_columns = {"cue", "label", "fade", "delay", "trigger", "macro", "notes"};
     auto *v = new QVBoxLayout(this);
     v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(4);
@@ -198,7 +200,12 @@ void PlaybackMonitor::rebuild()
                     text = formatSeconds(c.fade);
                 else if (id == "delay")
                     text = c.delay > 0 ? formatSeconds(c.delay) : QString();
-                else if (id == "notes")
+                else if (id == "trigger")
+                    text = c.triggerText();
+                else if (id == "macro") {
+                    const Macro *mc = c.macro ? show->macro(c.macro) : nullptr;
+                    text = !c.macro ? QString() : mc ? QStringLiteral("%1 %2").arg(c.macro).arg(mc->displayName()) : QString::number(c.macro);
+                } else if (id == "notes")
                     text = c.notes;
                 else if (id == "contents") {
                     QStringList parts;
@@ -219,7 +226,7 @@ void PlaybackMonitor::rebuild()
     for (int col = 0; col < m_columns.size(); ++col) {
         const QString &id = m_columns[col];
         m_table->setColumnWidth(col, id == "cue" ? 64 : id == "label" ? 220 : id == "notes" ? 260
-                                     : id == "contents" ? 180 : 70);
+                                     : id == "contents" ? 180 : id == "macro" ? 130 : id == "trigger" ? 84 : 70);
     }
     tick();
 }

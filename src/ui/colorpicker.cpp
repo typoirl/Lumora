@@ -9,6 +9,10 @@
 #include <QButtonGroup>
 #include <QDialog>
 #include <QDialogButtonBox>
+#include <QGuiApplication>
+#include <QRegularExpressionValidator>
+#include <QScreen>
+#include <QSpinBox>
 #include <QPushButton>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -18,6 +22,7 @@
 #include <QPainter>
 #include <QPainterPath>
 #include <QScrollArea>
+#include <QSet>
 #include <QStackedWidget>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -79,47 +84,63 @@ LinearRgb normalized(LinearRgb c)
 }
 } // namespace
 
-int applyColorToSelection(Show *show, const LinearRgb &color, const QColor &display, const QString &name)
+RawAttr colorValuesFor(const FixtureMode *m, const LinearRgb &color, const QColor &display, const QString &name)
 {
+    RawAttr out;
+    if (!m)
+        return out;
     const LinearRgb c = normalized(color);
-    int changed = 0;
-    for (int fid : show->selection()) {
-        const FixtureMode *m = show->fixtureMode(fid);
-        if (!m)
-            continue;
-        const RawAttr mix = emitterMix(m, c.r, c.g, c.b);
-        if (!mix.isEmpty()) {
-            // RGB(W), amber, lime and the rest of the emitters, or a virtual color's hue and saturation.
-            for (auto it = mix.begin(); it != mix.end(); ++it)
-                show->setAttribute(fid, it.key(), it.value());
-            ++changed;
-        } else if (m->channel("ColorSub_C")) {
-            show->setAttribute(fid, "ColorSub_C", 1 - c.r);
-            show->setAttribute(fid, "ColorSub_M", 1 - c.g);
-            show->setAttribute(fid, "ColorSub_Y", 1 - c.b);
-            ++changed;
-        } else if (const ChannelDef *wheel = m->channel("Color1")) {
-            double best = 1e9, value = -1;
-            for (const ChannelSet &s : wheel->sets) {
-                if (!name.isEmpty() && s.name.compare(name, Qt::CaseInsensitive) == 0) {
-                    value = (s.from + s.to) / 2.0;
-                    break;
-                }
-                const QColor sc = colorForName(s.name);
-                if (!sc.isValid())
-                    continue;
-                const double d = std::pow(sc.redF() - display.redF(), 2) + std::pow(sc.greenF() - display.greenF(), 2)
-                                 + std::pow(sc.blueF() - display.blueF(), 2);
-                if (d < best) {
-                    best = d;
-                    value = (s.from + s.to) / 2.0;
-                }
+    const RawAttr mix = emitterMix(m, c.r, c.g, c.b);
+    if (!mix.isEmpty())
+        return mix;   // RGB(W), amber, lime and the rest of the emitters, or a virtual color's hue and saturation
+    if (m->channel("ColorSub_C")) {
+        out.insert("ColorSub_C", 1 - c.r);
+        out.insert("ColorSub_M", 1 - c.g);
+        out.insert("ColorSub_Y", 1 - c.b);
+        return out;
+    }
+    if (const ChannelDef *wheel = m->channel("Color1")) {
+        double best = 1e9, value = -1;
+        for (const ChannelSet &s : wheel->sets) {
+            if (!name.isEmpty() && s.name.compare(name, Qt::CaseInsensitive) == 0) {
+                value = (s.from + s.to) / 2.0;
+                break;
             }
-            if (value >= 0) {
-                show->setAttribute(fid, "Color1", value);
-                ++changed;
+            const QColor sc = colorForName(s.name);
+            if (!sc.isValid())
+                continue;
+            const double d = std::pow(sc.redF() - display.redF(), 2) + std::pow(sc.greenF() - display.greenF(), 2)
+                             + std::pow(sc.blueF() - display.blueF(), 2);
+            if (d < best) {
+                best = d;
+                value = (s.from + s.to) / 2.0;
             }
         }
+        if (value >= 0)
+            out.insert("Color1", value);
+    }
+    return out;
+}
+
+RawAttr temperatureValuesFor(const FixtureMode *m, double kelvin)
+{
+    // Whites-only fixtures blend warm and cool; everything else mixes the blackbody color.
+    if (m && m->channel("ColorAdd_WW") && m->channel("ColorAdd_CW") && !m->channel("ColorAdd_R")) {
+        const double t = std::clamp((kelvin - 2700.0) / (6500.0 - 2700.0), 0.0, 1.0);
+        return {{"ColorAdd_WW", 1.0 - t}, {"ColorAdd_CW", t}};
+    }
+    const LinearRgb c = kelvinToLinear(kelvin);
+    return colorValuesFor(m, c, toDisplay(c), QString());
+}
+
+int applyColorToSelection(Show *show, const LinearRgb &color, const QColor &display, const QString &name)
+{
+    int changed = 0;
+    for (int fid : show->selection()) {
+        const RawAttr values = colorValuesFor(show->fixtureMode(fid), color, display, name);
+        for (auto it = values.begin(); it != values.end(); ++it)
+            show->setAttribute(fid, it.key(), it.value());
+        changed += !values.isEmpty();
     }
     return changed;
 }
@@ -533,6 +554,44 @@ void linearToXy(const LinearRgb &c, double *x, double *y)
     *y = sum > 1e-9 ? Y / sum : 0.3290;
 }
 
+// The convex hull of points (Andrew's monotone chain), counter-clockwise; duplicates removed.
+QVector<QPointF> convexHull(QVector<QPointF> pts)
+{
+    std::sort(pts.begin(), pts.end(), [](const QPointF &a, const QPointF &b) {
+        return a.x() < b.x() || (a.x() == b.x() && a.y() < b.y());
+    });
+    pts.erase(std::unique(pts.begin(), pts.end(), [](const QPointF &a, const QPointF &b) {
+        return std::abs(a.x() - b.x()) < 1e-4 && std::abs(a.y() - b.y()) < 1e-4;
+    }), pts.end());
+    if (pts.size() < 3)
+        return pts;
+    auto cross = [](const QPointF &o, const QPointF &a, const QPointF &b) {
+        return (a.x() - o.x()) * (b.y() - o.y()) - (a.y() - o.y()) * (b.x() - o.x());
+    };
+    QVector<QPointF> h(2 * pts.size());
+    int k = 0;
+    for (int i = 0; i < pts.size(); ++i) {
+        while (k >= 2 && cross(h[k - 2], h[k - 1], pts[i]) <= 1e-9) --k;
+        h[k++] = pts[i];
+    }
+    for (int i = int(pts.size()) - 2, t = k + 1; i >= 0; --i) {
+        while (k >= t && cross(h[k - 2], h[k - 1], pts[i]) <= 1e-9) --k;
+        h[k++] = pts[i];
+    }
+    h.resize(k - 1);
+    return h;
+}
+
+QPointF nearestOnSegment(const QPointF &p, const QPointF &a, const QPointF &b)
+{
+    const QPointF d = b - a;
+    const double len2 = d.x() * d.x() + d.y() * d.y();
+    if (len2 < 1e-12)
+        return a;
+    const double t = std::clamp(((p.x() - a.x()) * d.x() + (p.y() - a.y()) * d.y()) / len2, 0.0, 1.0);
+    return a + d * t;
+}
+
 QPolygonF locusPolygon()
 {
     QPolygonF poly;
@@ -546,6 +605,42 @@ CieDiagram::CieDiagram(QWidget *parent) : QWidget(parent)
 {
     setMinimumSize(200, 200);
     setCursor(Qt::CrossCursor);
+}
+
+void CieDiagram::setGamut(const QVector<QPointF> &xy, const QString &label)
+{
+    const QVector<QPointF> hull = convexHull(xy);
+    if (hull == m_gamut && label == m_gamutLabel)
+        return;
+    m_gamut = hull;
+    m_gamutLabel = label;
+    update();
+}
+
+QPointF CieDiagram::clampToGamut(const QPointF &xy) const
+{
+    QVector<QPointF> g = m_gamut;
+    if (g.isEmpty())
+        for (const auto &pt : kPrimaries)
+            g << QPointF(pt[0], pt[1]);
+    if (g.size() == 1)
+        return g.first();
+    if (g.size() >= 3 && QPolygonF(g).containsPoint(xy, Qt::OddEvenFill))
+        return xy;
+    // Outside: the nearest point on its outline (or on the line, for two emitters).
+    QPointF best = g.first();
+    double bestD = 1e9;
+    for (int i = 0; i < g.size(); ++i) {
+        if (g.size() == 2 && i == 1)
+            break;
+        const QPointF q = nearestOnSegment(xy, g[i], g[(i + 1) % g.size()]);
+        const double d = std::hypot(q.x() - xy.x(), q.y() - xy.y());
+        if (d < bestD) {
+            bestD = d;
+            best = q;
+        }
+    }
+    return best;
 }
 
 void CieDiagram::setMarker(const LinearRgb &c, bool valid)
@@ -611,14 +706,30 @@ void CieDiagram::paintEvent(QPaintEvent *)
     p.setBrush(Qt::NoBrush);
     p.drawPolyline(outline);
 
-    // Gamut triangle
-    QPolygonF tri;
-    for (const auto &pt : kPrimaries)
-        tri << toWidget(pt[0], pt[1]);
-    p.setPen(QPen(QColor(0, 0, 0, 160), 3));
-    p.drawPolygon(tri);
-    p.setPen(QPen(Qt::white, 1.5));
-    p.drawPolygon(tri);
+    // What the fixtures can make: their emitters' outline (a typical RGB LED's with nothing selected).
+    QPolygonF gamut;
+    if (m_gamut.isEmpty())
+        for (const auto &pt : kPrimaries)
+            gamut << toWidget(pt[0], pt[1]);
+    else
+        for (const QPointF &pt : m_gamut)
+            gamut << toWidget(pt.x(), pt.y());
+    if (gamut.size() >= 3) {
+        p.setPen(QPen(QColor(0, 0, 0, 160), 3));
+        p.drawPolygon(gamut);
+        p.setPen(QPen(Qt::white, 1.5));
+        p.drawPolygon(gamut);
+    } else if (gamut.size() == 2) {   // two emitters (warm and cool white, say): the line between them
+        p.setPen(QPen(QColor(0, 0, 0, 160), 6, Qt::SolidLine, Qt::RoundCap));
+        p.drawLine(gamut[0], gamut[1]);
+        p.setPen(QPen(Qt::white, 3, Qt::SolidLine, Qt::RoundCap));
+        p.drawLine(gamut[0], gamut[1]);
+    } else if (gamut.size() == 1) {   // one color only
+        p.setPen(QPen(Qt::black, 2));
+        p.setBrush(Qt::white);
+        p.drawEllipse(gamut[0], 5, 5);
+        p.setBrush(Qt::NoBrush);
+    }
 
     // White point
     const QPointF d65 = toWidget(0.3127, 0.3290);
@@ -639,7 +750,15 @@ void CieDiagram::paintEvent(QPaintEvent *)
 
     p.setFont(theme::uiFont(8));
     p.setPen(theme::muted);
-    p.drawText(QRectF(r.left(), r.top(), r.width(), 16), Qt::AlignRight | Qt::AlignTop, tr("LED gamut on CIE 1931"));
+    {
+        // Right-aligned when it fits; otherwise from its start, cut off at the end.
+        const QString label = m_gamutLabel.isEmpty() ? tr("Typical RGB LED gamut on CIE 1931") : tr("%1 on CIE 1931").arg(m_gamutLabel);
+        const QRectF lr(4, r.top(), width() - 8, 16);
+        if (p.fontMetrics().horizontalAdvance(label) <= lr.width())
+            p.drawText(lr, Qt::AlignRight | Qt::AlignTop, label);
+        else
+            p.drawText(lr, Qt::AlignLeft | Qt::AlignTop, p.fontMetrics().elidedText(label, Qt::ElideRight, int(lr.width())));
+    }
 }
 
 void CieDiagram::pickAt(const QPointF &pt)
@@ -647,8 +766,10 @@ void CieDiagram::pickAt(const QPointF &pt)
     const QRectF r = plotRect();
     double x = std::clamp((pt.x() - r.left()) / r.width() * kXMax, 0.0, kXMax);
     double y = std::clamp((r.bottom() - pt.y()) / r.height() * kYMax, 0.001, kYMax);
-    // Outside the triangle the fixture can't make the color: clamp to what it can.
-    LinearRgb c = normalized(xyToLinear(x, y));
+    // Outside the outline the fixtures can't make the color: pulled in to the nearest they can.
+    const QPointF in = clampToGamut(QPointF(x, y));
+    LinearRgb c = normalized(xyToLinear(in.x(), in.y()));
+    c = {std::max(0.0, c.r), std::max(0.0, c.g), std::max(0.0, c.b)};
     m_marker = c;
     m_hasMarker = true;
     update();
@@ -906,6 +1027,27 @@ void ColorPickerPanel::refreshMarkers()
     const bool ok = selectionColor(m_ctx->show, &c);
     m_cie->setMarker(c, ok);
     m_hueSat->setMarker(ok ? toDisplay(c) : QColor());
+    // The gamut: every color the selected fixtures' emitters can make between them.
+    Show *show = m_ctx->show;
+    QVector<QPointF> xy;
+    QStringList types;
+    QSet<const FixtureMode *> seen;
+    for (int fid : show->selection()) {
+        const FixtureMode *m = show->fixtureMode(fid);
+        if (!m || seen.contains(m))
+            continue;
+        seen.insert(m);
+        if (const FixtureType *t = show->fixtureType(fid); t && !types.contains(t->name))
+            types << t->name;
+        for (const auto &e : emitterColors(m)) {
+            double x, y;
+            linearToXy({e[0], e[1], e[2]}, &x, &y);
+            xy << QPointF(x, y);
+        }
+    }
+    m_cie->setGamut(xy, xy.isEmpty() ? QString()
+                        : types.size() == 1 ? tr("Gamut of %1").arg(types.first())
+                                            : tr("Gamut of %1 fixture types").arg(types.size()));
 }
 
 std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title, const QString &current)
@@ -913,45 +1055,99 @@ std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title
     QDialog d(parent);
     d.setWindowTitle(title);
     auto *v = new QVBoxLayout(&d);
+    v->setSpacing(10);
+
+    // The color as hex and as red, green and blue (0–255): type either, or pick below.
     auto *row = new QHBoxLayout;
+    row->setSpacing(6);
     auto *chip = new QLabel(&d);
-    chip->setFixedSize(36, 22);
-    auto *name = new QLabel(&d);
+    chip->setFixedSize(36, 26);
+    auto *hex = new QLineEdit(&d);
+    hex->setPlaceholderText(QObject::tr("No color"));
+    hex->setMaxLength(7);
+    hex->setFixedWidth(92);
+    hex->setValidator(new QRegularExpressionValidator(QRegularExpression(QStringLiteral("#?[0-9A-Fa-f]{0,6}")), hex));
+    hex->setToolTip(QObject::tr("Hex: #RRGGBB"));
     row->addWidget(chip);
-    row->addWidget(name, 1);
+    row->addWidget(new QLabel(QObject::tr("Hex"), &d));
+    row->addWidget(hex);
+    row->addSpacing(8);
+    QSpinBox *rgb[3];
+    const char *names[3] = {"R", "G", "B"};
+    for (int i = 0; i < 3; ++i) {
+        rgb[i] = new QSpinBox(&d);
+        rgb[i]->setRange(0, 255);
+        rgb[i]->setFixedWidth(64);
+        row->addWidget(new QLabel(QString::fromLatin1(names[i]), &d));
+        row->addWidget(rgb[i]);
+    }
+    row->addStretch(1);
     v->addLayout(row);
 
     QString chosen = current;
-    auto show = [&](const QString &c) {
+    bool updating = false;
+    auto *hueSat = new HueSatField(&d);
+    auto show = [&](const QString &c, QWidget *from) {
         chosen = c;
+        updating = true;
         chip->setStyleSheet(QStringLiteral("background: %1; border: 1px solid %2; border-radius: 4px;")
                                 .arg(c.isEmpty() ? QStringLiteral("transparent") : c, theme::line.name()));
-        name->setText(c.isEmpty() ? QObject::tr("No color") : c.toUpper());
+        const QColor col(c);
+        if (from != hex)
+            hex->setText(c.isEmpty() ? QString() : c.toUpper());
+        if (from != rgb[0] && from != rgb[1] && from != rgb[2]) {
+            rgb[0]->setValue(c.isEmpty() ? 0 : col.red());
+            rgb[1]->setValue(c.isEmpty() ? 0 : col.green());
+            rgb[2]->setValue(c.isEmpty() ? 0 : col.blue());
+        }
+        if (from != hueSat)
+            hueSat->setMarker(c.isEmpty() ? QColor() : col);
+        updating = false;
     };
-    show(current);
+    show(current, nullptr);
+    QObject::connect(hex, &QLineEdit::textEdited, &d, [&](const QString &t) {
+        QString h = t.trimmed();
+        if (!h.startsWith('#'))
+            h.prepend('#');
+        if (h.size() == 7 && QColor::isValidColorName(h))
+            show(h.toLower(), hex);
+        else if (h == QLatin1String("#"))
+            show(QString(), hex);
+    });
+    for (int i = 0; i < 3; ++i)
+        QObject::connect(rgb[i], &QSpinBox::valueChanged, &d, [&, i](int) {
+            if (updating)
+                return;
+            show(QColor(rgb[0]->value(), rgb[1]->value(), rgb[2]->value()).name(), rgb[i]);
+        });
 
+    // Ready-made colors, then any hue and saturation. Both a fixed height, so the dialog stays
+    // short enough for its buttons to be on screen.
     auto *grid = new SwatchGrid(&d);
     grid->setSwatches(standardColors());
+    grid->setFixedHeight(grid->heightForWidth(420));
     v->addWidget(grid);
-    auto *cie = new CieDiagram(&d);
-    cie->setMinimumHeight(260);
-    v->addWidget(cie, 1);
-    QObject::connect(grid, &SwatchGrid::picked, &d, [&](const Swatch &sw) { show(sw.color.name()); });
-    QObject::connect(cie, &CieDiagram::picked, &d, [&](const LinearRgb &c) {
-        cie->setMarker(c, true);
-        show(toDisplay(c).name());
-    });
+    hueSat->setFixedHeight(150);
+    v->addWidget(hueSat);
+    QObject::connect(grid, &SwatchGrid::picked, &d, [&](const Swatch &sw) { show(sw.color.name(), grid); });
+    QObject::connect(hueSat, &HueSatField::picked, &d, [&](const QColor &c) { show(c.name(), hueSat); });
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &d);
     QPushButton *none = buttons->addButton(QObject::tr("No color"), QDialogButtonBox::ResetRole);
     QObject::connect(none, &QPushButton::clicked, &d, [&]() {
-        show(QString());
+        show(QString(), nullptr);
         d.accept();
     });
     QObject::connect(buttons, &QDialogButtonBox::accepted, &d, &QDialog::accept);
     QObject::connect(buttons, &QDialogButtonBox::rejected, &d, &QDialog::reject);
     v->addWidget(buttons);
-    d.resize(420, 560);
+    d.setMinimumWidth(460);
+    d.adjustSize();
+    // Never taller than the screen it opens on.
+    if (const QScreen *screen = parent ? parent->screen() : QGuiApplication::primaryScreen()) {
+        const QRect avail = screen->availableGeometry();
+        d.resize(std::min(d.width(), avail.width() - 40), std::min(d.height(), avail.height() - 60));
+    }
     if (d.exec() != QDialog::Accepted)
         return std::nullopt;
     return chosen;

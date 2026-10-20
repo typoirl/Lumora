@@ -14,6 +14,17 @@ bool AppContext::tapTarget(const QString &object, const QString &currentName)
     if (line.isEmpty())
         return false;
     const QStringList words = line.split(' ');
+    // Off, On, Go, GoBack, Pause, Top or Goto on its own (a shortcut key, or the command keys),
+    // then a tap on an executor or sequence: that playback.
+    if (words.size() == 1 && (object.startsWith(QLatin1String("Executor ")) || object.startsWith(QLatin1String("Sequence ")))) {
+        static const QStringList playback = {"Off", "On", "Go", "GoBack", "Pause", "Top", "Goto"};
+        for (const QString &v : playback)
+            if (v.compare(words[0], Qt::CaseInsensitive) == 0) {
+                setCommandLine(QString());
+                run(v + ' ' + object);
+                return true;
+            }
+    }
     // The verb, allowing abbreviations ("mo", "del", "lab").
     static const QStringList verbs = {"Move", "Copy", "Delete", "Label", "Update", "Remove", "Assign"};
     QString verb;

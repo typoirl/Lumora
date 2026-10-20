@@ -39,8 +39,6 @@ QJsonObject PlotItem::toJson() const
     case Image:
         o["image"] = QString::fromLatin1(image.toBase64());
         o["imageName"] = imageName;
-        if (background)
-            o["background"] = true;
         break;
     }
     if (group)
@@ -68,10 +66,31 @@ PlotItem PlotItem::fromJson(const QJsonObject &o)
     it.fontSize = std::clamp(o["fontSize"].toDouble(14.0), 4.0, 400.0);
     it.image = QByteArray::fromBase64(o["image"].toString().toLatin1());
     it.imageName = o["imageName"].toString();
-    it.background = o["background"].toBool(false);
     it.group = std::max(0, o["group"].toInt(0));
     it.link = o["link"].toString();
     return it;
+}
+
+void Plot::setBackgroundColor(const QString &color)
+{
+    clearBackground();
+    backgroundColor = color;
+}
+
+void Plot::setBackgroundImage(const QByteArray &bytes, const QString &name, const QRectF &rect)
+{
+    clearBackground();
+    backgroundImage = bytes;
+    backgroundName = name;
+    backgroundRect = rect;
+}
+
+void Plot::clearBackground()
+{
+    backgroundColor.clear();
+    backgroundImage.clear();
+    backgroundName.clear();
+    backgroundRect = QRectF();
 }
 
 QString Plot::displayName() const
@@ -124,6 +143,12 @@ QJsonObject Plot::toJson() const
     QJsonObject o{{"id", id}, {"name", name}, {"items", a}, {"zoom", zoom}, {"panX", panX}, {"panY", panY}};
     if (zoomLocked)
         o["zoomLocked"] = true;
+    if (!backgroundColor.isEmpty())
+        o["backgroundColor"] = backgroundColor;
+    if (!backgroundImage.isEmpty())
+        o["backgroundImage"] = QJsonObject{{"image", QString::fromLatin1(backgroundImage.toBase64())}, {"name", backgroundName},
+                                           {"x", backgroundRect.x()}, {"y", backgroundRect.y()},
+                                           {"w", backgroundRect.width()}, {"h", backgroundRect.height()}};
     return o;
 }
 
@@ -132,8 +157,25 @@ Plot Plot::fromJson(const QJsonObject &o)
     Plot p;
     p.id = o["id"].toInt();
     p.name = o["name"].toString();
-    for (const auto &v : o["items"].toArray())
-        p.items << PlotItem::fromJson(v.toObject());
+    for (const auto &v : o["items"].toArray()) {
+        const QJsonObject io = v.toObject();
+        // Shows before a.7.2.2 kept the background as a picture marked "background": the first
+        // one becomes the plot's background.
+        if (io["background"].toBool(false)) {
+            const PlotItem it = PlotItem::fromJson(io);
+            if (p.backgroundImage.isEmpty() && !it.image.isEmpty())
+                p.setBackgroundImage(it.image, it.imageName, it.rect);
+            continue;
+        }
+        p.items << PlotItem::fromJson(io);
+    }
+    p.backgroundColor = o["backgroundColor"].toString(p.backgroundColor);
+    if (o.contains("backgroundImage")) {
+        const QJsonObject b = o["backgroundImage"].toObject();
+        p.setBackgroundImage(QByteArray::fromBase64(b["image"].toString().toLatin1()), b["name"].toString(),
+                             QRectF(b["x"].toDouble(), b["y"].toDouble(), std::max(4.0, b["w"].toDouble(800)),
+                                    std::max(4.0, b["h"].toDouble(600))));
+    }
     p.zoom = std::clamp(o["zoom"].toDouble(1.0), 0.1, 8.0);
     p.panX = o["panX"].toDouble(0);
     p.panY = o["panY"].toDouble(0);

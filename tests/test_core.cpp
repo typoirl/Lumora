@@ -4,7 +4,11 @@
 #include "dmxoutput.h"
 #include "engine.h"
 #include "midi.h"
+#include "osc.h"
+
+#include <QtEndian>
 #include "show.h"
+#include "undo.h"
 
 #include <QJsonDocument>
 #include <QNetworkDatagram>
@@ -858,8 +862,8 @@ private slots:
     void oflImport()
     {
         FixtureLibrary lib;
-        // 6 OFL + 2 GDTF + Pangolin and Resolume, and the Chauvet DJ and Chauvet Professional ranges.
-        QCOMPARE(lib.loadDirectory(LUMORA_SOURCE_FIXTURES), 12 + 134 + 126);
+        // 8 generic OFL + 2 GDTF + Pangolin and Resolume, and the Chauvet DJ and Chauvet Professional ranges.
+        QCOMPARE(lib.loadDirectory(LUMORA_SOURCE_FIXTURES), 14 + 134 + 126);
         // Every Chauvet profile loads, with at least one mode, under its own maker.
         for (const char *maker : {"chauvet-dj", "chauvet-professional"}) {
             QDirIterator it(QStringLiteral(LUMORA_SOURCE_FIXTURES "/") + maker, {"*.json"});
@@ -2103,7 +2107,9 @@ private slots:
         engine.tick(0.01);
         QCOMPARE(dmx(engine, 1, 1), 51);
 
-        // Flash (button 3 by default) goes to full while held
+        // Flash (on button 3 here: a fader's keys are Go, GoBack, Off by default) goes to full while held
+        QCOMPARE(a.buttons[2], ButtonFn::Off);
+        a.buttons[2] = ButtonFn::Flash;
         s.pressButton(a, 2, true);
         engine.tick(0.01);
         QCOMPARE(dmx(engine, 1, 1), 255);
@@ -2189,6 +2195,26 @@ private slots:
         QCOMPARE(s.executor(1, 201)->fader, 0.4);
         QVERIFY(cl.execute("Goto Cue 2 Executor 201").ok);
         QCOMPARE(s.executor(1, 201)->pb().cueIndex, 1);
+        // A fade of its own, for every value.
+        QVERIFY(cl.execute("Goto Cue 1 Executor 201 Fade 7").ok);
+        QCOMPARE(s.executor(1, 201)->pb().cueIndex, 0);
+        QCOMPARE(s.executor(1, 201)->pb().fadeTime, 7.0);
+        QVERIFY(s.executor(1, 201)->pb().timing.isEmpty());
+        // Goto Executor alone, and a Goto button: the screens show the cue list.
+        {
+            QSignalSpy asked(&s, &Show::gotoRequested);
+            QVERIFY(cl.execute("Goto Executor 201").ok);
+            QCOMPARE(asked.count(), 1);
+            QCOMPARE(asked[0][1].toInt(), 201);
+            Executor &ge = *s.executor(1, 201);
+            ge.buttons[1] = ButtonFn::Goto;
+            s.pressButton(ge, 1, true);
+            QCOMPARE(asked.count(), 2);
+            QCOMPARE(buttonFnFromName("Goto"), ButtonFn::Goto);
+            QVERIFY(cl.execute("Assign Goto At Executor 201").ok);
+            QCOMPARE(s.executor(1, 201)->buttons[0], ButtonFn::Goto);
+            s.executor(1, 201)->buttons[0] = ButtonFn::Go;
+        }
         QVERIFY(cl.execute("Off Executor 201").ok);
         QVERIFY(!s.executor(1, 201)->pb().isOn());
         QVERIFY(cl.execute("Page +").ok);
@@ -2302,6 +2328,345 @@ private slots:
         third.fromJson(midi.toJson());
         QCOMPARE(third.bindings().last().target.kind, MidiTarget::EncoderPush);
         QCOMPARE(third.bindings().last().target.encoder, 2);
+
+        // Rate masters: the fader (with pickup) and the Learn key.
+        MidiTarget rmFader;
+        rmFader.kind = MidiTarget::RateMasterFader;
+        rmFader.master = 3;
+        midi.arm(rmFader);
+        midi.handleMessage(cc(30, 64));
+        QVERIFY(midi.bindings().last().pickup);
+        const double before = s.rateMaster(3)->value;
+        midi.handleMessage(cc(30, 0));            // far from the fader: not picked up yet
+        QCOMPARE(s.rateMaster(3)->value, before);
+        midi.handleMessage(cc(30, int(std::lround(s.rateMaster(3)->faderPosition() * 127))));
+        midi.handleMessage(cc(30, 127));
+        QVERIFY(s.rateMaster(3)->value > before);
+        MidiTarget rmKey;
+        rmKey.kind = MidiTarget::RateMasterKey;
+        rmKey.master = 3;
+        midi.arm(rmKey);
+        midi.handleMessage(note(50, true));
+        QCOMPARE(midi.bindings().last().target.kind, MidiTarget::RateMasterKey);
+        MidiManager fourth(&s);
+        fourth.fromJson(midi.toJson());
+        QCOMPARE(fourth.bindings().last().target.master, 3);
+    }
+
+    void selectionMatrix()
+    {
+        Show s;
+        setupShow(s);
+        QVERIFY(s.addFixture({8, QString(), "generic/rgb-par", "3-channel", 2, 4}));
+        CommandLine cl(&s);
+        // Selecting fills along X; Next Y starts the next ones one step down.
+        QVERIFY(cl.execute("Fixture 1 Thru 4").ok);
+        QVERIFY(cl.execute("NextY").ok);
+        QVERIFY(cl.execute("Fixture 5 Thru 8").ok);
+        QCOMPARE(s.gridPosition(1), QPoint(0, 0));
+        QCOMPARE(s.gridPosition(4), QPoint(3, 0));
+        QCOMPARE(s.gridPosition(5), QPoint(0, 1));
+        QCOMPARE(s.gridPosition(8), QPoint(3, 1));
+        // Grid: coordinates, as x/y or x y.
+        QVERIFY(cl.execute("Fixture 8 Grid 6/2").ok);
+        QCOMPARE(s.gridPosition(8), QPoint(6, 2));
+        QVERIFY(cl.execute("Grid 0 3").ok);
+        QCOMPARE(s.gridCursor(), QPoint(0, 3));
+        QVERIFY(cl.execute("Grid 0/0 Thru 1/0").ok);   // two wide: 1 2 / 3 4 / 5 6 / 7 8
+        QCOMPARE(s.gridPosition(3), QPoint(0, 1));
+        QCOMPARE(s.gridPosition(8), QPoint(1, 3));
+        QVERIFY(!cl.execute("Grid 2").ok);
+        s.resetGrid();
+        QVERIFY(cl.execute("Clear").ok);
+        QVERIFY(cl.execute("Fixture 1 Thru 4").ok);
+        QVERIFY(cl.execute("NextY").ok);
+        QVERIFY(cl.execute("Fixture 5 Thru 8").ok);
+        // A group keeps its layout.
+        QVERIFY(cl.execute("Store Group 9").ok);
+        QCOMPARE(s.group(9)->grid.size(), 8);
+        QVERIFY(cl.execute("Clear").ok);
+        QCOMPARE(s.gridPosition(5), QPoint());
+        QVERIFY(cl.execute("Group 9").ok);
+        QCOMPARE(s.gridPosition(6), QPoint(1, 1));
+        // Spreads stack: X keeps columns, Y keeps rows.
+        QVERIFY(cl.execute("Spread Every 2").ok);
+        QCOMPARE(s.workingSelection(), (QVector<int>{1, 3, 5, 7}));
+        QVERIFY(cl.execute("Spread Y Every 2").ok);
+        QCOMPARE(s.activeSpreadY().every, 2);
+        QCOMPARE(s.workingSelection(), (QVector<int>{1, 3}));
+        s.setSpreadAxisOn(Spread::Axis::X, false);
+        QCOMPARE(s.workingSelection(), (QVector<int>{1, 2, 3, 4}));
+        s.setSpreadAxisOn(Spread::Axis::X, true);
+        // Stored on its axis, recalled onto it.
+        QVERIFY(s.storeSpread(20, "Down", 1));
+        QVERIFY(s.spread(20)->onY && !s.spread(20)->onX);
+        // One spread can work both ways: it fills both slots.
+        QVERIFY(s.storeSpread(21, "Both", 2));
+        QVERIFY(s.spread(21)->onX && s.spread(21)->onY);
+        // An effect run now keeps where its fixtures sit and both layouts.
+        Effect fx;
+        fx.id = 30;
+        fx.name = "Diag";
+        fx.axisY = true;
+        s.setEffect(fx);
+        QVERIFY(s.effect(30)->axisX && s.effect(30)->axisY);
+        // Clearing the selection resets the spreads and the matrix.
+        QVERIFY(cl.execute("Clear").ok);
+        QVERIFY(s.activeSpread().isDefault());
+        QVERIFY(s.activeSpreadY().isDefault());
+        QVERIFY(cl.execute("Spread 20").ok);
+        QCOMPARE(s.activeSpreadY().every, 2);
+        QVERIFY(s.activeSpread().isDefault());
+        // Round trips.
+        Show t;
+        QVERIFY(t.fromJson(s.toJson()));
+        QCOMPARE(t.group(9)->grid, s.group(9)->grid);
+        QVERIFY(t.spread(20)->onY && !t.spread(20)->onX);
+        QVERIFY(t.spread(21)->onX && t.spread(21)->onY);
+        QVERIFY(cl.execute("Clear").ok);
+        QVERIFY(cl.execute("Group 9").ok);
+        QVERIFY(cl.execute("Spread 21").ok);   // Every 2 both ways
+        QCOMPARE(s.workingSelection(), (QVector<int>{1, 3}));
+        QVERIFY(t.effect(30)->axisY);
+        // The grid as indices: gaps don't count.
+        const GridIndex gi = gridIndex({1, 2, 3}, {QPoint(0, 0), QPoint(5, 0), QPoint(5, 3)});
+        QCOMPARE(gi.cols, 2);
+        QCOMPARE(gi.rows, 2);
+        QCOMPARE(gi.col[1], 1);
+        QCOMPARE(gi.row[2], 1);
+    }
+
+    void matrixMoveAndSpreadStore()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        QVERIFY(cl.execute("Fixture 1 Thru 4").ok);   // X 0..3, Y 0
+        // Move 1 and 2 down one: nobody in the way.
+        s.moveInGrid({1, 2}, QPoint(0, 1));
+        QCOMPARE(s.gridPosition(1), QPoint(0, 1));
+        QCOMPARE(s.gridPosition(2), QPoint(1, 1));
+        // Move 3 and 4 onto them: 1 and 2 take the cells 3 and 4 left.
+        s.moveInGrid({3, 4}, QPoint(-2, 1));
+        QCOMPARE(s.gridPosition(3), QPoint(0, 1));
+        QCOMPARE(s.gridPosition(4), QPoint(1, 1));
+        QCOMPARE(s.gridPosition(1), QPoint(2, 0));
+        QCOMPARE(s.gridPosition(2), QPoint(3, 0));
+        // Not past the edge.
+        s.moveInGrid({3}, QPoint(-5, -5));
+        QCOMPARE(s.gridPosition(3), QPoint(0, 0));
+        // Store Spread with X and Y different: X in 30, Y in the next free slot.
+        QVERIFY(cl.execute("Spread X Every 2").ok);
+        QVERIFY(cl.execute("Spread Y Every 3").ok);
+        QVERIFY(cl.execute("Store Spread 30").ok);
+        QVERIFY(s.spread(30) && s.spread(30)->onX && !s.spread(30)->onY && s.spread(30)->every == 2);
+        QVERIFY(s.spread(31) && s.spread(31)->onY && !s.spread(31)->onX && s.spread(31)->every == 3);
+        QVERIFY(cl.execute("Store Spread 40 /y").ok);
+        QVERIFY(s.spread(40)->onY && !s.spread(40)->onX);
+        QVERIFY(cl.execute("Spread Y Every 2").ok);
+        QVERIFY(cl.execute("Store Spread 50").ok);   // the same both ways: one spread for both
+        QVERIFY(s.spread(50)->onX && s.spread(50)->onY && !s.spread(51));
+    }
+
+    void undoSteps()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        UndoManager undo(&s);
+        auto run = [&](const QString &c) {
+            undo.beginAction(c);
+            QVERIFY(cl.execute(c).ok);
+            QCoreApplication::processEvents();   // the command's step ends
+        };
+        run("Fixture 1 Thru 2 At 50");
+        run("Store Group 5 \"Pair\"");
+        run("Store Cue 1 Sequence 3");
+        QVERIFY(s.group(5));
+        QVERIFY(s.sequence(3) && s.sequence(3)->cues.size() == 1);
+        QCOMPARE(undo.undo(), QStringLiteral("Store Cue 1 Sequence 3"));
+        QVERIFY(!s.sequence(3) || s.sequence(3)->cues.isEmpty());
+        QCOMPARE(undo.undo(), QStringLiteral("Store Group 5 \"Pair\""));
+        QVERIFY(!s.group(5));
+        QVERIFY(!s.programmerValues().isEmpty());   // the programmer is as the first command left it
+        QCOMPARE(undo.redo(), QStringLiteral("Store Group 5 \"Pair\""));
+        QVERIFY(s.group(5));
+        run("Delete Group 5");
+        QVERIFY(!s.group(5));
+        QVERIFY(!undo.canRedo());   // a new step drops what could be redone
+        undo.undo();
+        QVERIFY(s.group(5));
+        QCOMPARE(undo.undo(), QStringLiteral("Store Group 5 \"Pair\""));
+        QCOMPARE(undo.undo(), QStringLiteral("Fixture 1 Thru 2 At 50"));
+        QVERIFY(s.programmerValues().isEmpty());
+        // Running playbacks aren't undone: undoing a label leaves the cue list running.
+        run("Store Cue 1 Sequence 4");
+        run("Assign Sequence 4 At Executor 201");
+        run("Go Executor 201");
+        run("Label Sequence 4 \"Pars\"");
+        QCOMPARE(undo.undo(), QStringLiteral("Label Sequence 4 \"Pars\""));
+        QVERIFY(s.executor(1, 201) && s.executor(1, 201)->pb().isOn());
+        // Plots keep their own steps.
+        run("Store Plot 2 \"Rig\"");
+        QVERIFY(s.plot(2));
+        QVERIFY(undo.canUndo(true));
+        undo.undo(true);
+        QVERIFY(!s.plot(2));
+    }
+
+    void programmerFade()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        Engine engine(&s);
+        // Switching it on leaves what's programmed where it is.
+        QVERIFY(cl.execute("Fixture 2 At 60").ok);
+        engine.tick(0.05);
+        QVERIFY(cl.execute("ProgFade 2").ok);
+        QVERIFY(s.progFadeOn());
+        QCOMPARE(s.progFadeTime(), 2.0);
+        engine.tick(0.05);
+        QVERIFY(std::abs(engine.merged()[2]["Dimmer"] - 0.6) < 1e-6);
+        QVERIFY(cl.execute("Clear").ok);
+        QVERIFY(cl.execute("Fixture 1 At 100").ok);
+        engine.tick(1.0);
+        QVERIFY(std::abs(engine.merged()[1]["Dimmer"] - 0.5) < 1e-6);   // halfway after 1 of 2 s
+        engine.tick(1.0);
+        QVERIFY(std::abs(engine.merged()[1]["Dimmer"] - 1.0) < 1e-6);
+        QVERIFY(cl.execute("ClearAll").ok);
+        engine.tick(1.0);
+        QVERIFY(std::abs(engine.merged()[1]["Dimmer"] - 0.5) < 1e-6);   // Clear fades out too
+        engine.tick(1.0);
+        QVERIFY(engine.merged()[1]["Dimmer"] < 1e-6);
+        QVERIFY(cl.execute("ProgFade Off").ok);
+        QVERIFY(cl.execute("Fixture 1 At 100").ok);
+        engine.tick(0.05);
+        QVERIFY(std::abs(engine.merged()[1]["Dimmer"] - 1.0) < 1e-6);   // off: at once
+        Show t;
+        QVERIFY(cl.execute("ProgFade 3").ok);
+        QVERIFY(t.fromJson(s.toJson()));
+        QVERIFY(t.progFadeOn());
+        QCOMPARE(t.progFadeTime(), 3.0);
+    }
+
+    void emitterGamut()
+    {
+        // What each fixture can make: its emitters, or the primaries for CMY, or white only.
+        FixtureMode rgbw, whites, dimmer;
+        auto ch = [](const char *a) { ChannelDef c; c.attribute = a; return c; };
+        rgbw.channels = {ch("Dimmer"), ch("ColorAdd_R"), ch("ColorAdd_G"), ch("ColorAdd_B"), ch("ColorAdd_W")};
+        whites.channels = {ch("Dimmer"), ch("ColorAdd_WW"), ch("ColorAdd_CW")};
+        dimmer.channels = {ch("Dimmer")};
+        QCOMPARE(emitterColors(&rgbw).size(), 4);
+        QCOMPARE(emitterColors(&whites).size(), 2);
+        QCOMPARE(emitterColors(&dimmer).size(), 1);
+    }
+
+    void oscMessages()
+    {
+        // Encoding and decoding, bundles, and TCP framing.
+        OscMessage m{QStringLiteral("/exec/1/201/fader"), {QVariant(0.5), QVariant(7), QVariant(QStringLiteral("hi")), QVariant(true)}};
+        const QVector<OscMessage> back = OscMessage::decode(m.encode());
+        QCOMPARE(back.size(), 1);
+        QCOMPARE(back[0].address, m.address);
+        QCOMPARE(back[0].args[0].toDouble(), 0.5);
+        QCOMPARE(back[0].args[1].toInt(), 7);
+        QCOMPARE(back[0].args[2].toString(), QString("hi"));
+        QVERIFY(back[0].args[3].toBool());
+        QByteArray bundle("#bundle\0", 8);
+        bundle += QByteArray(8, '\0');
+        const QByteArray one = m.encode();
+        char size[4];
+        qToBigEndian<qint32>(qint32(one.size()), size);
+        bundle += QByteArray(size, 4) + one;
+        bundle += QByteArray(size, 4) + one;
+        QCOMPARE(OscMessage::decode(bundle).size(), 2);
+        QByteArray tcp = slipEncode(one) + slipEncode(one).left(5);
+        QCOMPARE(takeTcpPackets(tcp).size(), 1);   // the second isn't all there yet
+        QByteArray textForm;
+        OscMessage parsed;
+        QVERIFY(OscManager::parseText(QStringLiteral("/Page1/Fader201,i,50"), &parsed));
+        QCOMPARE(parsed.args[0].toInt(), 50);
+        QVERIFY(!OscManager::parseText(QStringLiteral("Page1"), &parsed));
+    }
+
+    void oscControl()
+    {
+        Show s;
+        setupShow(s);
+        s.select({1});
+        s.setAttribute("Dimmer", 1.0);
+        s.storeCue(1, 1);
+        s.clearAll();
+        s.assignSequence(1, 1, 201);
+        OscManager osc(&s);
+        OscLine line;
+        line.name = "Tablet";
+        line.inPort = 0;   // not listening in a test: messages go straight to handle()
+        line.receive = true;
+        line.receiveCommands = true;
+        OscLine prefixed = line;
+        prefixed.prefix = "lumora";
+        osc.setLines({line, prefixed});
+        auto msg = [](const QString &a, QVariantList args = {}) { return OscMessage{a, args}; };
+        osc.handle(msg("/exec/1/201/fader", {0.25}), 0);
+        QCOMPARE(s.executor(1, 201)->fader, 0.25);
+        osc.handle(msg("/Page1/Fader201", {QVariant(80)}), 0);   // an integer: percent
+        QCOMPARE(s.executor(1, 201)->fader, 0.8);
+        osc.handle(msg("/exec/201/go"), 0);
+        QVERIFY(s.executor(1, 201)->pb().isOn());
+        // A prefix: only messages under it.
+        osc.handle(msg("/exec/1/201/fader", {0.1}), 1);
+        QCOMPARE(s.executor(1, 201)->fader, 0.8);
+        osc.handle(msg("/lumora/exec/1/201/fader", {0.1}), 1);
+        QCOMPARE(s.executor(1, 201)->fader, 0.1);
+        // Command lines, groups and presets come out as commands for the program to run.
+        QSignalSpy commands(&osc, &OscManager::commandRequested);
+        osc.handle(msg("/cmd", {QStringLiteral("Fixture %1 At %2"), 3, 40}), 0);
+        QCOMPARE(commands.last()[0].toString(), QString("Fixture 3 At 40"));
+        osc.handle(msg("/preset/4/2/fire"), 0);
+        QCOMPARE(commands.last()[0].toString(), QString("Preset 4.2"));
+        // Masters and the grand master.
+        osc.handle(msg("/master/3", {1.0}), 0);
+        QCOMPARE(s.rateMaster(3)->value, 2.0);
+        osc.handle(msg("/master/3/key"), 0);   // Reset on a rate master
+        QCOMPARE(s.rateMaster(3)->value, 1.0);
+        osc.handle(msg("/gm", {0.5}), 0);
+        QCOMPARE(s.grandMaster(), 0.5);
+        osc.handle(msg("/fixture/2", {50.0}), 0);
+        QCOMPARE(s.programmerValues()[2]["Dimmer"].value, 0.5);
+        // Commands need Receive commands.
+        OscLine noCmd = line;
+        noCmd.receiveCommands = false;
+        osc.setLines({noCmd});
+        const int before = int(commands.size());
+        osc.handle(msg("/cmd", {QStringLiteral("Fixture 1")}), 0);
+        QCOMPARE(int(commands.size()), before);
+        // SendOSC asks the manager to send.
+        CommandLine cl(&s);
+        QSignalSpy sends(&s, &Show::oscSendRequested);
+        QVERIFY(cl.execute("SendOSC 1 \"/Page1/Fader201,i,50\"").ok);
+        QCOMPARE(sends.size(), 1);
+        QVERIFY(!cl.execute("SendOSC 1").ok);
+        // Kept with its settings.
+        OscManager other(&s);
+        other.fromJson(osc.toJson());
+        QCOMPARE(other.lines().size(), 1);
+        QCOMPARE(other.lines()[0].name, QString("Tablet"));
+    }
+
+    void rateMasterAppearance()
+    {
+        Show s;
+        CommandLine cl(&s);
+        QVERIFY(cl.execute("Appearance RateMaster 2 \"#ff8800\"").ok);
+        QCOMPARE(s.rateMaster(2)->color, QString("#ff8800"));
+        Show t;
+        QVERIFY(t.fromJson(s.toJson()));
+        QCOMPARE(t.rateMaster(2)->color, QString("#ff8800"));
+        QVERIFY(cl.execute("Appearance RateMaster 2 Off").ok);
+        QVERIFY(s.rateMaster(2)->color.isEmpty());
     }
 
     void artNetPacket()
@@ -2819,14 +3184,31 @@ private slots:
         setupShow(s);
         CommandLine cl(&s);
         QCOMPARE(s.rateMasters().size(), RateMaster::kCount);
-        QVERIFY(cl.execute("Assign RateMaster 1 At Executor 205").ok);
+        // A new show: 1 is BPM, 2 a ratio, the rest rates; the key learns on BPM, resets on the rest.
+        QCOMPARE(s.rateMaster(1)->mode, RateMode::BPM);
+        QCOMPARE(s.rateMaster(2)->mode, RateMode::Ratio);
+        QCOMPARE(s.rateMaster(3)->mode, RateMode::Rate);
+        QVERIFY(s.rateMaster(1)->keyLearns());
+        QVERIFY(!s.rateMaster(3)->keyLearns());
+        QVERIFY(cl.execute("Assign RateMaster 3 At Executor 205").ok);
         Executor *e = s.executor(1, 205);
         QVERIFY(e);
-        QCOMPARE(e->rateMaster, 1);
+        QCOMPARE(e->rateMaster, 3);
         QVERIFY(!e->isEmpty());
         s.setFader(*e, 1.0);   // top of a Rate fader is 200%
-        QCOMPARE(s.rateMaster(1)->value, 2.0);
-        QCOMPARE(s.rateMaster(1)->cyclesPerSecond(2.0, 1.0), 1.0);
+        QCOMPARE(s.rateMaster(3)->value, 2.0);
+        QCOMPARE(s.rateMaster(3)->cyclesPerSecond(2.0, 1.0), 1.0);
+        s.pressRateMasterKey(3);   // Reset
+        QCOMPARE(s.rateMaster(3)->value, 1.0);
+        {
+            RateMaster k = *s.rateMaster(3);
+            k.key = RateMaster::Key::Learn;
+            s.setRateMaster(k);
+            Show kept;
+            QVERIFY(kept.fromJson(s.toJson()));
+            QVERIFY(kept.rateMaster(3)->keyLearns());
+            QCOMPARE(kept.rateMaster(1)->mode, RateMode::BPM);   // defaults aren't written, and come back
+        }
         // BPM mode: one cycle per beat.
         RateMaster m = *s.rateMaster(2);
         m.mode = RateMode::BPM;
@@ -3050,6 +3432,92 @@ private slots:
         s.pressButton(x, 0, true);
         s.pressButton(x, 0, false);
         QVERIFY(!x.pb().isOn());
+    }
+
+    // Developer sweep: every fixture file under LUMORA_SWEEP_DIRS (folders, separated by ';')
+    // must load. Point it at a checkout of the QLC+ fixtures and the Open Fixture Library.
+    void fixtureSweep()
+    {
+        const QString dirs = qEnvironmentVariable("LUMORA_SWEEP_DIRS");
+        if (dirs.isEmpty())
+            QSKIP("Set LUMORA_SWEEP_DIRS to sweep fixture files");
+        QStringList failures;
+        int tried = 0;
+        for (const QString &dir : dirs.split(';', Qt::SkipEmptyParts)) {
+            QDirIterator it(dir, {"*.qxf", "*.json", "*.gdtf"}, QDir::Files, QDirIterator::Subdirectories);
+            while (it.hasNext()) {
+                const QString path = it.next();
+                if (path.endsWith(QLatin1String("manufacturers.json")) || path.contains(QLatin1String("/schema")))
+                    continue;
+                FixtureLibrary lib;
+                QString error;
+                ++tried;
+                if (!lib.loadFile(path, &error))
+                    failures << QStringLiteral("%1: %2").arg(path, error);
+            }
+        }
+        qInfo().noquote() << tried << "files," << failures.size() << "failed";
+        for (const QString &f : failures)
+            qInfo().noquote() << f;
+        QVERIFY(failures.isEmpty());
+    }
+
+    // QLC+ capabilities can hold elements (<Alias> on a mode channel): the text around them is
+    // the capability's name. 63 QLC+ fixtures failed with "Expected character data" before.
+    void qxfCapabilityWithAlias()
+    {
+        const QByteArray xml =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            "<FixtureDefinition xmlns=\"http://www.qlcplus.org/FixtureDefinition\">\n"
+            " <Manufacturer>Test</Manufacturer>\n"
+            " <Model>Alias Par</Model>\n"
+            " <Type>Color Changer</Type>\n"
+            " <Channel Name=\"Dimmer\" Preset=\"IntensityMasterDimmer\"/>\n"
+            " <Channel Name=\"Color mode\">\n"
+            "  <Group Byte=\"0\">Effect</Group>\n"
+            "  <Capability Min=\"0\" Max=\"127\" Preset=\"Alias\">Dimmer mode</Capability>\n"
+            "  <Capability Min=\"128\" Max=\"255\" Preset=\"Alias\">Color macro mode\n"
+            "   <Alias Mode=\"2 Channel\" Channel=\"Dimmer\" With=\"Color mode\"/>\n"
+            "  </Capability>\n"
+            " </Channel>\n"
+            " <Mode Name=\"2 Channel\">\n"
+            "  <Channel Number=\"0\">Dimmer</Channel>\n"
+            "  <Channel Number=\"1\">Color mode</Channel>\n"
+            " </Mode>\n"
+            "</FixtureDefinition>\n";
+        FixtureType t;
+        QString error;
+        QVERIFY2(FixtureLibrary::parseQxf(xml, &t, &error), qPrintable(error));
+        QCOMPARE(t.modes.size(), 1);
+        QCOMPARE(t.modes.first().footprint, 2);
+    }
+
+    void cueMacros()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        QVERIFY(cl.execute("Store Macro 4 \"Haze\"").ok);
+        Macro m = *s.macro(4);
+        m.lines = {{"Fixture 5 At 40"}};
+        s.setMacro(m);
+        QVERIFY(cl.execute("Fixture 1 At 50").ok);
+        QVERIFY(cl.execute("Store Cue 1 Sequence 7").ok);
+        QVERIFY(cl.execute("Store Cue 2 Sequence 7").ok);
+        QVERIFY(cl.execute("ClearAll").ok);
+        s.setSelectedSequence(7);
+        QVERIFY(cl.execute("Cue 2 Macro 4").ok);
+        QCOMPARE(s.sequence(7)->cues[1].macro, 4);
+        QVERIFY(cl.execute("Assign Sequence 7 At Executor 205").ok);
+        QVERIFY(cl.execute("Go Executor 205").ok);
+        QCoreApplication::processEvents();
+        QVERIFY(!s.programmerValues().contains(5));   // cue 1 has no macro
+        QVERIFY(cl.execute("Go Executor 205").ok);
+        QCoreApplication::processEvents();
+        QCOMPARE(s.programmerValues()[5]["Dimmer"].value, 0.4);   // cue 2 ran it
+        // Saved with the show.
+        const Cue back = Cue::fromJson(s.sequence(7)->cues[1].toJson());
+        QCOMPARE(back.macro, 4);
     }
 
     void macros()
@@ -3321,7 +3789,6 @@ private slots:
         PlotItem pic;
         pic.kind = PlotItem::Image;
         pic.image = "<svg xmlns='http://www.w3.org/2000/svg'/>";
-        pic.background = true;
         pic.group = 2;
         p.items << text << pic;
         QCOMPARE(p.nextGroup(), 3);
@@ -3329,6 +3796,11 @@ private slots:
         QCOMPARE(p.groupOf(0), QVector<int>{0});
         p.zoom = 1.5;
         p.zoomLocked = true;
+        // A background is one thing: a color, or a picture; setting one replaces the other.
+        p.setBackgroundColor("#203040");
+        QVERIFY(p.hasBackground());
+        p.setBackgroundImage("<svg xmlns='http://www.w3.org/2000/svg'/>", "plan.svg", QRectF(0, 0, 800, 600));
+        QVERIFY(p.backgroundColor.isEmpty());
         s.setPlot(p);
         QVERIFY(cl.execute("Copy Plot 1 At 5").ok);
         QVERIFY(cl.execute("Label Plot 5 \"Copy\"").ok);
@@ -3339,8 +3811,24 @@ private slots:
         QCOMPARE(t.plot(1)->items[9].text, QString("Downstage"));
         QCOMPARE(t.plot(1)->items[9].link, QString("Group 1"));
         QCOMPARE(t.plot(1)->items[10].group, 2);
-        QVERIFY(t.plot(1)->items[10].background);
         QCOMPARE(t.plot(1)->items[10].image, pic.image);
+        QCOMPARE(t.plot(1)->backgroundName, QString("plan.svg"));
+        QCOMPARE(t.plot(1)->backgroundRect, QRectF(0, 0, 800, 600));
+        QCOMPARE(t.plot(1)->backgroundImage, pic.image);
+        // Shows from before kept the background as a picture item: it becomes the background.
+        {
+            QJsonObject old = p.toJson();
+            old.remove("backgroundImage");
+            QJsonArray items = old["items"].toArray();
+            QJsonObject bgItem = pic.toJson();
+            bgItem["background"] = true;
+            bgItem["imageName"] = "old.svg";
+            items.prepend(bgItem);
+            old["items"] = items;
+            const Plot migrated = Plot::fromJson(old);
+            QCOMPARE(migrated.items.size(), p.items.size());
+            QCOMPARE(migrated.backgroundName, QString("old.svg"));
+        }
         QCOMPARE(t.plot(1)->zoom, 1.5);
         QVERIFY(t.plot(1)->zoomLocked);
         QVERIFY(cl.execute("Plot 1").ok);

@@ -60,6 +60,8 @@ add_library(lumora_core STATIC
   src/core/engine.h src/core/engine.cpp
   src/core/dmxoutput.h src/core/dmxoutput.cpp
   src/core/midi.h src/core/midi.cpp
+  src/core/osc.h src/core/osc.cpp
+  src/core/undo.h src/core/undo.cpp
   src/core/commandline.h src/core/commandline.cpp
   src/core/zipreader.h src/core/zipreader.cpp
   src/core/gdtf.cpp
@@ -88,6 +90,11 @@ if(LUMORA_BUILD_APP)
     src/ui/theme.h src/ui/theme.cpp
     src/ui/mainwindow.h src/ui/mainwindow.cpp
     src/ui/executorbar.h src/ui/executorbar.cpp
+    src/ui/gotodialog.h src/ui/gotodialog.cpp
+    src/ui/helpview.h src/ui/helpview.cpp
+    src/ui/controlview.h src/ui/controlview.cpp
+    src/ui/presetbuilder.h src/ui/presetbuilder.cpp
+    src/ui/matrixui.h src/ui/matrixui.cpp
     src/ui/poolgrid.h src/ui/poolgrid.cpp
     src/ui/fixturesheet.h src/ui/fixturesheet.cpp
     src/ui/parkview.h src/ui/parkview.cpp
@@ -116,6 +123,9 @@ if(LUMORA_BUILD_APP)
   qt_add_resources(lumora "library" PREFIX "/library" BASE resources/library
     FILES resources/library/ofl-index.json resources/library/qlcplus-index.json)
   qt_add_resources(lumora "icons" PREFIX "/icons" BASE resources FILES resources/lumora.png)
+  # The user guide, built in for the Help window (F1).
+  file(GLOB _lumora_help_images RELATIVE ${CMAKE_SOURCE_DIR} CONFIGURE_DEPENDS docs/manual/images/*.png)
+  qt_add_resources(lumora "help" PREFIX "/help" BASE docs/manual FILES docs/manual/manual.md ${_lumora_help_images})
   if(WIN32)
     # Program icon and the version shown in the file's Properties
     set(_lumora_rc_version "${PROJECT_VERSION_MAJOR},${PROJECT_VERSION_MINOR}")

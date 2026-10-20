@@ -136,6 +136,8 @@ bool MidiTarget::operator==(const MidiTarget &o) const
     case ExecutorButton: return page == o.page && executor == o.executor && button == o.button;
     case Encoder:
     case EncoderPush: return encoder == o.encoder;
+    case RateMasterFader:
+    case RateMasterKey: return master == o.master;
     default: return true;
     }
 }
@@ -154,6 +156,8 @@ QString MidiTarget::describe() const
     case Blackout: return QStringLiteral("Blackout");
     case Encoder: return QStringLiteral("Encoder %1").arg(encoder);
     case EncoderPush: return QStringLiteral("Encoder %1 Push").arg(encoder);
+    case RateMasterFader: return QStringLiteral("Master %1 Fader").arg(master);
+    case RateMasterKey: return QStringLiteral("Master %1 Key").arg(master);
     }
     return QString();
 }
@@ -163,7 +167,7 @@ QJsonObject MidiBinding::toJson() const
     return {{"src", int(source.kind)}, {"channel", source.channel}, {"number", source.number},
             {"port", source.port}, {"target", int(target.kind)}, {"page", target.page},
             {"executor", target.executor}, {"button", target.button},
-            {"pickup", pickup}, {"invert", invert}, {"encoder", target.encoder}, {"relative", relative}};
+            {"pickup", pickup}, {"invert", invert}, {"encoder", target.encoder}, {"master", target.master}, {"relative", relative}};
 }
 
 int MidiBinding::relativeSteps(int v)
@@ -186,7 +190,8 @@ MidiBinding MidiBinding::fromJson(const QJsonObject &o)
     b.source.channel = o["channel"].toInt(1);
     b.source.number = o["number"].toInt();
     b.source.port = o["port"].toString();
-    b.target.kind = MidiTarget::Kind(std::clamp(o["target"].toInt(), 0, int(MidiTarget::EncoderPush)));
+    b.target.kind = MidiTarget::Kind(std::clamp(o["target"].toInt(), 0, int(MidiTarget::RateMasterKey)));
+    b.target.master = std::clamp(o["master"].toInt(1), 1, RateMaster::kCount);
     b.target.encoder = std::max(1, o["encoder"].toInt(1));
     b.relative = o["relative"].toBool(false);
     b.target.page = o["page"].toInt();
@@ -454,7 +459,8 @@ void MidiManager::handleMessage(const MidiMessage &m)
         b.source = MidiSource::fromMessage(m);
         b.target = m_armedTarget;
         // Buttons don't need pickup; faders do unless the controller has motors.
-        b.pickup = (m_armedTarget.kind == MidiTarget::ExecutorFader || m_armedTarget.kind == MidiTarget::GrandMaster)
+        b.pickup = (m_armedTarget.kind == MidiTarget::ExecutorFader || m_armedTarget.kind == MidiTarget::GrandMaster
+                    || m_armedTarget.kind == MidiTarget::RateMasterFader)
                    && !m_out;
         if (m_armedTarget.kind == MidiTarget::Encoder) {
             // An endless encoder sends small steps either side of 64 (or of 0); a knob sends where it is.
@@ -556,6 +562,18 @@ void MidiManager::apply(int index, const MidiMessage &m)
         if (m.isPress())
             emit encoderPushed(t.encoder);
         break;
+    case MidiTarget::RateMasterFader:
+        if (const RateMaster *rm = m_show->rateMaster(t.master))
+            continuous(rm->faderPosition(), [&](double v) {
+                RateMaster changed = *m_show->rateMaster(t.master);
+                changed.setFromFader(v);
+                m_show->setRateMaster(changed);
+            });
+        break;
+    case MidiTarget::RateMasterKey:
+        if (m.isPress())
+            m_show->pressRateMasterKey(t.master);   // Learn (tap) or Reset, as its key is set
+        break;
     }
 }
 
@@ -583,6 +601,9 @@ void MidiManager::sendFeedback()
                 cur = e->fader;
         } else if (b.target.kind == MidiTarget::GrandMaster) {
             cur = m_show->grandMaster();
+        } else if (b.target.kind == MidiTarget::RateMasterFader) {
+            if (const RateMaster *rm = m_show->rateMaster(b.target.master))
+                cur = rm->faderPosition();
         }
         if (cur >= 0 && std::fabs(cur - m_lastIncoming.value(i, cur)) > 0.03)
             m_pickedUp[i] = false;
@@ -607,6 +628,13 @@ void MidiManager::sendFeedback()
             break;
         case MidiTarget::GrandMaster:
             value = int(std::lround(m_show->grandMaster() * 127));
+            break;
+        case MidiTarget::RateMasterFader:
+            if (const RateMaster *rm = m_show->rateMaster(b.target.master)) {
+                double v = rm->faderPosition();
+                if (b.invert) v = 1.0 - v;
+                value = b.source.kind == MidiSource::PitchBend ? int(std::lround(v * 16383)) : int(std::lround(v * 127));
+            }
             break;
         case MidiTarget::Blackout:
             value = m_show->blackout() ? 127 : 0;

@@ -46,12 +46,25 @@ public:
     static double executorMaster(const Executor &e, bool anySwop);
     static double sequenceMaster(Show &show, const Executor &e, bool anySwop);
 
+signals:
+    // After every frame of output: live views repaint on it, so they show what was just sent.
+    void frameDone();
+
 private:
     void advance(Executor &e, double dt);
     int nextCueTriggers(Executor &e, double dt);   // 1: the next cue's Wait or Follow is due; 2: the Off line's
     void render(double dt, QList<Executor *> execs);
     // Advances an effect's phase (in cycles) and returns it; phases persist per running instance.
     double effectPhase(const QString &key, const EffectInstance &inst, double dt);
+    // The programmer as it reaches the stage: with Programmer fade on, values fade to what's
+    // programmed (from what was there) and, once cleared, back to what's underneath.
+    RawTable fadedProgrammer(const RawTable &under, double dt);
+    struct ProgFade {
+        double from = 0, to = 0, shown = 0, elapsed = 0, duration = 0;
+        bool releasing = false;
+    };
+    QHash<int, QHash<QString, ProgFade>> m_progFades;
+    bool m_progFadeWasOn = false;   // switched on just now: what's programmed already stays put
 
     Show *m_show;
     OutputManager *m_outputs = nullptr;

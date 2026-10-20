@@ -47,7 +47,11 @@ public:
         const int fid = index.sibling(index.row(), 0).data().toInt();
         const Fixture *f = m_ctx->show->fixture(fid);
         if (index.column() == 2) {
-            QList<FixtureType> types = m_ctx->show->library().all();
+            // The show's own types; Change type… finds any other.
+            QList<FixtureType> types;
+            for (const QString &id : m_ctx->show->typeIdsInShow())
+                if (const FixtureType *t = m_ctx->show->library().find(id))
+                    types << *t;
             std::sort(types.begin(), types.end(), [](const FixtureType &a, const FixtureType &b) {
                 return a.manufacturer + a.name < b.manufacturer + b.name;
             });
@@ -866,7 +870,7 @@ void PatchView::refresh()
 {
     m_updating = true;
     Show *show = m_ctx->show;
-    m_libraryInfo->setText(tr("%1 in library").arg(countOf(int(show->library().ids().size()), tr("fixture type"), tr("fixture types"))));
+    m_libraryInfo->setText(tr("%1 in this show").arg(countOf(int(show->typeIdsInShow().size()), tr("fixture type"), tr("fixture types"))));
     m_table->setRowCount(show->fixtures().size());
     int r = 0;
     for (const Fixture &f : show->fixtures()) {

@@ -211,6 +211,10 @@ void CommandBar::pressKey(const QString &key)
         m_ctx->setStoreArmed(false);
         return;
     }
+    if (key == QLatin1String("NextY")) {   // the selection matrix: one step down in Y, at once
+        m_ctx->run(QStringLiteral("NextY"));
+        return;
+    }
     if (key == QLatin1String("Back")) {
         t = t.trimmed();
         // Whole keywords go in one press; numbers one character at a time.
@@ -298,6 +302,14 @@ void CommandBar::focusInput()
 
 bool CommandBar::eventFilter(QObject *obj, QEvent *ev)
 {
+    // Ctrl+Z / Ctrl+Y with nothing typed to take back: the show's undo, not the text field's.
+    if (obj == m_input && ev->type() == QEvent::ShortcutOverride) {
+        auto *k = static_cast<QKeyEvent *>(ev);
+        if ((k->matches(QKeySequence::Undo) && !m_input->isUndoAvailable())
+            || ((k->matches(QKeySequence::Redo) || (k->modifiers() == Qt::ControlModifier && k->key() == Qt::Key_Y))
+                && !m_input->isRedoAvailable()))
+            return true;
+    }
     if (obj == m_input && ev->type() == QEvent::KeyPress) {
         auto *k = static_cast<QKeyEvent *>(ev);
         const QStringList &hist = m_ctx->commands.history();

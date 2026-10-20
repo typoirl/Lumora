@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "midiview.h"
 
+#include "effects.h"
+
 #include "appcontext.h"
 #include "theme.h"
 
@@ -97,6 +99,14 @@ MidiView::MidiView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ct
             targets << bt;
         }
     }
+    // The rate masters: each one's fader and Learn (tap tempo) key.
+    for (int n = 1; n <= RateMaster::kCount; ++n)
+        for (MidiTarget::Kind k : {MidiTarget::RateMasterFader, MidiTarget::RateMasterKey}) {
+            MidiTarget r;
+            r.kind = k;
+            r.master = n;
+            targets << r;
+        }
     // The encoder bar's encoders, by position (their push maps from the encoder's right-click).
     for (int n = 1; n <= 10; ++n) {
         MidiTarget e;
@@ -254,7 +264,8 @@ void MidiView::refreshBindings()
         const MidiBinding &b = bs[r];
         m_bindings->setItem(r, 0, new QTableWidgetItem(b.source.describe()));
         m_bindings->setItem(r, 1, new QTableWidgetItem(b.target.describe()));
-        const bool continuous = b.target.kind == MidiTarget::ExecutorFader || b.target.kind == MidiTarget::GrandMaster;
+        const bool continuous = b.target.kind == MidiTarget::ExecutorFader || b.target.kind == MidiTarget::GrandMaster
+                                || b.target.kind == MidiTarget::RateMasterFader;
         const bool encoder = b.target.kind == MidiTarget::Encoder;
         for (int c : {2, 3, 4}) {
             auto *it = new QTableWidgetItem;

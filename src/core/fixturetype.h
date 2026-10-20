@@ -165,6 +165,7 @@ public:
     QList<FixtureType> all() const;
     QList<FixtureType> shippedTypes() const { return m_types.values(); }   // the library Lumora ships with
     QStringList ids() const;
+    bool sharesDataWith(const FixtureLibrary &o) const { return m_types.isSharedWith(o.m_types) && m_show.isSharedWith(o.m_show); }
 
 private:
     QMap<QString, FixtureType> m_types;

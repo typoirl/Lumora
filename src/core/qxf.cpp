@@ -179,9 +179,9 @@ bool FixtureLibrary::parseQxf(const QByteArray &xml, FixtureType *out, QString *
         if (name == QLatin1String("FixtureDefinition")) {
             isQxf = true;
         } else if (name == QLatin1String("Manufacturer") && t.manufacturer.isEmpty()) {
-            t.manufacturer = r.readElementText().trimmed();
+            t.manufacturer = r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
         } else if (name == QLatin1String("Model") && t.name.isEmpty()) {
-            t.name = r.readElementText().trimmed();
+            t.name = r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
         } else if (name == QLatin1String("Channel") && r.attributes().hasAttribute("Name")) {
             QxfChannel c;
             c.name = r.attributes().value("Name").toString();
@@ -192,9 +192,9 @@ bool FixtureLibrary::parseQxf(const QByteArray &xml, FixtureType *out, QString *
                     continue;
                 if (r.name() == QLatin1String("Group")) {
                     c.byte = r.attributes().value("Byte").toInt();
-                    c.group = r.readElementText().trimmed();
+                    c.group = r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
                 } else if (r.name() == QLatin1String("Colour")) {
-                    c.colour = r.readElementText().trimmed();
+                    c.colour = r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
                 } else if (r.name() == QLatin1String("Capability")) {
                     QxfCap cap;
                     cap.min = r.attributes().value("Min").toInt();
@@ -203,7 +203,7 @@ bool FixtureLibrary::parseQxf(const QByteArray &xml, FixtureType *out, QString *
                     cap.res1 = r.attributes().value("Res1").toString();
                     if (cap.res1.isEmpty())
                         cap.res1 = r.attributes().value("Res").toString();   // older files
-                    cap.name = r.readElementText().trimmed();
+                    cap.name = r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed();
                     c.caps.append(cap);
                 }
             }
@@ -221,14 +221,14 @@ bool FixtureLibrary::parseQxf(const QByteArray &xml, FixtureType *out, QString *
                 r.readNext();
                 if (r.isStartElement() && r.name() == QLatin1String("Channel") && r.attributes().hasAttribute("Number")) {
                     const int num = r.attributes().value("Number").toInt();
-                    m.entries.append({num, r.readElementText().trimmed()});
+                    m.entries.append({num, r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed()});
                 } else if (r.isStartElement() && r.name() == QLatin1String("Head")) {
                     // A head lists its channels; with two or more, each head is a cell.
                     ++m.heads;
                     while (!(r.isEndElement() && r.name() == QLatin1String("Head")) && !r.atEnd()) {
                         r.readNext();
                         if (r.isStartElement() && r.name() == QLatin1String("Channel"))
-                            m.head.insert(r.readElementText().trimmed().toInt(), m.heads);
+                            m.head.insert(r.readElementText(QXmlStreamReader::IncludeChildElements).trimmed().toInt(), m.heads);
                     }
                 }
             }
@@ -237,7 +237,8 @@ bool FixtureLibrary::parseQxf(const QByteArray &xml, FixtureType *out, QString *
     }
     if (r.hasError() || !isQxf) {
         if (error)
-            *error = r.hasError() ? r.errorString() : QStringLiteral("Not a QLC+ fixture definition");
+            *error = r.hasError() ? QStringLiteral("The QLC+ file couldn't be read (line %1: %2)").arg(r.lineNumber()).arg(r.errorString())
+                                  : QStringLiteral("Not a QLC+ fixture definition");
         return false;
     }
     if (t.name.isEmpty() || modes.isEmpty()) {

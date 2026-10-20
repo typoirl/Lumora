@@ -7,7 +7,10 @@
 #include <QColor>
 #include <QString>
 #include <QStringList>
+#include <QToolButton>
 
+class QPainter;
+class QRect;
 class QTableWidget;
 class QWidget;
 
@@ -16,6 +19,32 @@ namespace lumora {
 struct Preset;
 
 // Small things several windows share.
+
+// Lines of text stacked in the middle of a rect. A line that fits is centered; one that doesn't
+// starts at the left and is cut off with "…", so its first part can still be read.
+void drawFittedLines(QPainter &p, const QRect &r, const QStringList &lines);
+
+// A tool button that, squeezed, shows the start of its text and "…" rather than cutting it off
+// at both ends. It asks the layout for room for its whole text, and gives it up when it must.
+class FittingToolButton : public QToolButton {
+public:
+    explicit FittingToolButton(const QString &text, QWidget *parent = nullptr);
+    void setFullText(const QString &text);
+    void setShortText(const QString &text);   // tried before cutting letters off ("Ctl")
+    QString fullText() const { return m_full; }
+    QSize sizeHint() const override;
+    QSize minimumSizeHint() const override;
+
+protected:
+    void resizeEvent(QResizeEvent *ev) override;
+    void changeEvent(QEvent *ev) override;
+
+private:
+    void fit();
+    int padding() const;   // the button's width around its text
+    QString m_full, m_short;
+    mutable int m_pad = -1;
+};
 
 // "2", "1.5": seconds the way cue lists show them.
 QString formatSeconds(double s);
