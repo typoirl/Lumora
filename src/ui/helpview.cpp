@@ -68,8 +68,8 @@ HelpView::HelpView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ct
     split->setStretchFactor(1, 1);
     split->setSizes({260, 700});
 
-    load();
-    fillList();
+    // The guide is read when the window is first shown (most of the time it sits in a tab
+    // behind another, or isn't opened at all).
     connect(m_search, &QLineEdit::textChanged, this, [this]() {
         fillList();
         highlight();
@@ -91,12 +91,27 @@ HelpView::HelpView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ct
         else if (url.scheme() == QLatin1String("help"))
             showTopic(url.path());
     });
+}
+
+void HelpView::ensureLoaded()
+{
+    if (m_loaded)
+        return;
+    m_loaded = true;
+    load();
+    fillList();
     if (!m_sections.isEmpty())
         for (int i = 0; i < m_sections.size(); ++i)
             if (m_sections[i].level == 2) {
                 showChapter(i);
                 break;
             }
+}
+
+void HelpView::showEvent(QShowEvent *ev)
+{
+    ensureLoaded();
+    QWidget::showEvent(ev);
 }
 
 void HelpView::openWindow(AppContext *ctx, QWidget *parent)
@@ -203,6 +218,7 @@ void HelpView::fillList()
 
 void HelpView::showTopic(const QString &id)
 {
+    ensureLoaded();
     for (int i = 0; i < m_sections.size(); ++i)
         if (m_sections[i].id == id) {
             const Section &s = m_sections[i];

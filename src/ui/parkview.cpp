@@ -3,6 +3,7 @@
 
 #include "appcontext.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QHBoxLayout>
 #include <QHeaderView>
@@ -56,7 +57,7 @@ ParkView::ParkView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ct
     connect(unpark, &QToolButton::clicked, this, &ParkView::unparkSelected);
     connect(all, &QToolButton::clicked, this, [this]() { m_ctx->run(QStringLiteral("Unpark All")); });
     connect(m_list, &QTreeWidget::itemDoubleClicked, this, [this]() { unparkSelected(); });
-    connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, ctx->show, [this](Show::Parts p) {
         if (p & (Show::ParkPart | Show::PatchPart))
             reload();
     });

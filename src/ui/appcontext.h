@@ -56,7 +56,7 @@ public:
             if (!m_history.isEmpty() && m_history.last().time.msecsTo(QDateTime::currentDateTime()) < 250
                 && (m_history.last().result == msg || m_history.last().text == msg))
                 return;
-            addHistory({QDateTime::currentDateTime(), false, msg, QString(), true});
+            addHistory({QDateTime::currentDateTime(), false, msg, QString(), true, QString()});
         });
         // "Plot 3" (or the pool): the plot windows show it.
         connect(show, &Show::plotRequested, this, [this](int id) { setUiValue(QStringLiteral("plot"), id); });
@@ -170,11 +170,28 @@ public:
         }
         undo->beginAction(line);
         m_inCommand = true;
-        CommandResult r = commands.execute(line);
+        CommandResult r;
+        {
+            const Show::Batch batch(show);   // the windows refresh once, after the command
+            r = commands.execute(line);
+        }
         m_inCommand = false;
+        if (!r.ok && !r.choices.isEmpty()) {
+            // Storing onto something that exists: ask, then run it with the answer.
+            QStringList answers;
+            for (const auto &c : r.choices)
+                answers << c.second;
+            const int i = askChoice(tr("Store"), r.question, answers);
+            if (i >= 0)
+                return run(line.trimmed() + QStringLiteral(" /") + r.choices[i].first);
+            r = CommandResult(false, tr("Store cancelled"));
+        }
         emit commandRan(line, r.ok, r.message);
         return r;
     }
+
+    // A question with answer buttons (the Store questions): the answer's index, or -1.
+    int askChoice(const QString &title, const QString &question, const QStringList &answers);
 
     CommandResult undoStep(bool plots, bool redo = false)
     {

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "commandline.h"
 
+#include "parameters.h"
 #include "show.h"
 
 #include <QHash>
@@ -37,7 +38,7 @@ QString canonical(const QString &w)
         {"cue", "cue"}, {"q", "cue"},
         {"executor", "executor"}, {"exec", "executor"}, {"e", "executor"}, {"exe", "executor"},
         {"go", "go"}, {"go+", "go"}, {"goback", "goback"}, {"go-", "goback"}, {"back", "goback"},
-        {"goto", "goto"}, {"off", "off"}, {"on", "on"}, {"pause", "pause"},
+        {"goto", "goto"}, {"load", "load"}, {"saveshow", "saveshow"}, {"off", "off"}, {"on", "on"}, {"pause", "pause"},
         {"assign", "assign"}, {"as", "assign"}, {"page", "page"}, {"build", "build"}, {"blueprint", "blueprint"}, {"bp", "blueprint"},
         {"fade", "fade"}, {"delay", "delay"}, {"time", "time"}, {"every", "every"}, {"interleave", "every"}, {"offset", "offset"},
         {"highlight", "highlight"}, {"hl", "highlight"}, {"progfade", "progfade"}, {"programmerfade", "progfade"}, {"nexty", "nexty"}, {"grid", "grid"}, {"gri", "grid"}, {"sendosc", "sendosc"}, {"x", "x"}, {"y", "y"}, {"blackout", "blackout"}, {"bo", "blackout"},
@@ -56,7 +57,7 @@ QString canonical(const QString &w)
         {"ratemaster", "ratemaster"}, {"rm", "ratemaster"}, {"speedmaster", "ratemaster"},
         {"park", "park"}, {"unpark", "unpark"}, {"next", "next"}, {"prev", "prev"}, {"previous", "prev"},
         {"last", "last"}, {"follow", "follow"}, {"wait", "wait"}, {"trigger", "trigger"},
-        {"plot", "plot"}, {"plots", "plot"}, {"macro", "macro"}, {"mac", "macro"}, {"ma", "macro"}, {"appearance", "appearance"}, {"app", "appearance"},
+        {"plot", "plot"}, {"plots", "plot"}, {"image", "image"}, {"images", "image"}, {"img", "image"}, {"macro", "macro"}, {"mac", "macro"}, {"ma", "macro"}, {"appearance", "appearance"}, {"app", "appearance"},
     };
     return map.value(w.toLower());
 }
@@ -207,10 +208,50 @@ private:
     }
     static Show::StoreMode storeMode(const QStringList &opts)
     {
-        for (const QString &o : opts)
+        for (const QString &raw : opts) {
+            const QString o = raw.toLower();
             if (o == "overwrite" || o == "o")
                 return Show::StoreMode::Overwrite;
+            if (o == "remove" || o == "rem" || o == "r")
+                return Show::StoreMode::Remove;
+        }
         return Show::StoreMode::Merge;
+    }
+    // Did the options say what to do with something that exists?
+    static bool storeChosen(const QStringList &opts)
+    {
+        static const QStringList words = {"overwrite", "o", "merge", "m", "remove", "rem", "r", "new", "n",
+                                          "global", "g", "selective", "s", "universal", "u", "type", "t", "fixture", "f"};
+        for (const QString &o : opts)
+            if (words.contains(o.toLower()))
+                return true;
+        return false;
+    }
+    CommandResult ask(const QString &question, const QVector<QPair<QString, QString>> &choices)
+    {
+        QStringList opts;
+        for (const auto &c : choices)
+            opts << '/' + c.first;
+        CommandResult r{false, QObject::tr("%1: add %2").arg(question, opts.join(QStringLiteral(", ")))};
+        r.question = question;
+        r.choices = choices;
+        return r;
+    }
+    // The answers, always in this order: Overwrite, Merge (or its kinds), Add cue, Remove.
+    static QVector<QPair<QString, QString>> storeChoices(bool preset, double newCue = -1)
+    {
+        QVector<QPair<QString, QString>> c{{"overwrite", QObject::tr("Overwrite")}};
+        if (preset)
+            c << QPair<QString, QString>{"global", QObject::tr("Merge global")} << QPair<QString, QString>{"selective", QObject::tr("Merge selective")};
+        else
+            c << QPair<QString, QString>{"merge", QObject::tr("Merge")};
+        if (newCue >= 0) {
+            Cue tmp;
+            tmp.number = newCue;
+            c << QPair<QString, QString>{"new", QObject::tr("Add Cue %1").arg(tmp.displayNumber())};
+        }
+        c << QPair<QString, QString>{"remove", QObject::tr("Remove")};
+        return c;
     }
     CommandResult fail(const QString &m) { return {false, m}; }
     CommandResult ok(const QString &m) { return {true, m}; }
@@ -397,6 +438,9 @@ private:
         int type = 0, id = 0;
         bool typed = false;   // a number: v is a percentage; raw is as typed (degrees for pan and tilt)
         double raw = 0;
+        // "+10", "+-10": up or down from where each fixture is now, in the channel's own values.
+        bool relative = false;
+        double delta = 0;
     };
     bool value(Value *out)
     {
@@ -412,6 +456,17 @@ private:
         if (accept("preset")) {
             out->preset = true;
             return presetRef(&out->type, &out->id);
+        }
+        if (acceptKind(Token::Plus)) {   // +10 up, +-10 down
+            const bool down = acceptKind(Token::Minus);
+            auto n = number();
+            if (!n)
+                return false;
+            out->relative = true;
+            out->typed = true;
+            out->delta = down ? -*n : *n;
+            out->raw = out->delta;
+            return true;
         }
         const bool negative = acceptKind(Token::Minus);   // -45 for pan and tilt
         if (auto n = number()) {
@@ -441,7 +496,17 @@ private:
             if (!c)
                 continue;
             double value;
-            if (v.typed)
+            if (v.relative) {
+                // From where it is: the programmer's value, else what's on stage, else its rest.
+                double cur = s->defaultValue(fid, attribute);
+                const auto prog = s->programmerValues().constFind(fid);
+                if (prog != s->programmerValues().constEnd() && prog->contains(attribute))
+                    cur = s->resolveValue(fid, attribute, prog->value(attribute));
+                else if (const auto out = s->lastOutput().constFind(fid); out != s->lastOutput().constEnd() && out->contains(attribute))
+                    cur = out->value(attribute);
+                value = c->isAngle() ? std::clamp(cur + v.delta, c->minValue(), c->maxValue())
+                                     : std::clamp(c->fromPhysical(c->toPhysical(cur) + v.delta), 0.0, 1.0);
+            } else if (v.typed)
                 value = c->isAngle() ? v.raw : std::clamp(c->fromPhysical(v.raw), 0.0, 1.0);
             else
                 value = c->isAngle() ? c->fromDmx(c->dmxFrom + (c->dmxTo - c->dmxFrom) * v.v) : v.v;
@@ -451,6 +516,9 @@ private:
         }
         if (!n)
             return ok(QObject::tr("The selected fixtures have no %1").arg(attributeLabel(attribute)));
+        if (v.relative)
+            return ok(QObject::tr("%1 %2%3%4 (%5)").arg(attributeLabel(attribute), v.delta >= 0 ? QStringLiteral("+") : QString())
+                          .arg(v.delta).arg(isAngle(attribute) ? QStringLiteral("°") : QString(), countOf(n, QObject::tr("fixture"), QObject::tr("fixtures"))));
         if (v.typed)
             shown = QString::number(v.raw) + (isAngle(attribute) ? QStringLiteral("°") : QString());
         else
@@ -465,6 +533,58 @@ private:
             {"color", 4}, {"colour", 4}, {"beam", 5}, {"focus", 6}, {"control", 7},
         };
         return words.value(w.toLower());
+    }
+    // An attribute by name, as typed: Pan, tilt, Zoom, Red, Gobo1, Dimmer… The selection's
+    // attributes first, then any Lumora knows. Empty when it isn't one.
+    QString attributeWord(const QString &word) const
+    {
+        const QString lw = word.toLower();
+        if (!canonical(lw).isEmpty())   // a command word (Effect, Rate, Size…) stays one
+            return QString();
+        if (lw == QLatin1String("dimmer") || lw == QLatin1String("intensity") || lw == QLatin1String("int"))
+            return QStringLiteral("Dimmer");
+        QStringList candidates;
+        for (int fid : s->selection())
+            for (const QString &a : s->fixtureAttributes(fid))
+                if (!candidates.contains(a))
+                    candidates << a;
+        for (const ParameterInfo &pi : parameterLibrary())
+            if (!candidates.contains(pi.attribute))
+                candidates << pi.attribute;
+        auto matches = [&](const QString &a) {
+            const QString al = a.toLower();
+            if (al == lw || al == lw + QLatin1Char('1'))   // Focus: Focus1, Gobo: Gobo1
+                return true;
+            if (a.startsWith(QLatin1String("ColorAdd_")) && al.mid(9) == lw)
+                return true;
+            const QString label = attributeLabel(a).toLower();
+            return label == lw || QString(label).remove(QLatin1Char(' ')) == lw;
+        };
+        for (const QString &a : candidates)
+            if (matches(a))
+                return a;
+        return QString();
+    }
+    // "Pan 30", "Pan At 30", "Pan +10", "Tilt +-10": an attribute word followed by a value, on the
+    // selection. Nothing when the next words aren't that.
+    std::optional<CommandResult> attributeValue()
+    {
+        if (peek().kind != Token::Word)
+            return std::nullopt;
+        const Token::Kind next = peek(1).kind;
+        if (next != Token::Plus && next != Token::Minus && next != Token::Number && !isWord("at", 1))
+            return std::nullopt;
+        const QString attr = attributeWord(peek().text);
+        if (attr.isEmpty())
+            return std::nullopt;
+        ++pos;
+        accept("at");
+        if (isTimingWord())
+            return timingFor(attr);
+        Value v;
+        if (!value(&v) || v.preset)
+            return fail(QObject::tr("Expected a value: %1 50, %1 +10 or %1 +-10").arg(attributeLabel(attr)));
+        return withTiming(applyValue(v, attr), v, attr);
     }
     // Optional "Attribute Pan" or a feature name ("Intensity", "Position").
     void attributeFilter(QString *attribute, int *feature)
@@ -583,7 +703,10 @@ private:
 
     CommandResult trailingAt(const QString &okMessage)
     {
-        // "Fixture 101 Park", "Fixture 101 Intensity Park", "Fixture 101 Attribute Pan At 30"
+        // "Fixture 101 Park", "Fixture 101 Intensity Park", "Fixture 101 Attribute Pan At 30",
+        // "Fixture 101 Pan +10"
+        if (auto r = attributeValue())
+            return *r;
         QString attribute;
         int feature = 0;
         attributeFilter(&attribute, &feature);
@@ -622,6 +745,15 @@ private:
             if (numOut) *numOut = num;
             return s->executor(page, num);
         }
+        if (accept("sequence")) {   // Go Sequence 5: the executor it's on
+            auto n = number();
+            if (!n)
+                return nullptr;
+            Executor *e = s->executorForSequence(int(*n));
+            if (e && pageOut) *pageOut = e->page;
+            if (e && numOut) *numOut = e->number;
+            return e;
+        }
         return s->executorForSequence(s->selectedSequence());
     }
 
@@ -629,6 +761,7 @@ private:
     CommandResult cmdSelectGroups();
     CommandResult cmdPark(bool on);
     CommandResult cmdStore();
+    CommandResult cmdLoad();
     CommandResult cmdDelete();
     CommandResult cmdLabel();
     CommandResult cmdSpread();
@@ -846,10 +979,18 @@ CommandResult Parser::cmdStore()
         if (!n)
             return fail(QObject::tr("Store Group needs a number"));
         auto name = string();
-        options();
-        return s->storeGroup(int(*n), name.value_or(QString()))
-                   ? ok(QObject::tr("Group %1 stored").arg(int(*n)))
-                   : fail(QObject::tr("Nothing selected"));
+        const QStringList opts = options();
+        if (s->group(int(*n)) && !storeChosen(opts) && !s->selection().isEmpty())
+            return ask(QObject::tr("Group %1 exists").arg(int(*n)), storeChoices(false));
+        Show::StoreMode mode = storeMode(opts);
+        if (!opts.contains("merge", Qt::CaseInsensitive) && !opts.contains("m", Qt::CaseInsensitive) && mode == Show::StoreMode::Merge)
+            mode = Show::StoreMode::Overwrite;   // a new group, or /overwrite
+        if (!s->storeGroup(int(*n), name.value_or(QString()), mode))
+            return fail(QObject::tr("Nothing selected"));
+        return ok(mode == Show::StoreMode::Remove ? (s->group(int(*n)) ? QObject::tr("Selection removed from Group %1").arg(int(*n))
+                                                                         : QObject::tr("Group %1 deleted: nothing left in it").arg(int(*n)))
+                  : mode == Show::StoreMode::Merge ? QObject::tr("Group %1 merged").arg(int(*n))
+                                                   : QObject::tr("Group %1 stored").arg(int(*n)));
     }
     if (accept("preset")) {
         int type, id;
@@ -857,7 +998,16 @@ CommandResult Parser::cmdStore()
             return fail(QObject::tr("Store Preset needs a pool and number, e.g. Color.1"));
         auto name = string();
         const QStringList opts = options();
+        if (s->preset(type, id) && !storeChosen(opts))
+            return ask(QObject::tr("Preset %1 exists").arg(lumora::presetRef(type, id)), storeChoices(true));
         Show::StoreMode mode = storeMode(opts);
+        if (mode == Show::StoreMode::Remove) {
+            const bool had = s->preset(type, id);
+            if (!s->storePreset(type, id, mode))
+                return fail(QObject::tr("Nothing in the programmer is in Preset %1").arg(lumora::presetRef(type, id)));
+            return ok(had && !s->preset(type, id) ? QObject::tr("Preset %1 deleted: nothing left in it").arg(lumora::presetRef(type, id))
+                                                  : QObject::tr("Programmer removed from Preset %1").arg(lumora::presetRef(type, id)));
+        }
         std::optional<PresetScope> scope;
         for (const QString &o : opts) {
             const PresetScope sc = presetScopeFromName(o, PresetScope(-1));
@@ -885,9 +1035,29 @@ CommandResult Parser::cmdStore()
     }
     optionalSequence(&seq);
     auto name = string();
-    Show::StoreMode mode = storeMode(options());
+    const QStringList opts = options();
+    Show::StoreMode mode = storeMode(opts);
     if (!atEnd())
         return fail(QObject::tr("Don't know how to store '%1'").arg(peek().text));
+    if (cueTo < 0 && !storeChosen(opts)) {
+        // Onto a cue that exists, or a sequence with a single cue: ask. A sequence with more
+        // cues takes the next one.
+        const Sequence *sq = s->sequence(seq);
+        if (cue >= 0 && sq && sq->indexOf(cue) >= 0) {
+            Cue tmp;
+            tmp.number = cue;
+            return ask(QObject::tr("Cue %1 exists in Sequence %2").arg(tmp.displayNumber()).arg(seq), storeChoices(false));
+        }
+        if (cue < 0 && sq && sq->cues.size() == 1)
+            return ask(QObject::tr("Sequence %1 has one cue").arg(seq), storeChoices(false, std::floor(sq->cues.first().number) + 1.0));
+    }
+    if (cue < 0 && cueTo < 0 && !opts.filter(QRegularExpression(QStringLiteral("^(new|n)$"), QRegularExpression::CaseInsensitiveOption)).isEmpty())
+        cue = -1;   // /new: the next cue
+    else if (cue < 0 && cueTo < 0 && storeChosen(opts)) {
+        // Overwrite, Merge or Remove with no cue: the single cue a sequence has (or its last).
+        if (const Sequence *sq = s->sequence(seq); sq && !sq->cues.isEmpty())
+            cue = sq->cues.last().number;
+    }
     if (cueTo >= 0) {
         // A run of cues, one per whole number: a cue list laid out in advance.
         if (cueTo - cue > 9999)
@@ -902,6 +1072,11 @@ CommandResult Parser::cmdStore()
     const bool empty = s->programmerValues().isEmpty() && s->programmerEffects().isEmpty();
     if (!s->storeCue(seq, cue, mode, &stored))
         return fail(QObject::tr("Couldn't store the cue"));
+    if (mode == Show::StoreMode::Remove) {
+        Cue tmp;
+        tmp.number = stored;
+        return ok(QObject::tr("Programmer removed from Cue %1 in Sequence %2").arg(tmp.displayNumber()).arg(seq));
+    }
     if (name) {
         Sequence *sq = s->sequenceMutable(seq);
         sq->cues[sq->indexOf(stored)].name = *name;
@@ -915,6 +1090,15 @@ CommandResult Parser::cmdStore()
 
 CommandResult Parser::cmdDelete()
 {
+    if (accept("image")) {
+        auto n = number();
+        if (!n || !s->image(int(*n)))
+            return fail(QObject::tr("No such image"));
+        const int uses = s->imageUses(int(*n));
+        s->deleteImage(int(*n));
+        return ok(uses ? QObject::tr("Image %1 deleted (plots used it %2 times: they show it missing)").arg(int(*n)).arg(uses)
+                       : QObject::tr("Image %1 deleted").arg(int(*n)));
+    }
     if (accept("plot")) {
         auto n = number();
         if (!n || !s->plot(int(*n)))
@@ -1083,6 +1267,16 @@ CommandResult Parser::cmdSpread()
 
 CommandResult Parser::cmdLabel()
 {
+    if (accept("image")) {
+        auto n = number();
+        auto name = string();
+        if (!n || !name || !s->image(int(*n)))
+            return fail(QObject::tr("Usage: Label Image 3 \"Name\""));
+        PoolImage img = *s->image(int(*n));
+        img.name = *name;
+        s->setImage(img);
+        return ok(QObject::tr("Labelled"));
+    }
     if (accept("plot")) {
         auto n = number();
         auto name = string();
@@ -1253,6 +1447,17 @@ std::optional<CommandResult> Parser::toPlot()
                     return fail(QObject::tr("Expected a plot number"));
                 const int n = s->addFixturesToPlot(plot, fids);
                 return ok(QObject::tr("%1 on Plot %2").arg(countOf(n, QObject::tr("fixture"), QObject::tr("fixtures"))).arg(plot));
+            }
+            if (accept("image")) {   // Assign Image 3 At Plot 2: the picture, on the plot
+                auto n = number();
+                if (!n || !s->image(int(*n)) || pos != end)
+                    return fail(QObject::tr("Usage: Assign Image 3 At Plot 2"));
+                const int img = int(*n);
+                const int plot = target();
+                if (!plot)
+                    return fail(QObject::tr("Expected a plot number"));
+                s->addImageToPlot(plot, img);
+                return ok(QObject::tr("Image %1 on Plot %2").arg(img).arg(plot));
             }
             static const QHash<QString, QString> kinds = {
                 {"group", "Group"}, {"sequence", "Sequence"}, {"macro", "Macro"}, {"effect", "Effect"},
@@ -1428,7 +1633,8 @@ CommandResult Parser::cmdPlayback(const QString &verb)
 
 CommandResult Parser::cmdGoto()
 {
-    // Goto Cue 3 Executor 201 [Fade 2]; Goto Executor 201 alone shows its cue list to pick from.
+    // Goto Cue 3 Executor 201 [Fade 2] (or Sequence 5: the executor it's on); Goto Executor 201
+    // alone shows its cue list to pick from.
     double cue = -1;
     double fade = -1;
     Executor *e = nullptr;
@@ -1439,7 +1645,7 @@ CommandResult Parser::cmdGoto()
             if (!n)
                 return fail(QObject::tr("Expected a cue number"));
             cue = *n;
-        } else if (isWord("executor")) {
+        } else if (isWord("executor") || isWord("sequence")) {
             e = resolveExecutorArg();
             namedExecutor = true;
         } else if (accept("fade") || accept("time")) {
@@ -1471,6 +1677,50 @@ CommandResult Parser::cmdGoto()
     else
         s->gotoCue(*e, idx, true);
     return ok(fade >= 0 ? QObject::tr("Goto cue %1 in %2 s").arg(cue).arg(fade) : QObject::tr("Goto cue %1").arg(cue));
+}
+
+CommandResult Parser::cmdLoad()
+{
+    // Load Cue 3 Executor 201 (or Sequence 5): the next Go there fires cue 3. Load Executor 201
+    // alone shows its cue list to pick from; Load Executor 201 /clear takes the load back.
+    double cue = -1;
+    Executor *e = nullptr;
+    bool namedExecutor = false;
+    for (int i = 0; i < 2; ++i) {
+        if (accept("cue")) {
+            auto n = number();
+            if (!n)
+                return fail(QObject::tr("Expected a cue number"));
+            cue = *n;
+        } else if (isWord("executor") || isWord("sequence")) {
+            e = resolveExecutorArg();
+            namedExecutor = true;
+        } else if (peek().kind == Token::Number && cue < 0) {
+            cue = *number();   // Load 3: the cue
+        }
+    }
+    const QStringList opts = options();
+    if (!e)
+        e = s->executorForSequence(s->selectedSequence());
+    if (!e || e->isEmpty())
+        return fail(QObject::tr("Usage: Load Cue 3 Executor 201"));
+    if (opts.contains(QStringLiteral("clear"), Qt::CaseInsensitive)) {
+        s->loadCue(*e, -1);
+        return ok(QObject::tr("Load cleared: Go fires the next cue"));
+    }
+    if (cue < 0) {
+        if (namedExecutor) {
+            emit s->loadRequested(e->page, e->number);
+            return ok(QObject::tr("Load: pick a cue"));
+        }
+        return fail(QObject::tr("Usage: Load Cue 3 Executor 201"));
+    }
+    const Sequence *sq = s->sequence(e->sequenceId);
+    const int idx = sq ? sq->indexOf(cue) : -1;
+    if (idx < 0)
+        return fail(QObject::tr("No such cue"));
+    s->loadCue(*e, idx);
+    return ok(QObject::tr("Cue %1 loaded: the next Go fires it").arg(sq->cues[idx].displayNumber()));
 }
 
 CommandResult Parser::cmdExecutor()
@@ -1544,6 +1794,63 @@ CommandResult Parser::cmdCue()
     auto n = number();
     if (!n)
         return fail(QObject::tr("Expected a cue number"));
+    if (accept("thru")) {
+        // A run of cues at once: Cue 1 Thru 14 Sequence 5 Fade 3 (fade, delay, trigger, macro).
+        auto last = number();
+        if (!last)
+            return fail(QObject::tr("Expected the last cue after Thru"));
+        optionalSequence(&seq);
+        Sequence *rs = s->sequenceMutable(seq);
+        if (!rs)
+            return fail(QObject::tr("No such sequence"));
+        const double lo = std::min(*n, *last), hi = std::max(*n, *last);
+        Sequence copy = *rs;
+        QVector<int> idxs;
+        for (int i = 0; i < copy.cues.size(); ++i)
+            if (copy.cues[i].number >= lo - 1e-9 && copy.cues[i].number <= hi + 1e-9)
+                idxs << i;
+        if (idxs.isEmpty())
+            return fail(QObject::tr("No cues in %1 Thru %2").arg(lo).arg(hi));
+        if (atEnd())
+            return fail(QObject::tr("Usage: Cue 1 Thru 14 Fade 3 (or Delay, Follow, Wait 2, Go, Macro 4)"));
+        while (!atEnd()) {
+            if (isWord("fade") || isWord("delay")) {
+                const bool delay = accept("delay");
+                if (!delay)
+                    accept("fade");
+                auto v = number();
+                if (!v || *v < 0)
+                    return fail(QObject::tr("Expected seconds"));
+                for (int i : idxs)
+                    (delay ? copy.cues[i].delay : copy.cues[i].fade) = *v;
+            } else if (accept("follow")) {
+                for (int i : idxs) copy.cues[i].trigger = CueTrigger::Follow;
+            } else if (accept("wait")) {
+                auto v = number();
+                if (!v || *v < 0)
+                    return fail(QObject::tr("Expected seconds after Wait"));
+                for (int i : idxs) {
+                    copy.cues[i].trigger = CueTrigger::Wait;
+                    copy.cues[i].wait = *v;
+                }
+            } else if (accept("go")) {
+                for (int i : idxs) copy.cues[i].trigger = CueTrigger::Go;
+            } else if (accept("macro")) {
+                int m = 0;
+                if (!accept("off")) {
+                    auto v = number();
+                    if (!v || *v < 0)
+                        return fail(QObject::tr("Expected a macro number (or Off) after Macro"));
+                    m = int(*v);
+                }
+                for (int i : idxs) copy.cues[i].macro = m;
+            } else {
+                return fail(QObject::tr("Unexpected '%1'").arg(peek().text));
+            }
+        }
+        s->setSequence(copy);
+        return ok(QObject::tr("%1 changed").arg(countOf(int(idxs.size()), QObject::tr("cue"), QObject::tr("cues"))));
+    }
     optionalSequence(&seq);
     Sequence *sq = s->sequenceMutable(seq);
     int idx = sq ? sq->indexOf(*n) : -1;
@@ -1843,6 +2150,20 @@ CommandResult Parser::cmdCopyMove(bool move)
         *out = n->section('.', -1).toInt();
         return *out > 0;
     };
+    if (accept("image")) {
+        auto n = number();
+        if (!n || !s->image(int(*n)) || !accept("at"))
+            return fail(move ? QObject::tr("Usage: Move Image 1 At 5") : QObject::tr("Usage: Copy Image 1 At 5"));
+        accept("image");
+        auto t2 = number();
+        const int to = t2 ? int(*t2) : 0;
+        if (to <= 0)
+            return fail(QObject::tr("Expected where it goes"));
+        if (s->image(to))
+            return fail(QObject::tr("Image %1 is used").arg(to));
+        s->moveImage(int(*n), to, !move);
+        return ok(QObject::tr("%1 Image %2 to %3").arg(verb).arg(int(*n)).arg(to));
+    }
     if (accept("plot")) {
         auto n = number();
         if (!n || !s->plot(int(*n)) || !accept("at"))
@@ -2110,6 +2431,10 @@ CommandResult Parser::run()
     const Token &first = peek();
     if (first.kind != Token::Word)
         return fail(QObject::tr("Unexpected '%1'").arg(first.text));
+    // "Pan +10", "Zoom 30": an attribute of the selection.
+    if (first.text != QLatin1String("at") && first.text != QLatin1String("fixture") && first.text != QLatin1String("group"))
+        if (auto r = attributeValue())
+            return *r;
     const QString w = first.text;
     ++pos;
 
@@ -2161,6 +2486,7 @@ CommandResult Parser::run()
     if (w == "assign") return cmdAssign();
     if (w == "go" || w == "goback" || w == "off" || w == "on" || w == "pause" || w == "top") return cmdPlayback(w);
     if (w == "goto") return cmdGoto();
+    if (w == "load") return cmdLoad();
     if (w == "executor") return cmdExecutor();
     if (w == "cue") return cmdCue();
     if (w == "blueprint") return cmdBlueprint();
@@ -2211,6 +2537,12 @@ CommandResult Parser::run()
         return ok(QObject::tr("%1: %2").arg(m.displayName(), m.valueText()));
     }
     if (w == "spread") return cmdSpread();
+    if (w == "image") {
+        auto n = number();
+        if (!n || !s->image(int(*n)))
+            return fail(QObject::tr("No such image"));
+        return ok(QObject::tr("Image %1: %2 (Assign Image %1 At Plot 2 puts it on a plot)").arg(int(*n)).arg(s->image(int(*n))->displayName()));
+    }
     if (w == "plot") {
         auto n = number();
         if (!n || !s->plot(int(*n)))
@@ -2239,13 +2571,17 @@ CommandResult Parser::run()
             QString name;
             if (auto str = string()) name = *str;
             else if (peek().kind == Token::Word) name = t[pos++].text;
-            color = colorFromName(name);
+            // A sequence can take its color from what it plays: Appearance Sequence 2 Follow.
+            color = what == QLatin1String("sequence") && name.compare(QLatin1String("follow"), Qt::CaseInsensitive) == 0
+                        ? QStringLiteral("follow") : colorFromName(name);
             if (color.isEmpty())
                 return fail(QObject::tr("Unknown color '%1': use a name (Red, Orange…) or #rrggbb").arg(name));
         }
         if (!s->setAppearance(what, int(*n), color))
             return fail(QObject::tr("No such %1").arg(what));
-        return ok(color.isEmpty() ? QObject::tr("Color removed") : QObject::tr("Color %1").arg(color));
+        return ok(color.isEmpty() ? QObject::tr("Color removed")
+                  : color == QLatin1String("follow") ? QObject::tr("Color: follows the fixtures")
+                                                     : QObject::tr("Color %1").arg(color));
     }
     if (w == "park") return cmdPark(true);
     if (w == "unpark") return cmdPark(false);
@@ -2341,6 +2677,10 @@ CommandResult Parser::run()
         }
         return ok(s->progFadeOn() ? QObject::tr("Programmer fade on: %1 s").arg(s->progFadeTime()) : QObject::tr("Programmer fade off"));
     }
+    if (w == "saveshow") {   // the same as Show → Save (Save as… for a show that has no file yet)
+        emit s->saveRequested();
+        return ok(QObject::tr("Show saved"));
+    }
     if (w == "blackout") {
         s->setBlackout(!s->blackout());
         return ok(s->blackout() ? QObject::tr("Blackout on") : QObject::tr("Blackout off"));
@@ -2381,10 +2721,10 @@ CommandResult CommandLine::execute(const QString &line)
 QStringList CommandLine::keywords()
 {
     return {"Fixture", "Cell", "Flip", "Spread", "Blocks", "Wings", "Phase", "Group", "Thru", "At", "Full", "Zero", "Preset", "Store", "Delete", "Label",
-            "Sequence", "Cue", "Executor", "Go", "GoBack", "Goto", "Off", "On", "Pause", "Assign",
+            "Sequence", "Cue", "Executor", "Go", "GoBack", "Goto", "Load", "Off", "On", "Pause", "Assign",
             "Page", "Build", "Blueprint", "Fade", "Delay", "Time", "Every", "Offset", "Highlight", "Blackout",
             "Clear", "ClearAll", "Attribute", "Update", "Remove", "Copy", "Move", "Effect", "Rate", "RateMaster", "Size",
-            "Default", "View", "Button", "Encoder", "Fader", "Top", "Macro", "Plot", "Appearance", "SetVar", "ProgFade", "NextY", "Grid", "SendOSC", "Undo", "Redo"};
+            "Default", "View", "Button", "Encoder", "Fader", "Top", "Macro", "Plot", "Appearance", "SetVar", "ProgFade", "NextY", "Grid", "SendOSC", "Undo", "Redo", "Image", "SaveShow"};
 }
 
 } // namespace lumora

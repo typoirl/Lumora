@@ -28,7 +28,6 @@ public:
     void selectType(const QString &typeId);
     void setSearchText(const QString &text);
     void focusSearch();
-    void debugPick(int row);   // developer: pick a result row
 
 signals:
     void typeChosen(const QString &typeId);   // empty while nothing usable is selected

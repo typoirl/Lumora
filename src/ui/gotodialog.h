@@ -14,11 +14,13 @@ class AppContext;
 // Goto, from an executor's Goto button or "Goto Executor 201": the sequence's cues with their
 // labels, big enough to tap. Tap a cue, or type its number and press Enter, and the executor goes
 // to it in the cue's own fade. Opens in the middle of the screen it was asked from.
+// Load (a Load button, "Load Executor 201") is the same window: the picked cue waits for the
+// next Go.
 class GotoDialog : public QDialog {
     Q_OBJECT
 public:
-    GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent = nullptr);
-    static void open(AppContext *ctx, int page, int executor, QWidget *parent);
+    GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent = nullptr, bool load = false);
+    static void open(AppContext *ctx, int page, int executor, QWidget *parent, bool load = false);
 
 protected:
     void keyPressEvent(QKeyEvent *ev) override;
@@ -28,6 +30,7 @@ private:
     void goTyped();
     AppContext *m_ctx = nullptr;
     int m_page = 1, m_executor = 201;
+    bool m_load = false;
     QLineEdit *m_number = nullptr;
     QTableWidget *m_list = nullptr;
     QLabel *m_note = nullptr;

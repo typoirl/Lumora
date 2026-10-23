@@ -143,21 +143,6 @@ void QuickEditor::addNumber(const QString &label, int min, int max, int value, s
     m_layout->addWidget(spin);
 }
 
-void QuickEditor::addSeconds(const QString &label, double value, std::function<void(double)> apply, bool optional)
-{
-    addSection(label);
-    auto *spin = new QDoubleSpinBox(this);
-    spin->setDecimals(1);
-    spin->setSingleStep(0.5);
-    spin->setSuffix(QStringLiteral(" s"));
-    spin->setRange(optional ? -0.1 : 0.0, 3600.0);
-    if (optional)
-        spin->setSpecialValueText(tr("None"));
-    spin->setValue(value < 0 && optional ? -0.1 : std::max(0.0, value));
-    connect(spin, &QDoubleSpinBox::valueChanged, this, [apply, optional](double v) { apply(optional && v < 0 ? -1.0 : std::max(0.0, v)); });
-    m_layout->addWidget(spin);
-}
-
 void QuickEditor::addChoices(const QVector<Choice> &choices)
 {
     if (choices.size() <= 10) {

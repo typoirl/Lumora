@@ -248,11 +248,6 @@ private:
     QListWidgetItem *m_toggledByBox = nullptr;
 };
 
-QWidget *makePresetPicker(Show *show, const QVector<QPair<int, int>> &current, QWidget *parent)
-{
-    return new PresetPickerDialog(show, current, parent);
-}
-
 CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
 {
     // The sequence editor edits the selected sequence: pick one in a Sequences pool (or with
@@ -611,7 +606,7 @@ CueView::CueView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
         });
     });
 
-    connect(show, &Show::changed, this, [this](Show::Parts parts) {
+    onShowChanged(this, show, [this](Show::Parts parts) {
         if (parts & (Show::SequencesPart | Show::GroupsPart | Show::PresetsPart | Show::PatchPart | Show::EffectsPart
                      | Show::SpreadsPart))
             refreshCues();
@@ -650,7 +645,7 @@ void editAppearance(QWidget *parent, Show *show, int sequenceId)
     if (!s0)
         return;
     const QString title = QObject::tr("Appearance · %1").arg(s0->name.isEmpty() ? QObject::tr("Sequence %1").arg(sequenceId) : s0->name);
-    if (const auto c = pickAppearanceColor(parent, title, s0->color)) {
+    if (const auto c = pickAppearanceColor(parent, title, s0->color, true)) {
         if (const Sequence *s1 = show->sequence(sequenceId)) {
             Sequence s = *s1;
             s.color = *c;
@@ -670,10 +665,8 @@ SequencePool::SequencePool(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Seq
     // Pool interactions
     connect(tiles(), &PoolTiles::tileClicked, this, [this, show](int id, bool occupied, Qt::KeyboardModifiers) {
         if (m_ctx->storeArmed()) {
-            double n = 0;
-            if (show->storeCue(id, -1, Show::StoreMode::Merge, &n))
-                emit m_ctx->status(tr("Stored the next cue in Sequence %1").arg(id));
             m_ctx->setStoreArmed(false);
+            m_ctx->run(QStringLiteral("Store Sequence %1").arg(id));   // the next cue; asks when it has one
             show->setSelectedSequence(id);
             return;
         }
@@ -722,7 +715,7 @@ SequencePool::SequencePool(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Seq
         ed->popup(pos);
     });
 
-    connect(show, &Show::changed, this, [this](Show::Parts parts) {
+    onShowChanged(this, show, [this](Show::Parts parts) {
         if (parts & (Show::SequencesPart | Show::ExecutorsPart))
             refresh();
     });
@@ -740,9 +733,10 @@ void SequencePool::refresh()
         it.label = s.name;
         it.active = s.id == show->selectedSequence();
         Executor *e = show->executorForSequence(s.id);
-        it.tag = e && e->pb().isOn() ? theme::live : QColor(s.color);
-        if (!s.color.isEmpty())
-            it.swatch = QColor(s.color);
+        const QColor look = sequenceAppearance(show, s.id);
+        it.tag = e && e->pb().isOn() ? theme::live : look;
+        if (look.isValid())
+            it.swatch = look;
         if (s.priority != SeqPriority::LTP)
             it.badge = s.priority == SeqPriority::Ultra ? QStringLiteral("U") : seqPriorityName(s.priority);
         items << it;

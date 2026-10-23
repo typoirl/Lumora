@@ -36,7 +36,7 @@ namespace lumora {
 namespace {
 
 enum ChannelColumn {
-    ColSlot, ColFine, ColCell, ColAttr, ColName, ColDefault, ColHighlight, ColMin, ColMax, ColDmxFrom, ColDmxTo, ColRanges, ChannelColumns
+    ColSlot, ColFine, ColCell, ColAttr, ColName, ColDefault, ColHighlight, ColSnap, ColMin, ColMax, ColDmxFrom, ColDmxTo, ColRanges, ChannelColumns
 };
 enum RangeColumn { ColFrom, ColTo, ColRangeName, RangeColumns };
 
@@ -265,7 +265,7 @@ FixtureEditorDialog::FixtureEditorDialog(AppContext *ctx, const QString &typeId,
     cv->addWidget(new QLabel(tr("Channels  ·  Default, Highlight, Min and Max in the channel's own values  ·  no DMX slot: virtual"),
                              chanBox));
     m_channels = makeTable26(chanBox, {tr("DMX"), tr("Fine"), tr("Cell"), tr("Parameter"), tr("Name"), tr("Default"), tr("Highlight"),
-                                       tr("Min"), tr("Max"), tr("DMX from"), tr("DMX to"), tr("Ranges")});
+                                       tr("Snap"), tr("Min"), tr("Max"), tr("DMX from"), tr("DMX to"), tr("Ranges")});
     m_channels->setSelectionMode(QAbstractItemView::ExtendedSelection);   // several: the channels of a pixel
     m_channels->setItemDelegateForColumn(ColAttr, new AttributeDelegate(m_channels));
     m_channels->setColumnWidth(ColSlot, 48);
@@ -291,6 +291,10 @@ FixtureEditorDialog::FixtureEditorDialog(AppContext *ctx, const QString &typeId,
     m_channels->setColumnWidth(ColName, 120);
     m_channels->setColumnWidth(ColDefault, 64);
     m_channels->setColumnWidth(ColHighlight, 70);
+    m_channels->setColumnWidth(ColSnap, 48);
+    m_channels->horizontalHeaderItem(ColSnap)->setToolTip(
+        tr("Snap: in a fade the channel jumps to its new value as the fade starts, instead of passing through the values "
+           "in between. On for gobo and color wheels and macros unless you change it."));
     // Right-click with several channels selected: one value for all of them (the cell of R, G
     // and B at once, say). DMX slots and parameters stay one by one.
     enableRightClickEdit(m_channels, [this](int row, int col, const QPoint &global) {
@@ -646,6 +650,7 @@ void FixtureEditorDialog::addParameters(const QStringList &attributes)
         if (a == QLatin1String("Dimmer"))
             m->noAutoDimmer = false;
         ChannelDef c = p->channel();
+        c.snap = FixtureType::snapsByDefault(a);
         c.cell = cell;
         c.sub = sub;
         c.coarse = nextFreeSlot(*m, p->fine ? 2 : 1);   // fills the gap a removed channel left
@@ -828,6 +833,9 @@ void FixtureEditorDialog::loadChannels()
             auto value = [&](double v) { return QString::number(c.toPhysical(v), 'g', 6) + c.unit(); };
             set(ColDefault, value(c.defaultValue));
             set(ColHighlight, c.hasHighlight ? value(c.highlightValue) : QString());
+            QTableWidgetItem *snap = set(ColSnap, QString(), false);
+            snap->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+            snap->setCheckState(c.snap ? Qt::Checked : Qt::Unchecked);
             set(ColMin, QString::number(c.rangeFrom(), 'g', 6) + c.unit());
             set(ColMax, QString::number(c.rangeTo(), 'g', 6) + c.unit());
             set(ColDmxFrom, QString::number(toDmx(c.dmxFrom, c.dmxMax())));
@@ -862,8 +870,13 @@ void FixtureEditorDialog::readChannels()
         c.cell = ok ? std::clamp(cell, 0, kCellsPerFixture - 1) : 0;
         c.sub = c.cell > 0 && cellParts.size() > 1 ? std::clamp(cellParts[1].toInt(), 0, 99) : 0;
         const QString a = m_channels->item(r, ColAttr) ? m_channels->item(r, ColAttr)->data(Qt::UserRole).toString() : QString();
-        if (!a.isEmpty())
+        const bool snapOn = m_channels->item(r, ColSnap) && m_channels->item(r, ColSnap)->checkState() == Qt::Checked;
+        if (!a.isEmpty() && a != c.attribute) {
             c.attribute = a;
+            c.snap = FixtureType::snapsByDefault(a);   // a new parameter starts with its usual snap
+        } else {
+            c.snap = snapOn;
+        }
         c.name = text(ColName).isEmpty() ? attributeLabel(c.attribute) : text(ColName);
         // Value range, then DMX range (a fine channel added or removed rescales the numbers).
         double lo = c.rangeFrom(), hi = c.rangeTo();

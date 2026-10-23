@@ -208,4 +208,97 @@ void FittingToolButton::changeEvent(QEvent *ev)
     }
 }
 
+LiveRefresh::LiveRefresh(QWidget *view, std::function<void()> update, int ms)
+    : QObject(view), m_view(view), m_update(std::move(update)), m_ms(ms)
+{
+    m_timer.setSingleShot(true);
+    connect(&m_timer, &QTimer::timeout, this, [this]() {
+        m_last.start();
+        m_update();
+    });
+    view->installEventFilter(this);
+}
+
+bool LiveRefresh::eventFilter(QObject *obj, QEvent *ev)
+{
+    if (obj == m_view && ev->type() == QEvent::Show && m_missed) {
+        m_missed = false;
+        request();
+    }
+    return false;
+}
+
+void LiveRefresh::request()
+{
+    if (!m_view->isVisible()) {
+        m_missed = true;   // nothing to show now; catch up when it's shown
+        return;
+    }
+    if (m_timer.isActive())
+        return;   // a refresh already waiting covers this one
+    const qint64 since = m_last.isValid() ? m_last.elapsed() : m_ms;
+    if (since >= m_ms) {
+        m_last.start();
+        m_update();
+    } else {
+        m_timer.start(int(m_ms - since));
+    }
+}
+
+namespace {
+class HiddenChanges : public QObject {
+public:
+    HiddenChanges(QWidget *window, Show *show, std::function<void(Show::Parts)> handler)
+        : QObject(window), m_window(window), m_handler(std::move(handler))
+    {
+        connect(show, &Show::changed, this, [this](Show::Parts parts) {
+            if (m_window->isVisible())
+                m_handler(parts);
+            else
+                m_pending |= parts;
+        });
+        window->installEventFilter(this);
+    }
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev) override
+    {
+        if (obj == m_window && ev->type() == QEvent::Show && m_pending) {
+            const Show::Parts parts = m_pending;
+            m_pending = {};
+            m_handler(parts);
+        }
+        return false;
+    }
+
+private:
+    QWidget *m_window;
+    std::function<void(Show::Parts)> m_handler;
+    Show::Parts m_pending;
+};
+} // namespace
+
+void onShowChanged(QWidget *window, Show *show, std::function<void(Show::Parts)> handler)
+{
+    new HiddenChanges(window, show, std::move(handler));
+}
+
+void ElidedLabel::setFullText(const QString &text)
+{
+    m_full = text;
+    setToolTip(text);
+    elide();
+}
+
+void ElidedLabel::resizeEvent(QResizeEvent *ev)
+{
+    QLabel::resizeEvent(ev);
+    elide();
+}
+
+void ElidedLabel::elide()
+{
+    setText(fontMetrics().elidedText(m_full, Qt::ElideRight, std::max(10, width())));
+}
+
 } // namespace lumora

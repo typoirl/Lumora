@@ -21,12 +21,10 @@ namespace lumora {
 
 class AppContext;
 class PoolPanel;
+class Show;
 struct Sequence;
 
 // Sequences pool, the cue list of the selected sequence, and the blueprint editor for the selected cue.
-class Show;
-// The blueprint preset picker (a tab per preset pool plus "All presets"), for screenshots and tests.
-QWidget *makePresetPicker(Show *show, const QVector<QPair<int, int>> &current, QWidget *parent);
 
 // Right-click → Appearance: the sequence's color, for its pool tile and executors.
 void editAppearance(QWidget *parent, Show *show, int sequenceId);

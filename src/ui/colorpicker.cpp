@@ -5,6 +5,7 @@
 #include "appcontext.h"
 #include "fixturesheet.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QButtonGroup>
 #include <QDialog>
@@ -944,6 +945,12 @@ ColorPickerPanel::ColorPickerPanel(AppContext *ctx, QWidget *parent) : QWidget(p
     m_stack->addWidget(scrollWrap(tempPage, m_stack));
     connect(m_kelvin, &KelvinBar::picked, this, [this](double k) {
         m_kelvinLabel->setText(QStringLiteral("%1 K").arg(int(k)));
+        if (m_pickOnly) {
+            const LinearRgb lin = kelvinToLinear(k);
+            apply(lin, toDisplay(lin), m_kelvinName.isEmpty() ? QStringLiteral("%1 K").arg(int(k))
+                                                               : QStringLiteral("%1 %2 K").arg(m_kelvinName).arg(int(k)), false);
+            return;
+        }
         if (m_ctx->show->selection().isEmpty()) {
             emit m_ctx->status(tr("Select fixtures first"));
             return;
@@ -963,7 +970,7 @@ ColorPickerPanel::ColorPickerPanel(AppContext *ctx, QWidget *parent) : QWidget(p
     m_stack->addWidget(m_cie);
     connect(m_cie, &CieDiagram::picked, this, [this](const LinearRgb &c) { apply(c, toDisplay(c), tr("Gamut pick"), false); });
 
-    connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, ctx->show, [this](Show::Parts p) {
         if (p & (Show::ProgrammerPart | Show::PatchPart))
             refreshMarkers();
     });
@@ -1005,8 +1012,26 @@ void ColorPickerPanel::filterGels()
     m_gels->setSwatches(out);
 }
 
+void ColorPickerPanel::setPickOnly(const LinearRgb &current)
+{
+    m_pickOnly = true;
+    m_chosen = current;
+    const QColor d = toDisplay(current);
+    m_chip->setStyleSheet(QStringLiteral("background: %1; border: 1px solid %2; border-radius: 4px;").arg(d.name(), theme::line.name()));
+    m_lastName->setText(tr("Current"));
+    refreshMarkers();
+}
+
 void ColorPickerPanel::apply(const LinearRgb &c, const QColor &display, const QString &name, bool namesPreset)
 {
+    if (m_pickOnly) {
+        m_chosen = c;
+        m_chip->setStyleSheet(QStringLiteral("background: %1; border: 1px solid %2; border-radius: 4px;").arg(display.name(), theme::line.name()));
+        m_lastName->setText(name);
+        refreshMarkers();
+        emit colorChosen(c, name);
+        return;
+    }
     if (m_ctx->show->selection().isEmpty()) {
         emit m_ctx->status(tr("Select fixtures first, then pick a color"));
         return;
@@ -1024,7 +1049,7 @@ void ColorPickerPanel::apply(const LinearRgb &c, const QColor &display, const QS
 void ColorPickerPanel::refreshMarkers()
 {
     LinearRgb c;
-    const bool ok = selectionColor(m_ctx->show, &c);
+    const bool ok = m_pickOnly ? (c = m_chosen, true) : selectionColor(m_ctx->show, &c);
     m_cie->setMarker(c, ok);
     m_hueSat->setMarker(ok ? toDisplay(c) : QColor());
     // The gamut: every color the selected fixtures' emitters can make between them.
@@ -1050,7 +1075,7 @@ void ColorPickerPanel::refreshMarkers()
                                             : tr("Gamut of %1 fixture types").arg(types.size()));
 }
 
-std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title, const QString &current)
+std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title, const QString &current, bool allowFollow)
 {
     QDialog d(parent);
     d.setWindowTitle(title);
@@ -1084,7 +1109,8 @@ std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title
     row->addStretch(1);
     v->addLayout(row);
 
-    QString chosen = current;
+    // "follow" is no color to show here: the dialog starts from none, and Follow fixtures says so.
+    QString chosen = current == QLatin1String("follow") ? QString() : current;
     bool updating = false;
     auto *hueSat = new HueSatField(&d);
     auto show = [&](const QString &c, QWidget *from) {
@@ -1104,7 +1130,7 @@ std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title
             hueSat->setMarker(c.isEmpty() ? QColor() : col);
         updating = false;
     };
-    show(current, nullptr);
+    show(chosen, nullptr);
     QObject::connect(hex, &QLineEdit::textEdited, &d, [&](const QString &t) {
         QString h = t.trimmed();
         if (!h.startsWith('#'))
@@ -1133,6 +1159,16 @@ std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title
     QObject::connect(hueSat, &HueSatField::picked, &d, [&](const QColor &c) { show(c.name(), hueSat); });
 
     auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &d);
+    if (allowFollow) {
+        QPushButton *follow = buttons->addButton(QObject::tr("Follow fixtures"), QDialogButtonBox::ResetRole);
+        follow->setToolTip(QObject::tr("The color its fixtures show on stage while it plays (its first cue's when it's off)"));
+        follow->setCheckable(true);
+        follow->setChecked(current == QLatin1String("follow"));
+        QObject::connect(follow, &QPushButton::clicked, &d, [&]() {
+            chosen = QStringLiteral("follow");
+            d.accept();
+        });
+    }
     QPushButton *none = buttons->addButton(QObject::tr("No color"), QDialogButtonBox::ResetRole);
     QObject::connect(none, &QPushButton::clicked, &d, [&]() {
         show(QString(), nullptr);
@@ -1151,6 +1187,24 @@ std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title
     if (d.exec() != QDialog::Accepted)
         return std::nullopt;
     return chosen;
+}
+
+std::optional<LinearRgb> pickLightColor(AppContext *ctx, QWidget *parent, const QString &title, const LinearRgb &current)
+{
+    QDialog d(parent);
+    d.setWindowTitle(title);
+    d.resize(560, 560);
+    auto *v = new QVBoxLayout(&d);
+    auto *panel = new ColorPickerPanel(ctx, &d);
+    panel->setPickOnly(current);
+    v->addWidget(panel, 1);
+    auto *buttons = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &d);
+    QObject::connect(buttons, &QDialogButtonBox::accepted, &d, &QDialog::accept);
+    QObject::connect(buttons, &QDialogButtonBox::rejected, &d, &QDialog::reject);
+    v->addWidget(buttons);
+    if (d.exec() != QDialog::Accepted)
+        return std::nullopt;
+    return panel->chosen();
 }
 
 } // namespace lumora

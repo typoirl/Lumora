@@ -183,7 +183,7 @@ public:
     void setGuides(bool on);
     static PanelOptions *optionsOf(QWidget *panel);
     // Developer: apply options to the first window of a type, and optionally open its options editor.
-    QWidget *debugOptions(const QString &typeId, const QJsonObject &options, bool openEditor);
+    void debugOptions(const QString &typeId, const QJsonObject &options);   // developer: a window's options
     void showAddMenu(const QPoint &globalPos, PanelFrame *into = nullptr, const QPoint &cell = QPoint(-1, -1));
 
 signals:

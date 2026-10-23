@@ -2,6 +2,7 @@
 #include "fixturesheet.h"
 
 #include "appcontext.h"
+#include "show.h"
 #include "media.h"
 #include "quickedit.h"
 #include "theme.h"
@@ -76,6 +77,48 @@ QColor approximateColor(const RawAttr &v, const FixtureMode *mode)
             return colorForName(c->setNameFor(v.value("Color1")));
     }
     return QColor();
+}
+
+QColor sequenceAppearance(const Show *show, int sequenceId)
+{
+    const Sequence *seq = show->sequence(sequenceId);
+    if (!seq || seq->color.isEmpty())
+        return QColor();
+    if (!seq->followsFixtures())
+        return QColor(seq->color);
+    // What it plays: on stage while it runs (its values and effects included, as they look now),
+    // else the colors of its first cue. Each fixture counts as much as it's bright.
+    const Executor *running = nullptr;
+    for (const Executor *e : const_cast<Show *>(show)->allExecutors())   // (only reads them)
+        if (e->sequenceId == sequenceId && e->pb().isOn()) {
+            running = e;
+            break;
+        }
+    RawTable values;
+    if (running) {
+        for (auto f = running->pb().current.begin(); f != running->pb().current.end(); ++f)
+            values.insert(f.key(), show->lastOutput().value(f.key()));
+        for (const EffectInstance &fx : show->cueEffects(seq->cues.value(running->pb().cueIndex)))
+            for (int fid : fx.fixtures)
+                values.insert(fid, show->lastOutput().value(fid));
+    } else if (!seq->cues.isEmpty()) {
+        values = show->trackedState(*seq, 0);
+    }
+    double r = 0, g = 0, b = 0, weight = 0;
+    for (auto f = values.begin(); f != values.end(); ++f) {
+        const QColor c = approximateColor(f.value(), show->fixtureMode(f.key()));
+        if (!c.isValid() || c == QColor(0, 0, 0))
+            continue;
+        const double w = f->contains(QStringLiteral("Dimmer")) ? f->value(QStringLiteral("Dimmer")) : 1.0;
+        r += c.redF() * w;
+        g += c.greenF() * w;
+        b += c.blueF() * w;
+        weight += w;
+    }
+    const double m = std::max({r, g, b});
+    if (weight <= 1e-6 || m <= 1e-6)
+        return running ? QColor(0x40, 0x40, 0x40) : QColor();
+    return QColor::fromRgbF(float(r / m), float(g / m), float(b / m));
 }
 
 // ===========================================================================
@@ -192,7 +235,7 @@ QString FixtureSheetModel::effectNames(int fid, Feature f) const
     return names.join(QStringLiteral(" + "));
 }
 
-void FixtureSheetModel::reloadPatch()
+void FixtureSheetModel::reloadPatch(bool force)
 {
     QVector<int> fids;
     Show *show = m_ctx->show;
@@ -220,10 +263,11 @@ void FixtureSheetModel::reloadPatch()
     };
     for (const Fixture &f : show->fixtures())
         collect(f.fid, fids);
-    if (fids == m_fids && !m_fids.isEmpty())
-        return;
+    if (!force && fids == m_fids && !m_fids.isEmpty())
+        return;   // the same rows: nothing to reset
     beginResetModel();
     m_fids = fids;
+    m_rows.clear();
     endResetModel();
 }
 
@@ -246,15 +290,13 @@ void FixtureSheetModel::setExpanded(int master, bool on)
         m_expanded.insert(master);
     else
         m_expanded.remove(master);
-    m_fids.clear();   // force the reset
-    reloadPatch();
+    reloadPatch(true);
 }
 
 void FixtureSheetModel::setExpandedAll(const QList<int> &masters)
 {
     m_expanded = QSet<int>(masters.begin(), masters.end());
-    m_fids.clear();
-    reloadPatch();
+    reloadPatch(true);
 }
 
 bool FixtureSheetModel::isLabelRow(int fid) const
@@ -280,15 +322,80 @@ bool FixtureSheetModel::hidesSelection(int fid) const
 void FixtureSheetModel::setFilter(Filter f)
 {
     m_filter = f;
-    m_fids.clear();
-    reloadPatch();
+    reloadPatch(true);
 }
 
 void FixtureSheetModel::refreshValues()
 {
     collectPlaybacks();
-    if (!m_fids.isEmpty())
-        emit dataChanged(index(0, Dimmer), index(m_fids.size() - 1, Control));
+    // Rows shown so far are worked out again; the ones that changed are repainted.
+    int first = -1, last = -1;
+    for (int i = 0; i < m_fids.size(); ++i) {
+        const auto it = m_rows.find(m_fids[i]);
+        if (it == m_rows.end())
+            continue;   // never shown yet: worked out when it is
+        Row now = computeRow(m_fids[i]);
+        if (now == *it)
+            continue;
+        *it = std::move(now);
+        if (first < 0)
+            first = i;
+        last = i;
+    }
+    if (first >= 0)
+        emit dataChanged(index(first, Dimmer), index(last, Control));
+}
+
+bool FixtureSheetModel::Row::operator==(const Row &o) const
+{
+    for (int i = 0; i < 7; ++i)
+        if (text[i] != o.text[i] || state[i] != o.state[i])
+            return false;
+    return color == o.color && gobo == o.gobo;
+}
+
+FixtureSheetModel::Row FixtureSheetModel::computeRow(int fid) const
+{
+    Row r;
+    Show *show = m_ctx->show;
+    for (int i = 0; i < 7; ++i) {
+        const Feature f = static_cast<Feature>(i + 1);
+        r.text[i] = computeCellText(fid, f);
+        bool programmed = false, changed = false;
+        computeCellState(fid, f, &programmed, &changed);
+        r.state[i] = quint8((programmed ? 1 : 0) | (changed ? 2 : 0));
+    }
+    const RawAttr v = show->lastOutput().value(fid);
+    r.color = approximateColor(v, show->fixtureMode(fid));
+    if (v.contains(QStringLiteral("Gobo1"))) {
+        r.gobo = v.value(QStringLiteral("Gobo1"));
+        const QImage img = slotImage(show, fid, QStringLiteral("Gobo1"), r.gobo);
+        if (!img.isNull())
+            r.goboIcon = QIcon(goboPixmap(img, 18));
+    }
+    return r;
+}
+
+const FixtureSheetModel::Row &FixtureSheetModel::row(int fid) const
+{
+    auto it = m_rows.find(fid);
+    if (it == m_rows.end())
+        it = m_rows.insert(fid, computeRow(fid));
+    return *it;
+}
+
+QString FixtureSheetModel::cellText(int fid, Feature f) const
+{
+    const int i = int(f) - 1;
+    return i >= 0 && i < 7 ? row(fid).text[i] : QString();
+}
+
+void FixtureSheetModel::cellState(int fid, Feature f, bool *programmed, bool *changed) const
+{
+    const int i = int(f) - 1;
+    const quint8 st = i >= 0 && i < 7 ? row(fid).state[i] : 0;
+    *programmed = st & 1;
+    *changed = st & 2;
 }
 
 QVariant FixtureSheetModel::headerData(int section, Qt::Orientation o, int role) const
@@ -316,7 +423,7 @@ QVariant FixtureSheetModel::headerData(int section, Qt::Orientation o, int role)
     return {};
 }
 
-void FixtureSheetModel::cellState(int fid, Feature f, bool *programmed, bool *changed) const
+void FixtureSheetModel::computeCellState(int fid, Feature f, bool *programmed, bool *changed) const
 {
     Show *show = m_ctx->show;
     *programmed = false;
@@ -338,7 +445,7 @@ void FixtureSheetModel::cellState(int fid, Feature f, bool *programmed, bool *ch
     }
 }
 
-QString FixtureSheetModel::cellText(int fid, Feature f) const
+QString FixtureSheetModel::computeCellText(int fid, Feature f) const
 {
     Show *show = m_ctx->show;
     const FixtureMode *mode = show->fixtureMode(fid);
@@ -482,16 +589,10 @@ QVariant FixtureSheetModel::data(const QModelIndex &index, int role) const
             return theme::programmer;
         return changed ? theme::text : theme::faint;
     }
-    if (role == Qt::DecorationRole && f == Feature::Gobo) {
-        const RawAttr v = show->lastOutput().value(fid);
-        if (v.contains("Gobo1")) {
-            const QImage img = slotImage(show, fid, "Gobo1", v.value("Gobo1"));
-            if (!img.isNull())
-                return QIcon(goboPixmap(img, 18));
-        }
-    }
+    if (role == Qt::DecorationRole && f == Feature::Gobo && !row(fid).goboIcon.isNull())
+        return row(fid).goboIcon;
     if (role == Qt::DecorationRole && f == Feature::Color) {
-        QColor c = approximateColor(show->lastOutput().value(fid), show->fixtureMode(fid));
+        const QColor c = row(fid).color;
         if (c.isValid() && c != QColor(0, 0, 0))
             return c;
     }
@@ -850,7 +951,10 @@ FixtureSheet::FixtureSheet(AppContext *ctx, QWidget *parent) : QWidget(parent), 
             syncSelectionFromShow();
     });
     auto *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, m_model, &FixtureSheetModel::refreshValues);
+    connect(timer, &QTimer::timeout, this, [this]() {
+        if (isVisible())   // hidden: catches up within a tenth of a second of showing
+            m_model->refreshValues();
+    });
     timer->start(100);
 }
 

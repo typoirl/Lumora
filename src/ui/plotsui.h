@@ -8,6 +8,7 @@
 #include <QHash>
 #include <QIcon>
 #include <QPixmap>
+#include <QStaticText>
 #include <QWidget>
 
 #include <functional>
@@ -114,6 +115,14 @@ private:
     Plot m_dragPlot;                  // the plot while dragging (committed on release)
     bool m_dragging = false;
     mutable QHash<QString, QPixmap> m_imageCache;
+    // Items from..to-1 (the background too when asked); the overlays come with the last items.
+    void paintScene(QPainter &p, const Plot &plot, int from, int to, bool background);
+    QPixmap m_staticLayer;   // what lies under the first live item, for the view in m_staticKey
+    QString m_staticKey;
+    bool m_staticDirty = true;
+    QHash<int, QPair<QString, QPixmap>> m_itemLayers;   // static items above live ones: item → (where, picture)
+    bool m_drawingLayer = false;
+    QHash<QString, QStaticText> m_labels;   // fixture labels, laid out: "pixel size|text"
 };
 
 // A plot window: the sheet with Edit, Add, zoom buttons and the zoom lock.
@@ -129,7 +138,8 @@ private:
     void follow();
     void refreshHeader();
     void addMenu();
-    void addPicture(bool background);   // background: becomes the plot's background (replacing any)
+    void addPicture(bool background);   // imports a file into the image pool, then places it
+    void placeImage(int imageId, bool background);   // a pool image as a picture, or the background
     void setBackgroundColor();
     void fitBackground();
     void removeBackground();
@@ -160,6 +170,5 @@ void pickPoolObject(AppContext *ctx, QWidget *parent, const QPoint &global, cons
                     bool offerNone, std::function<void(const QString &)> chosen);
 
 // Ready-made icons for plots (SVG): name and file bytes.
-QVector<QPair<QString, QByteArray>> builtinPlotIcons();
 
 } // namespace lumora

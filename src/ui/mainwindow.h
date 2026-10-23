@@ -95,7 +95,6 @@ private:
     QList<QWidget *> m_setupPages;
     QList<QToolButton *> m_setupButtons;
     CommandBar *m_commandBar = nullptr;
-    ExecutorBar *m_execStrip = nullptr;            // Learn MIDI: real faders and buttons to click
     StoreExecutorPicker *m_storePicker = nullptr;   // Store: a tile per executor, 101 to 4xx
     EncoderBar *m_encoders = nullptr;
     CommandKeypad *m_keypad = nullptr;

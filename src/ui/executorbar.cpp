@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "executorbar.h"
+
+#include <QIcon>
+#include "fixturesheet.h"
 #include "colorpicker.h"
 #include "cueview.h"
 
 #include "appcontext.h"
+#include "engine.h"
 #include "quickedit.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QContextMenuEvent>
 #include <QMouseEvent>
@@ -54,10 +59,15 @@ ExecutorStrip::ExecutorStrip(AppContext *ctx, int number, QWidget *parent)
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
 }
 
+int ExecutorStrip::page() const
+{
+    return m_lockedPage > 0 ? m_lockedPage : m_ctx->show->currentPage();
+}
+
 ExecKind ExecutorStrip::kind() const
 {
     Show *show = m_ctx->show;
-    return executorKind(m_number, show->executor(show->currentPage(), m_number));
+    return executorKind(m_number, show->executor(page(), m_number));
 }
 
 QSize ExecutorStrip::sizeHint() const
@@ -163,7 +173,7 @@ int ExecutorStrip::regionAt(const QPoint &p) const
 MidiTarget ExecutorStrip::targetFor(int region) const
 {
     MidiTarget t;
-    t.page = 0;   // controllers follow the current page
+    t.page = m_lockedPage;   // controllers follow the current page, unless the window has its own
     t.executor = m_number;
     if (region == Fader) {
         t.kind = MidiTarget::ExecutorFader;
@@ -184,7 +194,7 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
     Show *show = m_ctx->show;
-    const Executor *e = show->executor(show->currentPage(), m_number);
+    const Executor *e = show->executor(page(), m_number);
     const Sequence *seq = e && e->sequenceId ? show->sequence(e->sequenceId) : nullptr;
     const bool on = e && e->pb().isOn();
     const bool learnMode = m_ctx->midi->learnMode();
@@ -201,9 +211,10 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
 
     // The sequence's (or rate master's) appearance: a stripe along the top of the card.
     const RateMaster *rateShown = e && e->rateMaster ? show->rateMaster(e->rateMaster) : nullptr;
-    const QString appearance = seq ? seq->color : rateShown ? rateShown->color : QString();
-    if (!appearance.isEmpty()) {
-        const QColor sc(appearance);
+    const QColor seqColor = seq ? sequenceAppearance(show, seq->id) : QColor();
+    const QColor appearanceColor = seq ? seqColor : rateShown && !rateShown->color.isEmpty() ? QColor(rateShown->color) : QColor();
+    if (appearanceColor.isValid()) {
+        const QColor sc = appearanceColor;
         p.setPen(Qt::NoPen);
         p.setBrush(sc);
         QPainterPath top;
@@ -256,6 +267,14 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
 
     QRect cueRect(h.left() + 2, h.top() + 33, h.width() - 4, 16);
     p.setFont(theme::uiFont(9));
+    if (seq && e && e->pb().loadedIndex >= 0 && e->pb().loadedIndex < seq->cues.size()) {
+        // Load: the cue the next Go fires, at the right of the cue line.
+        const QString loadText = tr("Load %1").arg(seq->cues[e->pb().loadedIndex].displayNumber());
+        const int lw = p.fontMetrics().horizontalAdvance(loadText);
+        p.setPen(theme::programmer);
+        p.drawText(cueRect, Qt::AlignRight | Qt::AlignVCenter, loadText);
+        cueRect.setRight(cueRect.right() - lw - 6);
+    }
     if (seq && on && e->pb().cueIndex < seq->cues.size()) {
         const Cue &c = seq->cues[e->pb().cueIndex];
         p.setPen(theme::live);
@@ -305,16 +324,17 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
         QRect b = buttonRect(i);
         static const ButtonFn faderKeys[3] = {ButtonFn::Go, ButtonFn::GoBack, ButtonFn::Off};
         const ButtonFn fn = e ? e->buttons[i] : k == ExecKind::Encoder ? ButtonFn::Toggle : k == ExecKind::Fader ? faderKeys[i] : ButtonFn::Go;
-        const bool lit = rate ? (i == 2 ? rate->frozen : e->buttonDown[i]) : e && executorButtonLit(*e, i);
+        const bool lit = rate ? (e->rateKeys[i] == RateKey::Freeze ? rate->frozen : e->buttonDown[i]) : e && executorButtonLit(*e, i);
         const bool down = m_pressed == i;
         p.setPen(QPen(lit ? theme::live : theme::line, 1));
         p.setBrush(down ? QColor(0x36, 0x3d, 0x49) : lit ? QColor(0x3a, 0x32, 0x20) : theme::raised);
         p.drawRoundedRect(QRectF(b).adjusted(0.5, 0.5, -0.5, -0.5), 4, 4);
         p.setFont(theme::uiFont(k == ExecKind::Button && b.height() > 44 ? 11 : 9, QFont::Medium));
         if (rate) {
-            static const QStringList rateButtons = {tr("Learn"), tr("Reset"), tr("Freeze")};
-            p.setPen(lit ? theme::live : theme::text);
-            p.drawText(b, Qt::AlignCenter, rateButtons.value(i));
+            const RateKey rk = e->rateKeys[i];
+            p.setPen(rk == RateKey::None ? theme::faint : lit ? theme::live : theme::text);
+            p.drawText(b, Qt::AlignCenter, rk == RateKey::Learn ? tr("Learn") : rk == RateKey::Reset ? tr("Reset")
+                                         : rk == RateKey::Freeze ? tr("Freeze") : QStringLiteral("–"));
         } else {
             p.setPen(fn == ButtonFn::None || !seq ? theme::faint : lit ? theme::live : theme::text);
             p.drawText(b, Qt::AlignCenter, fn == ButtonFn::None ? QStringLiteral("–") : buttonFnName(fn));
@@ -380,7 +400,7 @@ void ExecutorStrip::paintEvent(QPaintEvent *)
     p.setPen(Qt::NoPen);
     p.setBrush(rate ? (rate->color.isEmpty() ? QColor(0x2c, 0x33, 0x3e) : theme::mix(QColor(0x2c, 0x33, 0x3e), QColor(rate->color), 0.28))
                     : !seq ? QColor(0x1d, 0x21, 0x28)
-                    : seq->color.isEmpty() ? QColor(0x2c, 0x33, 0x3e) : theme::mix(QColor(0x2c, 0x33, 0x3e), QColor(seq->color), 0.28));
+                    : !seqColor.isValid() ? QColor(0x2c, 0x33, 0x3e) : theme::mix(QColor(0x2c, 0x33, 0x3e), seqColor, 0.28));
     p.drawRoundedRect(fill, 4, 4);
     if (glow > 0.001) {
         QLinearGradient g(fill.bottomLeft(), fill.topLeft());
@@ -411,7 +431,7 @@ void ExecutorStrip::setFaderFromY(int y)
 {
     QRect tr = trackRect();
     double v = 1.0 - double(y - tr.top() - 2) / double(tr.height() - 4);
-    Executor &e = m_ctx->show->ensureExecutor(m_ctx->show->currentPage(), m_number);
+    Executor &e = m_ctx->show->ensureExecutor(page(), m_number);
     m_ctx->show->setFader(e, std::clamp(v, 0.0, 1.0));
     update();
 }
@@ -424,6 +444,12 @@ void storeOntoExecutor(AppContext *ctx, int page, int number)
     if (seqId == 0)
         seqId = show->sequences().isEmpty() ? 1 : show->sequences().lastKey() + 1;
     const bool assign = e.sequenceId == 0;
+    ctx->setStoreArmed(false);
+    if (!assign) {
+        // The next cue; a sequence with one cue asks what to do.
+        ctx->run(QStringLiteral("Store Sequence %1").arg(seqId));
+        return;
+    }
     double stored = 0;
     if (show->storeCue(seqId, -1, Show::StoreMode::Merge, &stored)) {
         if (assign)
@@ -437,7 +463,7 @@ void storeOntoExecutor(AppContext *ctx, int page, int number)
 
 void ExecutorStrip::storeHere()
 {
-    storeOntoExecutor(m_ctx, m_ctx->show->currentPage(), m_number);
+    storeOntoExecutor(m_ctx, page(), m_number);
 }
 
 // ===========================================================================
@@ -573,7 +599,7 @@ void ExecutorStrip::mousePressEvent(QMouseEvent *ev)
                                  && !QStringLiteral("ratemaster").startsWith(words[1].toLower())
                                  && words[1].toLower() != QLatin1String("rm")
                                  && !QStringLiteral("effect").startsWith(words[1].toLower());
-        QString object = QStringLiteral("Executor %1.%2").arg(show->currentPage()).arg(m_number);
+        QString object = QStringLiteral("Executor %1.%2").arg(page()).arg(m_number);
         if (assigningFn && region >= 0)
             object += QStringLiteral(" Button %1").arg(region + 1);
         else if (assigningFn && region == Fader)
@@ -585,18 +611,18 @@ void ExecutorStrip::mousePressEvent(QMouseEvent *ev)
         if (!words.isEmpty() && words[0].size() >= 2)
             for (const QString &v : verbs)
                 waiting = waiting || v.startsWith(words[0].toLower());
-        // Off (the O shortcut), On, Go, GoBack, Pause, Top or Goto, then a tap: that executor.
-        static const QStringList playback = {"off", "on", "go", "goback", "pause", "top", "goto"};
+        // Off (the O shortcut), On, Go, GoBack, Pause, Top, Goto or Load, then a tap: that executor.
+        static const QStringList playback = {"off", "on", "go", "goback", "pause", "top", "goto", "load"};
         if (words.size() == 1 && playback.contains(words[0].toLower()))
             waiting = true;
         if (region == Header || assigningFn || waiting) {
-            const Executor *ex = show->executor(show->currentPage(), m_number);
+            const Executor *ex = show->executor(page(), m_number);
             const Sequence *sq = ex ? show->sequence(ex->sequenceId) : nullptr;
             if (m_ctx->tapTarget(object, sq ? sq->name : QString()))
                 return;
         }
     }
-    Executor &e = show->ensureExecutor(show->currentPage(), m_number);
+    Executor &e = show->ensureExecutor(page(), m_number);
     if (region == Header) {
         if (e.sequenceId)
             show->setSelectedSequence(e.sequenceId);
@@ -655,10 +681,17 @@ private:
 };
 } // namespace
 
+int ExecutorBar::shownPage() const
+{
+    return m_lockedPage > 0 ? m_lockedPage : m_ctx->show->currentPage();
+}
+
 void ExecutorBar::rebuildPages()
 {
     Show *show = m_ctx->show;
-    const int page = show->currentPage();
+    const int page = shownPage();
+    if (m_lockedPage > 0)
+        updateTitle();   // the page's name may have changed
     const QString signature = QStringLiteral("%1:%2").arg(page).arg(show->pageName(page));
     if (!m_pageEdit->hasFocus())
         m_pageEdit->setText(QString::number(page));
@@ -690,7 +723,7 @@ void ExecutorStrip::mouseMoveEvent(QMouseEvent *ev)
         // About 160 px of travel from 0 to full; hold Shift for fine.
         const double perPx = (ev->modifiers() & Qt::ShiftModifier) ? 1.0 / 800 : 1.0 / 160;
         Show *show = m_ctx->show;
-        Executor &e = show->ensureExecutor(show->currentPage(), m_number);
+        Executor &e = show->ensureExecutor(page(), m_number);
         show->setFader(e, std::clamp(m_dragValue + (m_dragY - ev->pos().y()) * perPx, 0.0, 1.0));
         update();
         return;
@@ -702,7 +735,7 @@ void ExecutorStrip::mouseReleaseEvent(QMouseEvent *)
 {
     if (m_pressed >= 0) {
         Show *show = m_ctx->show;
-        Executor &e = show->ensureExecutor(show->currentPage(), m_number);
+        Executor &e = show->ensureExecutor(page(), m_number);
         show->pressButton(e, m_pressed, false);
     }
     m_pressed = None;
@@ -715,7 +748,7 @@ void ExecutorStrip::wheelEvent(QWheelEvent *ev)
     if (!faderRect().contains(ev->position().toPoint()))
         return;
     Show *show = m_ctx->show;
-    Executor &e = show->ensureExecutor(show->currentPage(), m_number);
+    Executor &e = show->ensureExecutor(page(), m_number);
     const double step = ev->angleDelta().y() > 0 ? 0.02 : -0.02;
     show->setFader(e, e.fader + step);
     update();
@@ -724,7 +757,7 @@ void ExecutorStrip::wheelEvent(QWheelEvent *ev)
 void ExecutorStrip::contextMenuEvent(QContextMenuEvent *ev)
 {
     Show *show = m_ctx->show;
-    const int page = show->currentPage();
+    const int page = ExecutorStrip::page();
     QMenu menu(this);
     if (const Executor *ex = show->executor(page, m_number); ex && show->sequence(ex->sequenceId)) {
         const int seqId = ex->sequenceId;
@@ -783,7 +816,43 @@ void ExecutorStrip::contextMenuEvent(QContextMenuEvent *ev)
             });
         }
     }
-    if (k != ExecKind::Button) {
+    if (e.rateMaster) {
+        // A rate master on the executor: its kind, and what each key does. (Sequences' fader and
+        // button functions don't apply.)
+        if (const RateMaster *rm = show->rateMaster(e.rateMaster)) {
+            QMenu *mode = menu.addMenu(tr("Rate master type"));
+            for (RateMode md : {RateMode::Rate, RateMode::BPM, RateMode::Ratio}) {
+                QAction *a = mode->addAction(md == RateMode::Rate ? tr("Rate (a multiplier on each effect's speed)")
+                                             : md == RateMode::BPM ? tr("BPM (one cycle per beat)")
+                                                                   : tr("Ratio (musical steps, ×1/16 … ×16)"));
+                a->setCheckable(true);
+                a->setChecked(rm->mode == md);
+                const int id = rm->id;
+                connect(a, &QAction::triggered, this, [show, id, md]() {
+                    RateMaster m = *show->rateMaster(id);
+                    if (m.mode == md)
+                        return;
+                    m.mode = md;
+                    m.value = m.defaultValue();
+                    show->setRateMaster(m);
+                });
+            }
+        }
+        for (int i = 0; i < buttonCount(); ++i) {
+            QMenu *bm = menu.addMenu(buttonCount() > 1 ? tr("Key %1").arg(i + 1) : tr("Key"));
+            for (RateKey rk : {RateKey::Learn, RateKey::Reset, RateKey::Freeze, RateKey::None}) {
+                QAction *a = bm->addAction(rk == RateKey::Learn ? tr("Learn (tap tempo)") : rk == RateKey::Reset ? tr("Reset")
+                                           : rk == RateKey::Freeze ? tr("Freeze") : tr("Nothing"));
+                a->setCheckable(true);
+                a->setChecked(e.rateKeys[i] == rk);
+                connect(a, &QAction::triggered, this, [this, show, page, i, rk]() {
+                    show->ensureExecutor(page, m_number).rateKeys[i] = rk;
+                    show->notifyExecutors();
+                });
+            }
+        }
+    }
+    if (k != ExecKind::Button && !e.rateMaster) {
         QMenu *fader = menu.addMenu(k == ExecKind::Encoder ? tr("Encoder function") : tr("Fader function"));
         for (FaderFn f : {FaderFn::Master, FaderFn::XFade, FaderFn::Temp}) {
             QAction *a = fader->addAction(faderLabel(f));
@@ -797,7 +866,7 @@ void ExecutorStrip::contextMenuEvent(QContextMenuEvent *ev)
     }
     const int nButtons = buttonCount();
     auto buttonTitle = [k](int) { return k == ExecKind::Encoder ? tr("Push function") : tr("Button function"); };
-    for (int i = 0; i < nButtons; ++i) {
+    for (int i = 0; i < nButtons && !e.rateMaster; ++i) {
         QMenu *bm = menu.addMenu(buttonTitle(i));
         for (ButtonFn fn : allButtonFns()) {
             QAction *a = bm->addAction(buttonFnName(fn));
@@ -842,11 +911,10 @@ void ExecutorStrip::contextMenuEvent(QContextMenuEvent *ev)
 
 // ===========================================================================
 
-ExecutorBar::ExecutorBar(AppContext *ctx, QWidget *parent, Mode mode) : QWidget(parent), m_ctx(ctx), m_mode(mode)
+ExecutorBar::ExecutorBar(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(ctx)
 {
     auto *v = new QVBoxLayout(this);
-    v->setContentsMargins(mode == Mode::Learn ? 10 : 0, mode == Mode::Learn ? 8 : 0, mode == Mode::Learn ? 10 : 0,
-                          mode == Mode::Learn ? 10 : 0);
+    v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(8);
 
     m_head = new QWidget(this);
@@ -854,19 +922,8 @@ ExecutorBar::ExecutorBar(AppContext *ctx, QWidget *parent, Mode mode) : QWidget(
     head->setContentsMargins(0, 0, 0, 0);
     head->setSpacing(6);
     auto *title = new QLabel(tr("Executors"), m_head);
-    if (mode == Mode::Panel)
-        title->setProperty("role", "title");
+    title->setProperty("role", "title");
     head->addWidget(title);
-    if (mode == Mode::Learn) {
-        // The strip appears for Store and for Learn MIDI; its title and accent say which.
-        // The strip that slides in for Learn MIDI when the view has no executor window.
-        title->setText(tr("Click a fader or button, then move a MIDI control"));
-        title->setStyleSheet(QStringLiteral("color: %1; font-weight: 600;").arg(theme::learn.name()));
-        QTimer::singleShot(0, this, [this]() {   // once it has its object name
-            setStyleSheet(QStringLiteral("QWidget#%1 { background: %2; border-top: 2px solid %3; }")
-                              .arg(objectName(), theme::panel.name(), theme::learn.name()));
-        });
-    }
     head->addSpacing(14);
     // Pages, the way pools page: ▲, the page number (type one to jump there), ▼, and its name.
     auto *up = new QToolButton(m_head);
@@ -884,9 +941,15 @@ ExecutorBar::ExecutorBar(AppContext *ctx, QWidget *parent, Mode mode) : QWidget(
     down->setFocusPolicy(Qt::NoFocus);
     m_pages = new QHBoxLayout;   // the page's name
     m_pages->setSpacing(4);
-    head->addWidget(up);
-    head->addWidget(m_pageEdit);
-    head->addWidget(down);
+    // ▲ n ▼ go; a window locked to a page hides them and just names its page.
+    m_pageControls = new QWidget(m_head);
+    auto *pc = new QHBoxLayout(m_pageControls);
+    pc->setContentsMargins(0, 0, 0, 0);
+    pc->setSpacing(6);
+    pc->addWidget(up);
+    pc->addWidget(m_pageEdit);
+    pc->addWidget(down);
+    head->addWidget(m_pageControls);
     head->addLayout(m_pages);
     head->addStretch(1);
     v->addWidget(m_head);
@@ -916,23 +979,32 @@ ExecutorBar::ExecutorBar(AppContext *ctx, QWidget *parent, Mode mode) : QWidget(
     });
     rebuildPages();
 
-    // Animate only while something moves: a running playback (fades, the output glow) or MIDI
-    // learn's pulsing outline. Anything else repaints when the show changes.
+    // Animate only while something moves: a fade (its progress bar), MIDI learn's pulsing
+    // outline, or the output when it changes (Follow fixtures colors). Anything else repaints
+    // when the show changes.
     auto *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, [this]() {
         if (!isVisible())
             return;
         Show *show = m_ctx->show;
-        bool active = m_ctx->midi->isArmed() || m_ctx->midi->learnMode();
+        const bool learning = m_ctx->midi->isArmed() || m_ctx->midi->learnMode();
+        QSet<ExecutorStrip *> moving;
         for (ExecutorStrip *s : m_strips)
-            if (const Executor *e = show->executor(show->currentPage(), s->number()); e && e->pb().isOn())
-                active = true;
-        if (!active && !m_wasActive)
-            return;
-        m_wasActive = active;   // one more frame after it stops, to settle
-        for (ExecutorStrip *s : m_strips)
+            if (const Executor *e = show->executor(s->page(), s->number()); learning || (e && e->pb().isOn() && e->pb().fading))
+                moving.insert(s);
+        for (ExecutorStrip *s : moving | m_wasMoving)   // one more frame after it stops, to settle
             s->update();
+        m_wasMoving = moving;
     });
+    auto *live = new LiveRefresh(this, [this]() {
+        // Only a running sequence colored "Follow fixtures" shows the output.
+        Show *show = m_ctx->show;
+        for (ExecutorStrip *s : m_strips)
+            if (const Executor *e = show->executor(s->page(), s->number()); e && e->pb().isOn())
+                if (const Sequence *seq = show->sequence(e->sequenceId); seq && seq->followsFixtures())
+                    s->update();
+    });
+    connect(ctx->engine, &Engine::outputChanged, live, &LiveRefresh::request);
     timer->start(33);
     connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
         if (p & (Show::ExecutorsPart | Show::SequencesPart | Show::PatchPart))
@@ -969,20 +1041,19 @@ void ExecutorBar::syncSizes()
             s->updateGeometry();
     }
     const int head = m_head->isHidden() ? 0 : 38;
-    const int margins = m_mode == Mode::Learn ? 18 : 0;
     if (fixedGrid()) {   // shrinks with the window; the executors scale down
         int small = 0;
         for (int r = 0; r < rowHeights.size(); ++r)
             small += std::min(rowHeights[r], 96) + (r ? 8 : 0);
         tallest = small;
     }
-    setMinimumHeight(tallest + head + margins + (m_mode == Mode::Learn ? 12 : 0));
+    setMinimumHeight(tallest + head);
 }
 
 bool ExecutorBar::fixedGrid() const
 {
     // A grid size set in the window's options (wide and tall), rather than one that fits.
-    return m_mode == Mode::Panel && m_wide > 0 && m_tall > 1;
+    return m_wide > 0 && m_tall > 1;
 }
 
 int ExecutorBar::rowEnd() const
@@ -1019,6 +1090,7 @@ void ExecutorBar::rebuild()
             if (number > rowEnd())
                 break;
             auto *strip = new ExecutorStrip(m_ctx, number, this);
+            strip->setLockedPage(m_lockedPage);
             if (fixedGrid())   // a set grid follows the window: executors grow and shrink with it
                 strip->setMinimumSize(48, std::min(strip->minimumSizeHint().height(), 96));
             m_grid->addWidget(strip, r, c);
@@ -1035,8 +1107,9 @@ void ExecutorBar::rebuild()
     // The tab says which row: "Faders 201–210", "Buttons 101–110"…
     const int row = m_first / 100;
     const QString kind = row == 1 ? tr("Buttons") : row == 2 ? tr("Faders") : row == 3 ? tr("Encoders") : tr("Executors");
-    setWindowTitle(n > 1 ? QStringLiteral("%1 %2–%3").arg(kind).arg(m_first).arg(m_first + n - 1)
-                         : QStringLiteral("%1 %2").arg(kind).arg(m_first));
+    m_baseTitle = n > 1 ? QStringLiteral("%1 %2–%3").arg(kind).arg(m_first).arg(m_first + n - 1)
+                        : QStringLiteral("%1 %2").arg(kind).arg(m_first);
+    updateTitle();
 }
 
 void ExecutorBar::resizeEvent(QResizeEvent *ev)
@@ -1058,6 +1131,8 @@ QJsonObject ExecutorBar::saveOptions() const
         o["tall"] = m_tall;
     if (m_first != 201)
         o["first"] = m_first;
+    if (m_lockedPage > 0)
+        o["page"] = m_lockedPage;
     return o;
 }
 
@@ -1068,7 +1143,50 @@ void ExecutorBar::loadOptions(const QJsonObject &o)
     m_tall = std::clamp(o["tall"].toInt(1), 0, kExecutorsPerRow);
     m_first = std::clamp(o["first"].toInt(201), 101, 499);
     m_showPages = true;   // every executor window has the page control
+    setLockedPage(o["page"].toInt(0));
     rebuild();
+}
+
+void ExecutorBar::updateTitle()
+{
+    // Locked to a page: the tab says which ("Faders 201–210 · Busking", or "· Page 3") and
+    // carries a lock; the page bar above the executors goes.
+    if (m_lockedPage <= 0) {
+        setWindowTitle(m_baseTitle);
+        setWindowIcon(QIcon());
+        return;
+    }
+    const QString name = m_ctx->show->pageName(m_lockedPage);
+    setWindowTitle(QStringLiteral("%1 · %2").arg(m_baseTitle, name.isEmpty() ? tr("Page %1").arg(m_lockedPage) : name));
+    static const QIcon lock = [] {
+        QPixmap pm(32, 32);
+        pm.fill(Qt::transparent);
+        QPainter p(&pm);
+        p.setRenderHint(QPainter::Antialiasing);
+        p.setPen(QPen(theme::live, 3.2));
+        p.setBrush(Qt::NoBrush);
+        p.drawArc(QRectF(9, 3, 14, 16), 0, 180 * 16);   // the shackle
+        p.drawLine(QPointF(9, 11), QPointF(9, 15));
+        p.drawLine(QPointF(23, 11), QPointF(23, 15));
+        p.setPen(Qt::NoPen);
+        p.setBrush(theme::live);
+        p.drawRoundedRect(QRectF(5, 14, 22, 15), 3, 3);   // the body
+        return QIcon(pm);
+    }();
+    setWindowIcon(lock);
+}
+
+void ExecutorBar::setLockedPage(int page)
+{
+    m_lockedPage = std::max(0, page);
+    m_pageControls->setVisible(m_lockedPage == 0);
+    m_head->setVisible(m_lockedPage == 0);
+    updateTitle();
+    for (ExecutorStrip *s : m_strips)
+        s->setLockedPage(m_lockedPage);
+    m_pageSignature.clear();
+    rebuildPages();
+    syncSizes();
 }
 
 void ExecutorBar::setGridDefaults(int first, int wide, int tall)
@@ -1101,6 +1219,11 @@ void ExecutorBar::buildOptions(QuickEditor *ed)
                          m_first = (i + 1) * 100 + 1;
                          rebuild();
                      });
+    // A page of its own: it stays on that page whatever page the others go to (this tab only).
+    ed->addNumber(tr("Locked to page (0: follows the current page)"), 0, 999, m_lockedPage, [this](int n) {
+        setLockedPage(n);
+        panelStateChanged(this);
+    });
     ed->addNumber(tr("First executor"), 101, 499, m_first, [this](int n) {
         if (n % 100 == 0 || n % 100 > kExecutorsPerRow)
             n = (n / 100) * 100 + 1;

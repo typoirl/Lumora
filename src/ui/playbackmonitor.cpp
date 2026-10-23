@@ -119,7 +119,7 @@ PlaybackMonitor::PlaybackMonitor(AppContext *ctx, QWidget *parent) : QWidget(par
             editCell(i.row(), i.column());
     });
 
-    connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, ctx->show, [this](Show::Parts p) {
         if (p & (Show::SequencesPart | Show::ExecutorsPart | Show::SettingsPart))
             rebuild();
     });
@@ -239,7 +239,10 @@ void PlaybackMonitor::tick()
     const Sequence *s = show->sequence(sequenceId());
     const Executor *e = executor();
     const int live = e && e->pb().isOn() ? e->pb().cueIndex : -1;
-    const int next = s && !s->cues.isEmpty() ? (live + 1 < s->cues.size() ? live + 1 : (s->wrap ? 0 : -1)) : -1;
+    int next = s && !s->cues.isEmpty() ? (live + 1 < s->cues.size() ? live + 1 : (s->wrap ? 0 : -1)) : -1;
+    const bool loaded = e && s && e->pb().loadedIndex >= 0 && e->pb().loadedIndex < s->cues.size();
+    if (loaded)
+        next = e->pb().loadedIndex;   // Load: the next Go fires this one
     const bool fading = e && e->pb().isOn() && e->pb().fading;
 
     // Banner
@@ -247,7 +250,7 @@ void PlaybackMonitor::tick()
         const Cue *lc = live >= 0 && live < s->cues.size() ? &s->cues[live] : nullptr;
         const Cue *nc = next >= 0 && next < s->cues.size() ? &s->cues[next] : nullptr;
         m_now->setText(lc ? tr("Cue %1  %2").arg(lc->displayNumber(), lc->name) : tr("No cue live"));
-        m_next->setText(nc ? tr("Next: Cue %1  %2").arg(nc->displayNumber(), nc->name) : QString());
+        m_next->setText(nc ? (loaded ? tr("Loaded: Cue %1  %2") : tr("Next: Cue %1  %2")).arg(nc->displayNumber(), nc->name) : QString());
     } else {
         m_now->clear();
         m_next->clear();

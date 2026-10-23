@@ -29,12 +29,12 @@ QPointer<GotoDialog> &openDialog()
 }
 } // namespace
 
-void GotoDialog::open(AppContext *ctx, int page, int executor, QWidget *parent)
+void GotoDialog::open(AppContext *ctx, int page, int executor, QWidget *parent, bool load)
 {
     // One at a time: a second Goto replaces the first.
     if (openDialog())
         openDialog()->close();
-    auto *d = new GotoDialog(ctx, page, executor, parent);
+    auto *d = new GotoDialog(ctx, page, executor, parent, load);
     d->setAttribute(Qt::WA_DeleteOnClose);
     openDialog() = d;
     // In the middle of the screen the tap came from (or the one the window is on).
@@ -52,17 +52,18 @@ void GotoDialog::open(AppContext *ctx, int page, int executor, QWidget *parent)
     d->activateWindow();
 }
 
-GotoDialog::GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent)
-    : QDialog(parent, Qt::Dialog | Qt::WindowStaysOnTopHint), m_ctx(ctx), m_page(page), m_executor(executor)
+GotoDialog::GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent, bool load)
+    : QDialog(parent, Qt::Dialog | Qt::WindowStaysOnTopHint), m_ctx(ctx), m_page(page), m_executor(executor), m_load(load)
 {
     Show *show = ctx->show;
     const Executor *e = show->executor(page, executor);
     const Sequence *seq = e ? show->sequence(e->sequenceId) : nullptr;
     const QString seqName = seq ? (seq->name.isEmpty() ? tr("Sequence %1").arg(seq->id) : seq->name) : QString();
-    setWindowTitle(tr("Goto · Executor %1.%2").arg(page).arg(executor));
+    const QString verb = load ? tr("Load") : tr("Goto");
+    setWindowTitle(tr("%1 · Executor %2.%3").arg(verb).arg(page).arg(executor));
     auto *v = new QVBoxLayout(this);
     v->setSpacing(10);
-    auto *title = new QLabel(tr("Goto  ·  %1  ·  Executor %2.%3").arg(seqName).arg(page).arg(executor), this);
+    auto *title = new QLabel(tr("%1  ·  %2  ·  Executor %3.%4").arg(verb, seqName).arg(page).arg(executor), this);
     title->setFont(theme::uiFont(13, QFont::DemiBold));
     v->addWidget(title);
 
@@ -86,11 +87,14 @@ GotoDialog::GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent)
     m_list->setMinimumWidth(460);
     m_list->setMinimumHeight(380);
     const int live = e && e->pb().isOn() ? e->pb().cueIndex : -1;
+    const int loaded = e ? e->pb().loadedIndex : -1;
     if (seq) {
         m_list->setRowCount(int(seq->cues.size()));
         for (int i = 0; i < seq->cues.size(); ++i) {
             const Cue &c = seq->cues[i];
-            const QString cells[3] = {c.displayNumber(), c.name, tr("%1 s").arg(formatSeconds(c.fade))};
+            // The loaded cue (the next Go fires it) is marked in both windows.
+            const QString label = i == loaded ? tr("%1  ·  loaded").arg(c.name) : c.name;
+            const QString cells[3] = {c.displayNumber(), label, tr("%1 s").arg(formatSeconds(c.fade))};
             for (int col = 0; col < 3; ++col) {
                 auto *it = new QTableWidgetItem(cells[col]);
                 it->setData(Qt::UserRole, i);
@@ -102,6 +106,8 @@ GotoDialog::GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent)
                 }
                 if (col == 2)
                     it->setForeground(i == live ? theme::live : theme::muted);
+                if (i == loaded && i != live && col < 2)
+                    it->setForeground(theme::programmer);
                 m_list->setItem(i, col, it);
             }
             if (i == live)
@@ -136,7 +142,7 @@ GotoDialog::GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent)
         keys->addWidget(b, i / 3, i % 3);
     }
     side->addLayout(keys);
-    auto *go = new QPushButton(tr("Go to cue"), this);
+    auto *go = new QPushButton(load ? tr("Load cue") : tr("Go to cue"), this);
     go->setProperty("role", "primary");
     go->setFont(theme::uiFont(14, QFont::DemiBold));
     go->setMinimumHeight(56);
@@ -149,7 +155,8 @@ GotoDialog::GotoDialog(AppContext *ctx, int page, int executor, QWidget *parent)
     side->addWidget(cancel);
     body->addLayout(side);
     v->addLayout(body, 1);
-    m_note = new QLabel(tr("Tap a cue, or type its number and press Enter. It goes in the cue's own fade."), this);
+    m_note = new QLabel(load ? tr("Tap a cue, or type its number and press Enter. The next Go fires it, in its own fade.")
+                             : tr("Tap a cue, or type its number and press Enter. It goes in the cue's own fade."), this);
     m_note->setProperty("role", "muted");
     v->addWidget(m_note);
 
@@ -197,6 +204,15 @@ void GotoDialog::goTyped()
 void GotoDialog::goTo(int cueIndex)
 {
     Show *show = m_ctx->show;
+    if (m_load) {
+        if (Executor *e = show->executor(m_page, m_executor)) {
+            show->loadCue(*e, cueIndex);
+            if (const Sequence *seq = show->sequence(e->sequenceId); seq && cueIndex < seq->cues.size())
+                emit m_ctx->status(tr("Executor %1.%2: cue %3 loaded, the next Go fires it").arg(m_page).arg(m_executor).arg(seq->cues[cueIndex].displayNumber()));
+        }
+        close();
+        return;
+    }
     if (Executor *e = show->executor(m_page, m_executor)) {
         show->gotoCue(*e, cueIndex, true);
         if (const Sequence *seq = show->sequence(e->sequenceId); seq && cueIndex < seq->cues.size())

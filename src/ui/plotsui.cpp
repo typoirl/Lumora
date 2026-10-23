@@ -1,12 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "plotsui.h"
 
+#include "imagesui.h"
+
 #include "appcontext.h"
 #include "macros.h"
 #include "colorpicker.h"
 #include "fixturesheet.h"
 #include "quickedit.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QApplication>
 #include <QContextMenuEvent>
@@ -27,6 +30,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QStaticText>
 #include <QPainterPath>
 #include <QRegularExpression>
 #include <QSvgRenderer>
@@ -50,45 +54,7 @@ bool isSvg(const QByteArray &b)
     return b.left(512).contains("<svg") || b.trimmed().startsWith("<?xml");
 }
 
-QByteArray icon(const char *body)
-{
-    return QByteArray("<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none' stroke='#ffffff' "
-                      "stroke-width='4' stroke-linecap='round' stroke-linejoin='round'>")
-           + body + "</svg>";
-}
 } // namespace
-
-QVector<QPair<QString, QByteArray>> builtinPlotIcons()
-{
-    return {
-        {QObject::tr("Arrow"), icon("<path d='M8 32h44M38 18l14 14-14 14'/>")},
-        {QObject::tr("Truss"), icon("<path d='M4 24h56M4 40h56M4 24l8 16 8-16 8 16 8-16 8 16 8-16 8 16'/>")},
-        {QObject::tr("Stage"), icon("<rect x='6' y='14' width='52' height='36' rx='2'/><path d='M6 50h52'/>")},
-        {QObject::tr("Speaker"), icon("<rect x='16' y='6' width='32' height='52' rx='4'/><circle cx='32' cy='38' r='9'/><circle cx='32' cy='18' r='4'/>")},
-        {QObject::tr("Person"), icon("<circle cx='32' cy='14' r='8'/><path d='M18 58V36a14 14 0 0 1 28 0v22'/>")},
-        {QObject::tr("Star"), icon("<path d='M32 6l7.6 16.4L58 24.6 44.6 37.2 48 56 32 46.8 16 56l3.4-18.8L6 24.6l18.4-2.2z'/>")},
-        {QObject::tr("Circle"), icon("<circle cx='32' cy='32' r='24'/>")},
-        {QObject::tr("Square"), icon("<rect x='10' y='10' width='44' height='44' rx='2'/>")},
-        {QObject::tr("Triangle"), icon("<path d='M32 8l26 46H6z'/>")},
-        {QObject::tr("Door"), icon("<path d='M14 58V6h36v52M8 58h48'/><circle cx='42' cy='34' r='2.5'/>")},
-        {QObject::tr("Camera"), icon("<rect x='6' y='18' width='38' height='28' rx='3'/><path d='M44 26l14-8v28l-14-8'/>")},
-        {QObject::tr("Fog"), icon("<path d='M8 26c8-8 16 8 24 0s16 8 24 0M8 40c8-8 16 8 24 0s16 8 24 0'/>")},
-        // Fixture symbols: a moving wash (round head of LED cells), a moving profile (one big lens)
-        // and a conventional ellipsoidal profile from the side, with its shutters and yoke.
-        {QObject::tr("Moving wash"), icon("<rect x='18' y='54' width='28' height='6' rx='2'/><path d='M24 54v-4h16v4M10 44V18h6M54 44V18h-6M10 44h44'/>"
-                                           "<circle cx='32' cy='28' r='15'/><circle cx='32' cy='28' r='3' fill='#ffffff'/>"
-                                           "<circle cx='32' cy='20' r='2.5' fill='#ffffff'/><circle cx='32' cy='36' r='2.5' fill='#ffffff'/>"
-                                           "<circle cx='25' cy='24' r='2.5' fill='#ffffff'/><circle cx='39' cy='24' r='2.5' fill='#ffffff'/>"
-                                           "<circle cx='25' cy='32' r='2.5' fill='#ffffff'/><circle cx='39' cy='32' r='2.5' fill='#ffffff'/>")},
-        {QObject::tr("Moving profile"), icon("<rect x='18' y='54' width='28' height='6' rx='2'/><path d='M24 54v-4h16v4M10 44V16h6M54 44V16h-6M10 44h44'/>"
-                                              "<rect x='16' y='8' width='32' height='36' rx='9'/><circle cx='32' cy='26' r='11'/>"
-                                              "<circle cx='32' cy='26' r='5'/>")},
-        {QObject::tr("Conventional profile"), icon("<path d='M6 22h10v16H6z'/><path d='M8 22v-3M11 22v-3M14 22v-3M8 38v3M11 38v3M14 38v3'/>"
-                                                    "<path d='M16 20l10-6h8v32h-8l-10-6z'/><path d='M34 22h20v16H34z'/>"
-                                                    "<path d='M54 20h4v20h-4z'/><path d='M38 22v-5M44 22v-5M38 38v5M44 38v5'/>"
-                                                    "<path d='M24 46v8h16v-8M32 54v6M26 60h12'/>")},
-    };
-}
 
 // ===========================================================================
 // Pool
@@ -149,7 +115,7 @@ PlotsPanel::PlotsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Plots")
         ed->addAction(tr("Delete plot"), [this, id]() { m_ctx->run(QStringLiteral("Delete Plot %1").arg(id)); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & Show::PlotsPart)
             refresh();
     });
@@ -189,16 +155,17 @@ PlotCanvas::PlotCanvas(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ct
     setFocusPolicy(Qt::ClickFocus);
     setMouseTracking(false);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setAttribute(Qt::WA_OpaquePaintEvent);   // it paints all of itself: nothing behind it repaints
     connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
-        if (p & Show::PlotsPart)
+        if (p & (Show::PlotsPart | Show::ImagesPart))
             m_imageCache.clear();
+        m_staticDirty = true;   // anything can change what the plot shows (a renamed preset…)
+        m_itemLayers.clear();
         update();
     });
-    // Fixtures follow the output live: every frame sent.
-    connect(ctx->engine, &Engine::frameDone, this, [this]() {
-        if (isVisible())
-            update();
-    });
+    // Fixtures follow the output live, when it changes.
+    auto *live = new LiveRefresh(this, [this]() { update(); });
+    connect(ctx->engine, &Engine::outputChanged, live, &LiveRefresh::request);
 }
 
 const Plot *PlotCanvas::plot() const
@@ -213,6 +180,8 @@ void PlotCanvas::setPlotId(int id)
     if (m_plotId == id)
         return;
     m_plotId = id;
+    m_itemLayers.clear();   // another plot's items
+    m_staticDirty = true;
     m_picked.clear();
     m_imageCache.clear();
     update();
@@ -453,24 +422,65 @@ bool PlotCanvas::objectActive(const QString &object) const
     }
     if (k == QLatin1String("Plot"))
         return m_ctx->uiValue("plot", 0).toInt() == n;
-    return false;
+    return show->commandLive(object);   // a command: Goto Cue 3 Sequence 5, Copy Preset 4.2 At 4.101
 }
+
+namespace {
+// Items that look the same whatever plays: pictures without a link, and text.
+bool staticItem(const PlotItem &it)
+{
+    return it.kind == PlotItem::Text || (it.kind == PlotItem::Image && it.link.isEmpty());
+}
+} // namespace
 
 void PlotCanvas::paintEvent(QPaintEvent *)
 {
     QPainter p(this);
-    p.setRenderHint(QPainter::Antialiasing);
-    p.fillRect(rect(), QColor(0x12, 0x15, 0x1a));
     const Plot *pl = plot();
     if (!pl) {
+        p.fillRect(rect(), QColor(0x12, 0x15, 0x1a));
         p.setPen(theme::muted);
         p.drawText(rect(), Qt::AlignCenter, tr("No plot. Tap one in the Plots pool, or right-click an empty slot there to make one."));
         return;
     }
-    if (!pl->backgroundColor.isEmpty())
+    // The plot repaints with the output, up to 30 times a second. What lies under the first
+    // live item (the background, truss, pictures and text, usually most of the drawing) is
+    // drawn once into a picture and reused until the plot, the view or the size changes.
+    int prefix = 0;
+    while (prefix < pl->items.size() && staticItem(pl->items[prefix]))
+        ++prefix;
+    const bool cacheable = !m_editing && !m_dragging && m_drag == None;
+    if (!cacheable) {
+        paintScene(p, *pl, 0, int(pl->items.size()), true);
+        return;
+    }
+    const ViewState &v = view();
+    const QString key = QStringLiteral("%1|%2|%3|%4|%5x%6").arg(m_plotId).arg(v.zoom).arg(v.panX).arg(v.panY).arg(width()).arg(height());
+    if (m_staticDirty || key != m_staticKey) {
+        const qreal dpr = devicePixelRatioF();
+        QPixmap layer(QSize(std::max(1, int(width() * dpr)), std::max(1, int(height() * dpr))));
+        layer.setDevicePixelRatio(dpr);
+        QPainter lp(&layer);
+        paintScene(lp, *pl, 0, prefix, true);
+        lp.end();
+        m_staticLayer = layer;
+        m_staticKey = key;
+        m_staticDirty = false;
+    }
+    p.drawPixmap(0, 0, m_staticLayer);
+    paintScene(p, *pl, prefix, int(pl->items.size()), false);
+}
+
+void PlotCanvas::paintScene(QPainter &p, const Plot &plotRef, int from, int to, bool background)
+{
+    const Plot *pl = &plotRef;
+    p.setRenderHint(QPainter::Antialiasing);
+    if (background)
+        p.fillRect(rect(), QColor(0x12, 0x15, 0x1a));
+    if (background && !pl->backgroundColor.isEmpty())
         p.fillRect(rect(), QColor(pl->backgroundColor));   // a solid background: the whole sheet
     // A faint grid while editing, so things line up.
-    if (m_editing) {
+    if (background && m_editing) {
         const double step = kGrid * 4 * view().zoom;
         if (step >= 8) {
             p.setPen(QPen(QColor(255, 255, 255, 14), 1));
@@ -485,7 +495,19 @@ void PlotCanvas::paintEvent(QPaintEvent *)
     const QVector<int> &sel = show->selection();
     auto drawImage = [&](const PlotItem &it, int index) {
         const QRectF r = toWidget(it.rect);
-        if (it.imageName == QLatin1String("Truss")) {
+        // The picture comes from the image pool (older shows' own bytes until they're moved there).
+        const PoolImage *pooled = it.imageId > 0 ? show->image(it.imageId) : nullptr;
+        if (it.imageId > 0 && !pooled) {   // deleted from the pool: say which one is missing
+            p.setPen(QPen(theme::programmer, 1, Qt::DashLine));
+            p.setBrush(Qt::NoBrush);
+            p.drawRect(r.adjusted(0.5, 0.5, -0.5, -0.5));
+            p.setFont(theme::uiFont(8));
+            p.drawText(r.adjusted(2, 2, -2, -2), Qt::AlignCenter | Qt::TextWordWrap, tr("Image %1 missing").arg(it.imageId));
+            return;
+        }
+        const QByteArray &bytes = pooled ? pooled->data : it.image;
+        const bool truss = pooled ? pooled->builtin == QLatin1String("truss") : it.imageName == QLatin1String("Truss");
+        if (truss) {
             // Truss stretches: two chords the length of the item and a cross section for every
             // square of it, so a longer truss gets more sections, not a wider picture.
             const bool across = r.width() >= r.height();
@@ -515,27 +537,70 @@ void PlotCanvas::paintEvent(QPaintEvent *)
             return;
         }
         const QSize size(std::max(1, int(r.width())), std::max(1, int(r.height())));
-        const QString key = QStringLiteral("%1|%2x%3|%4").arg(index).arg(size.width()).arg(size.height()).arg(it.color);
+        const QString key = QStringLiteral("%1|%2|%3x%4|%5").arg(index).arg(it.imageId).arg(size.width()).arg(size.height()).arg(it.color);
         auto c = m_imageCache.constFind(key);
         if (c == m_imageCache.constEnd())
-            c = m_imageCache.insert(key, renderImage(it.image, size, it.color));
+            c = m_imageCache.insert(key, renderImage(bytes, size, it.color));
         p.drawPixmap(r.topLeft(), *c);
     };
     // The background behind everything: a picture where it was put, or the sheet in a color.
-    if (!pl->backgroundImage.isEmpty()) {
+    if (background && pl->hasBackgroundImage()) {
         PlotItem bg;
         bg.kind = PlotItem::Image;
+        bg.imageId = pl->backgroundImageId;
         bg.image = pl->backgroundImage;
         bg.imageName = pl->backgroundName;
         bg.rect = pl->backgroundRect;
         drawImage(bg, -1);
     }
-    for (int i = 0; i < pl->items.size(); ++i) {
+    const bool cacheItems = !background && !m_drawingLayer && !m_editing && !m_dragging && m_drag == None;
+    for (int i = from; i < to; ++i) {
         const PlotItem &it = pl->items[i];
         const QRectF r = toWidget(it.rect);
+        // Linked items show what they stand for: the fixture selected, or the object in use.
+        bool live = false;
+        if (!it.link.isEmpty() && it.kind != PlotItem::Fixture) {
+            if (it.link.startsWith(QLatin1String("Fixture "), Qt::CaseInsensitive))
+                live = sel.contains(show->parseId(it.link.mid(8).trimmed()));
+            else
+                live = objectActive(it.link);
+        }
+        if (cacheItems && it.kind != PlotItem::Fixture) {
+            // Pictures, text and pool objects look the same until they're live or not: each is
+            // drawn once per look into a picture of its own, and that's what each frame draws.
+            const bool on = it.kind == PlotItem::Object && objectActive(it.object);
+            const QRect area = r.toAlignedRect().adjusted(-6, -6, 6, 6);
+            const QString key = QStringLiteral("%1,%2,%3,%4,%5%6").arg(area.x()).arg(area.y()).arg(area.width()).arg(area.height())
+                                    .arg(live ? 'L' : '-').arg(on ? 'O' : '-');
+            auto cached = m_itemLayers.find(i);
+            if (cached == m_itemLayers.end() || cached->first != key) {
+                const qreal dpr = devicePixelRatioF();
+                QPixmap layer(QSize(std::max(1, int(area.width() * dpr)), std::max(1, int(area.height() * dpr))));
+                layer.setDevicePixelRatio(dpr);
+                layer.fill(Qt::transparent);
+                QPainter lp(&layer);
+                lp.translate(-area.topLeft());
+                m_drawingLayer = true;
+                paintScene(lp, *pl, i, i + 1, false);
+                m_drawingLayer = false;
+                lp.end();
+                cached = m_itemLayers.insert(i, {key, layer});
+            }
+            p.drawPixmap(area.topLeft(), cached->second);
+            continue;
+        }
+        bool litPicture = false;
         switch (it.kind) {
         case PlotItem::Image:
-            drawImage(it, i);
+            // A picture with a lit version shows it while its link is live.
+            if (live && it.litImageId > 0 && show->image(it.litImageId)) {
+                PlotItem lit = it;
+                lit.imageId = it.litImageId;
+                drawImage(lit, i);
+                litPicture = true;
+            } else {
+                drawImage(it, i);
+            }
             break;
         case PlotItem::Text: {
             QFont f = theme::uiFont(9, QFont::DemiBold);
@@ -588,16 +653,13 @@ void PlotCanvas::paintEvent(QPaintEvent *)
                 shape.addEllipse(r.adjusted(1, 1, -1, -1));
             else
                 shape.addRoundedRect(r.adjusted(1, 1, -1, -1), 5, 5);
-            p.setPen(Qt::NoPen);
-            p.setBrush(lit);
-            p.drawPath(shape);
             const bool selected = sel.contains(it.fid);
             const bool programmed = show->programmerValues().contains(it.fid);
             QPen outline(selected ? theme::live : exists ? theme::line : theme::faint, selected ? 2.5 : 1,
                          exists ? Qt::SolidLine : Qt::DashLine);
             p.setPen(outline);
-            p.setBrush(Qt::NoBrush);
-            p.drawPath(shape);
+            p.setBrush(lit);
+            p.drawPath(shape);   // filled and outlined in one go
             if (programmed) {   // in the programmer: a coral dot in the corner
                 const double d = std::clamp(std::min(r.width(), r.height()) * 0.16, 3.0, 9.0);
                 p.setPen(QPen(QColor(0x12, 0x15, 0x1a), 1));
@@ -617,23 +679,33 @@ void PlotCanvas::paintEvent(QPaintEvent *)
                 const bool darkText = lit.lightnessF() > 0.6;
                 p.setPen(darkText ? QColor(20, 20, 20) : theme::text);
                 const QString label = it.text.isEmpty() ? show->idText(it.fid) : it.text;
-                p.drawText(it.round ? r : r.adjusted(4, 2, -3, -6), it.round ? Qt::AlignCenter : (Qt::AlignLeft | Qt::AlignTop), label);
+                // Laid out once per label and size (QStaticText), not every frame.
+                const QString key = QStringLiteral("%1|%2").arg(f.pixelSize()).arg(label);
+                auto st = m_labels.find(key);
+                if (st == m_labels.end()) {
+                    QStaticText t(label);
+                    t.setTextFormat(Qt::PlainText);
+                    t.prepare(QTransform(), f);
+                    if (m_labels.size() > 4000)
+                        m_labels.clear();
+                    st = m_labels.insert(key, t);
+                }
+                const QSizeF ts = st->size();
+                const QRectF box = it.round ? r : r.adjusted(4, 2, -3, -6);
+                const QPointF at = it.round ? QPointF(box.center().x() - ts.width() / 2, box.center().y() - ts.height() / 2) : box.topLeft();
+                p.save();
+                p.setClipRect(box);
+                p.drawStaticText(at, *st);
+                p.restore();
             }
             break;
         }
         }
-        // A linked item shows what it stands for: the fixture selected, or the object in use.
-        if (!it.link.isEmpty() && it.kind != PlotItem::Fixture) {
-            bool on = false;
-            if (it.link.startsWith(QLatin1String("Fixture "), Qt::CaseInsensitive))
-                on = sel.contains(show->parseId(it.link.mid(8).trimmed()));
-            else
-                on = objectActive(it.link);
-            if (on) {
-                p.setPen(QPen(theme::live, 2));
-                p.setBrush(Qt::NoBrush);
-                p.drawRoundedRect(r.adjusted(-3, -3, 3, 3), 4, 4);
-            }
+        // Live and without a lit picture to say so: an outline in the live color.
+        if (live && !litPicture) {
+            p.setPen(QPen(theme::live, 2));
+            p.setBrush(Qt::NoBrush);
+            p.drawRoundedRect(r.adjusted(-3, -3, 3, 3), 4, 4);
         }
         if (m_editing && m_picked.contains(i)) {
             p.setPen(QPen(theme::programmer, 1.5, Qt::DashLine));
@@ -646,6 +718,8 @@ void PlotCanvas::paintEvent(QPaintEvent *)
             }
         }
     }
+    if (to < pl->items.size())
+        return;   // a layer under the rest: the overlays come with the last one
     if (m_drag == Lasso) {
         p.setPen(QPen(theme::live, 1, Qt::DashLine));
         QColor fill = theme::live;
@@ -1002,6 +1076,30 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
                     x.rect.setHeight(x.rect.width());
             });
         });
+    if (it.kind == PlotItem::Image) {
+        const PoolImage *img = it.imageId > 0 ? show->image(it.imageId) : nullptr;
+        ed->addAction(img ? tr("Image %1 %2: change…").arg(it.imageId).arg(img->displayName()) : tr("Picture: choose from the pool…"),
+                      [this, change, current = it.imageId]() {
+                          const int chosen = pickPoolImage(m_ctx, this, current);
+                          if (chosen > 0)
+                              change([chosen](PlotItem &x) {
+                                  x.imageId = chosen;
+                                  x.image.clear();
+                              });
+                      });
+        // Lit: another picture shown while what it's linked to is live (a filled swatch for the
+        // color that's on, say).
+        const PoolImage *lit = it.litImageId > 0 ? show->image(it.litImageId) : nullptr;
+        ed->addAction(lit ? tr("While live, Image %1 %2: change…").arg(it.litImageId).arg(lit->displayName())
+                          : tr("While live, show another picture…"),
+                      [this, change, current = it.litImageId]() {
+                          const int chosen = pickPoolImage(m_ctx, this, current);
+                          if (chosen > 0)
+                              change([chosen](PlotItem &x) { x.litImageId = chosen; });
+                      });
+        if (it.litImageId > 0)
+            ed->addAction(tr("While live: no other picture"), [change]() { change([](PlotItem &x) { x.litImageId = 0; }); });
+    }
     if (it.kind == PlotItem::Text || it.kind == PlotItem::Image)
         ed->addAction(it.kind == PlotItem::Text ? tr("Color…") : tr("Tint (one-color icons)…"), [this, change, it]() {
             if (const auto c = pickAppearanceColor(this, tr("Color"), it.color))
@@ -1014,6 +1112,9 @@ void PlotCanvas::itemMenu(int index, const QPoint &global)
             pickPoolObject(m_ctx, this, global, tr("Target"), current, true,
                            [change](const QString &link) { change([link](PlotItem &x) { x.link = link; }); });
         });
+        // Or any command line, run when tapped: Goto Cue 3 Sequence 5, Copy Preset 4.2 At 4.101 /o.
+        ed->addNameField(tr("Or a command to run"), it.link,
+                         [change](const QString &t) { change([t](PlotItem &x) { x.link = t.trimmed(); }); }, true);
         if (!it.link.isEmpty())
             ed->addAction(tr("Unlink"), [change]() { change([](PlotItem &x) { x.link.clear(); }); });
     }
@@ -1206,7 +1307,7 @@ public:
                 add(3, QStringLiteral("Preset %1.%2").arg(t).arg(pr.id), presetRef(t, pr.id), pr.name, theme::presetTypeColor(t));
         for (const Sequence &q : show->sequences())
             add(4, QStringLiteral("Sequence %1").arg(q.id), tr("Sequence %1").arg(q.id), q.name,
-                q.color.isEmpty() ? QColor() : QColor(q.color));
+                sequenceAppearance(show, q.id));
         for (Executor *e : show->allExecutors()) {
             if (e->isEmpty())
                 continue;
@@ -1742,42 +1843,40 @@ void PlotView::fillAddMenu(QMenu *menuPtr)
         p.items << it;
         m_ctx->show->setPlot(p);
     });
-    QMenu *icons = menu.addMenu(tr("Icon"));
-    for (const auto &ic : builtinPlotIcons()) {
-        const QPixmap pm = PlotCanvas::renderImage(ic.second, QSize(20, 20), theme::text.name());
-        icons->addAction(QIcon(pm), ic.first, this, [this, id, ic]() {
-            const Plot *cur = m_ctx->show->plot(id);
-            if (!cur)
-                return;
-            Plot p = *cur;
-            PlotItem it;
-            it.kind = PlotItem::Image;
-            it.image = ic.second;
-            it.imageName = ic.first;
-            it.color = theme::text.name();
-            const QPointF c = m_canvas->viewCenter();
-            const bool truss = ic.first == QLatin1String("Truss");
-            it.rect = truss ? QRectF(snap(c.x() - 96), snap(c.y() - 12), 192, 24) : QRectF(snap(c.x() - 24), snap(c.y() - 24), 48, 48);
-            p.items << it;
-            m_ctx->show->setPlot(p);
-        });
+    // Pictures come from the image pool: its symbols and anything imported.
+    QMenu *imgs = menu.addMenu(tr("Image from the pool"));
+    for (const PoolImage &img : m_ctx->show->images()) {
+        const QPixmap pm = PlotCanvas::renderImage(img.data, QSize(20, 20), img.tintable ? theme::text.name() : QString());
+        imgs->addAction(QIcon(pm), QStringLiteral("%1  %2").arg(img.id).arg(img.displayName()), this,
+                        [this, imgId = img.id]() { placeImage(imgId, false); });
     }
-    menu.addAction(tr("Picture or SVG file…"), this, [this]() { addPicture(false); });
+    if (m_ctx->show->images().isEmpty())
+        imgs->addAction(tr("The image pool is empty"))->setEnabled(false);
+    menu.addAction(tr("Import a picture into the pool…"), this, [this]() { addPicture(false); });
     // One background at a time: adding one replaces the one there.
     QMenu *bg = menu.addMenu(tr("Background"));
-    bg->addAction(tr("Image (SVG or picture)…"), this, [this]() { addPicture(true); });
+    bg->addAction(tr("Image from the pool…"), this, [this]() {
+        const int chosen = pickPoolImage(m_ctx, this, 0);
+        if (chosen > 0)
+            placeImage(chosen, true);
+    });
+    bg->addAction(tr("Import a picture into the pool…"), this, [this]() { addPicture(true); });
     bg->addAction(tr("Solid color…"), this, [this]() { setBackgroundColor(); });
 }
 
 void PlotView::fillBackgroundMenu(QMenu *menu)
 {
     const Plot *p = m_ctx->show->plot(m_canvas->plotId());
-    menu->addAction(p && !p->backgroundImage.isEmpty() ? tr("Change image…") : tr("Image (SVG or picture)…"), this,
-                    [this]() { addPicture(true); });
+    menu->addAction(p && p->hasBackgroundImage() ? tr("Change image…") : tr("Image from the pool…"), this, [this]() {
+        const int chosen = pickPoolImage(m_ctx, this, 0);
+        if (chosen > 0)
+            placeImage(chosen, true);
+    });
+    menu->addAction(tr("Import a picture into the pool…"), this, [this]() { addPicture(true); });
     menu->addAction(p && !p->backgroundColor.isEmpty() ? tr("Change color…") : tr("Solid color…"), this,
                     [this]() { setBackgroundColor(); });
     menu->addAction(tr("Fit the image to the plot"), this, [this]() { fitBackground(); })
-        ->setEnabled(p && !p->backgroundImage.isEmpty());
+        ->setEnabled(p && p->hasBackgroundImage());
     menu->addSeparator();
     menu->addAction(tr("Remove the background"), this, [this]() { removeBackground(); })->setEnabled(p && p->hasBackground());
 }
@@ -1801,7 +1900,7 @@ void PlotView::setBackgroundColor()
 void PlotView::fitBackground()
 {
     const Plot *cur = m_ctx->show->plot(m_canvas->plotId());
-    if (!cur || cur->backgroundImage.isEmpty())
+    if (!cur || !cur->hasBackgroundImage())
         return;
     // As big as what's on the plot, keeping the picture's shape.
     Plot p = *cur;
@@ -1826,52 +1925,68 @@ void PlotView::removeBackground()
 
 void PlotView::addPicture(bool background)
 {
-    const int id = m_canvas->plotId();
+    // Into the image pool first (the next free slot), then onto the plot from there.
     const QString path = QFileDialog::getOpenFileName(this, background ? tr("Background") : tr("Picture"), QString(),
                                                       tr("Pictures (*.svg *.png *.jpg *.jpeg *.bmp *.gif)"));
     if (path.isEmpty())
         return;
-    QFile f(path);
-    if (!f.open(QIODevice::ReadOnly))
+    QString error;
+    const int id = m_ctx->show->importImage(path, 0, &error);
+    if (!id) {
+        emit m_ctx->status(error);
         return;
-    const QByteArray bytes = f.readAll();
+    }
+    emit m_ctx->status(tr("%1 is Image %2 in the pool").arg(QFileInfo(path).fileName()).arg(id));
+    placeImage(id, background);
+}
+
+static QSizeF poolImageSize(const PoolImage &img)
+{
     QSizeF natural(160, 160);
-    if (isSvg(bytes)) {
-        QSvgRenderer svg(bytes);
-        if (!svg.isValid()) {
-            emit m_ctx->status(tr("Couldn't read %1 as an SVG").arg(QFileInfo(path).fileName()));
-            return;
-        }
+    if (img.isSvg()) {
+        QSvgRenderer svg(img.data);
         if (!svg.defaultSize().isEmpty())
             natural = svg.defaultSize();
     } else {
-        const QImage img = QImage::fromData(bytes);
-        if (img.isNull()) {
-            emit m_ctx->status(tr("Couldn't read %1 as a picture").arg(QFileInfo(path).fileName()));
-            return;
-        }
-        natural = img.size();
+        const QImage pic = QImage::fromData(img.data);
+        if (!pic.isNull())
+            natural = pic.size();
     }
-    const Plot *cur = m_ctx->show->plot(id);
-    if (!cur)
+    return natural;
+}
+
+void PlotView::placeImage(int imageId, bool background)
+{
+    const PoolImage *img = m_ctx->show->image(imageId);
+    const Plot *cur = m_ctx->show->plot(m_canvas->plotId());
+    if (!img || !cur)
         return;
     Plot p = *cur;
-    PlotItem it;
-    it.kind = PlotItem::Image;
-    it.image = bytes;
-    it.imageName = QFileInfo(path).fileName();
+    const QSizeF natural = poolImageSize(*img);
     if (background) {
         // Behind everything, as big as what's there; it replaces the background there was.
         QRectF b = p.bounds();
         if (b.isNull())
             b = QRectF(0, 0, 800, 600);
         const double k = std::max(b.width() / natural.width(), b.height() / natural.height());
-        p.setBackgroundImage(bytes, it.imageName, QRectF(b.left(), b.top(), natural.width() * k, natural.height() * k));
+        p.setBackgroundImage(imageId, QRectF(b.left(), b.top(), natural.width() * k, natural.height() * k));
     } else {
-        const double k = std::min(1.0, 240.0 / std::max(natural.width(), natural.height()));
+        PlotItem it;
+        it.kind = PlotItem::Image;
+        it.imageId = imageId;
+        it.imageName = img->name;
+        if (img->tintable)
+            it.color = theme::text.name();
         const QPointF c = m_canvas->viewCenter();
-        it.rect = QRectF(snap(c.x() - natural.width() * k / 2), snap(c.y() - natural.height() * k / 2), natural.width() * k,
-                         natural.height() * k);
+        if (img->builtin == QLatin1String("truss")) {
+            it.rect = QRectF(snap(c.x() - 96), snap(c.y() - 12), 192, 24);
+        } else if (img->tintable) {
+            it.rect = QRectF(snap(c.x() - 24), snap(c.y() - 24), 48, 48);
+        } else {
+            const double k = std::min(1.0, 240.0 / std::max(natural.width(), natural.height()));
+            it.rect = QRectF(snap(c.x() - natural.width() * k / 2), snap(c.y() - natural.height() * k / 2), natural.width() * k,
+                             natural.height() * k);
+        }
         p.items << it;
     }
     m_ctx->show->setPlot(p);
@@ -1907,12 +2022,17 @@ void PlotView::buildOptions(QuickEditor *editor)
     // The plot's background: change it, or take it away.
     if (const Plot *p = m_ctx->show->plot(m_canvas->plotId())) {
         editor->addSection(tr("Background"));
-        editor->addAction(!p->backgroundImage.isEmpty() ? tr("Image: %1 (change…)").arg(p->backgroundName.isEmpty() ? tr("picture") : p->backgroundName)
-                                                        : tr("Image (SVG or picture)…"),
-                          [this]() { addPicture(true); });
+        const PoolImage *bgImg = p->backgroundImageId > 0 ? m_ctx->show->image(p->backgroundImageId) : nullptr;
+        editor->addAction(p->hasBackgroundImage() ? tr("Image: %1 (change…)").arg(bgImg ? bgImg->displayName() : tr("picture"))
+                                                        : tr("Image from the pool…"),
+                          [this]() {
+                              const int chosen = pickPoolImage(m_ctx, this, 0);
+                              if (chosen > 0)
+                                  placeImage(chosen, true);
+                          });
         editor->addAction(!p->backgroundColor.isEmpty() ? tr("Color: %1 (change…)").arg(p->backgroundColor.toUpper()) : tr("Solid color…"),
                           [this]() { setBackgroundColor(); });
-        if (!p->backgroundImage.isEmpty())
+        if (p->hasBackgroundImage())
             editor->addAction(tr("Fit the image to the plot"), [this]() { fitBackground(); });
         if (p->hasBackground())
             editor->addAction(tr("Remove the background"), [this]() { removeBackground(); }, QIcon(), true);

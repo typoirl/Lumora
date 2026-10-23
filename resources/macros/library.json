@@ -1,0 +1,382 @@
+{
+ "about": "Lumora's macro library. Each macro imports into a free slot of the Macros pool. {self} in a line becomes the macro's own number.",
+ "macros": [
+  {
+   "category": "Basics",
+   "name": "Save show",
+   "color": "#4a90d9",
+   "background": true,
+   "description": "Saves the show to its file (Save as… when it has none yet).",
+   "lines": [
+    {
+     "command": "SaveShow"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Clear all",
+   "color": "#ef6b5b",
+   "description": "Empties the programmer and the selection.",
+   "lines": [
+    {
+     "command": "ClearAll"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Blackout",
+   "color": "#55595f",
+   "description": "Blackout on, or off again.",
+   "lines": [
+    {
+     "command": "Blackout"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Highlight",
+   "color": "#f0b54a",
+   "description": "Highlight on, or off again.",
+   "lines": [
+    {
+     "command": "Highlight"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Stop every macro",
+   "background": true,
+   "description": "Stops every running macro.",
+   "lines": [
+    {
+     "command": "Off Macro"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Undo",
+   "description": "Takes back the last command or edit.",
+   "lines": [
+    {
+     "command": "Undo"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Programmer fade 2 s",
+   "description": "Values set by hand fade in over 2 seconds instead of jumping.",
+   "lines": [
+    {
+     "command": "ProgFade 2"
+    }
+   ]
+  },
+  {
+   "category": "Basics",
+   "name": "Programmer fade off",
+   "description": "Values set by hand jump again.",
+   "lines": [
+    {
+     "command": "ProgFade Off"
+    }
+   ]
+  },
+  {
+   "category": "Selection and spreads",
+   "name": "Next fixture",
+   "description": "Steps through the selection one fixture at a time.",
+   "lines": [
+    {
+     "command": "Next"
+    }
+   ]
+  },
+  {
+   "category": "Selection and spreads",
+   "name": "Previous fixture",
+   "description": "Steps back through the selection one fixture at a time.",
+   "lines": [
+    {
+     "command": "Prev"
+    }
+   ]
+  },
+  {
+   "category": "Selection and spreads",
+   "name": "Whole selection",
+   "description": "Back to the whole selection after Next or Prev.",
+   "lines": [
+    {
+     "command": "All"
+    }
+   ]
+  },
+  {
+   "category": "Selection and spreads",
+   "name": "Spread every 2",
+   "color": "#9b6bd6",
+   "description": "Every second fixture of the selection: odd, then even with Next.",
+   "lines": [
+    {
+     "command": "Spread Every 2"
+    }
+   ]
+  },
+  {
+   "category": "Selection and spreads",
+   "name": "Spread off",
+   "color": "#9b6bd6",
+   "description": "Back to no spread.",
+   "lines": [
+    {
+     "command": "Spread Off"
+    }
+   ]
+  },
+  {
+   "category": "Selection and spreads",
+   "name": "Spread from the pool",
+   "color": "#9b6bd6",
+   "description": "Asks for a spread's number and turns it on.",
+   "lines": [
+    {
+     "command": "Spread (Spread number?)"
+    }
+   ]
+  },
+  {
+   "category": "Intensity",
+   "name": "Selection at full",
+   "color": "#f0b54a",
+   "description": "The selected fixtures at full.",
+   "lines": [
+    {
+     "command": "At Full"
+    }
+   ]
+  },
+  {
+   "category": "Intensity",
+   "name": "Selection out",
+   "color": "#55595f",
+   "description": "The selected fixtures at 0.",
+   "lines": [
+    {
+     "command": "At 0"
+    }
+   ]
+  },
+  {
+   "category": "Intensity",
+   "name": "Dimmer +10",
+   "color": "#f0b54a",
+   "description": "Each selected fixture 10 % brighter than it is.",
+   "lines": [
+    {
+     "command": "Dimmer +10"
+    }
+   ]
+  },
+  {
+   "category": "Intensity",
+   "name": "Dimmer -10",
+   "color": "#f0b54a",
+   "description": "Each selected fixture 10 % darker than it is.",
+   "lines": [
+    {
+     "command": "Dimmer +-10"
+    }
+   ]
+  },
+  {
+   "category": "Intensity",
+   "name": "Set a level",
+   "color": "#f0b54a",
+   "description": "Asks for a level once and keeps it as $level, then sets the selection to it. Later lines and commands can use $level too.",
+   "lines": [
+    {
+     "command": "SetVar $level = (Level, 0 to 100?)",
+     "info": "Kept until Lumora closes"
+    },
+    {
+     "command": "At $level"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Pan left 10°",
+   "color": "#5b8def",
+   "description": "Each selected fixture 10° left of where it points now.",
+   "lines": [
+    {
+     "command": "Pan +-10"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Pan right 10°",
+   "color": "#5b8def",
+   "description": "Each selected fixture 10° right of where it points now.",
+   "lines": [
+    {
+     "command": "Pan +10"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Tilt up 10°",
+   "color": "#5b8def",
+   "description": "Each selected fixture 10° up from where it points now.",
+   "lines": [
+    {
+     "command": "Tilt +10"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Tilt down 10°",
+   "color": "#5b8def",
+   "description": "Each selected fixture 10° down from where it points now.",
+   "lines": [
+    {
+     "command": "Tilt +-10"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Nudge pan",
+   "color": "#5b8def",
+   "description": "Asks how far, then pans each selected fixture that far from where it is (-15 goes the other way).",
+   "lines": [
+    {
+     "command": "Pan +(Pan by how many degrees? -15 goes the other way)"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Nudge tilt",
+   "color": "#5b8def",
+   "description": "Asks how far, then tilts each selected fixture that far from where it is (-15 goes the other way).",
+   "lines": [
+    {
+     "command": "Tilt +(Tilt by how many degrees? -15 goes the other way)"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Nudge pan and tilt",
+   "color": "#5b8def",
+   "description": "Asks for both, then moves each selected fixture that far from where it points.",
+   "lines": [
+    {
+     "command": "Pan +(Pan by how many degrees?)"
+    },
+    {
+     "command": "Tilt +(Tilt by how many degrees?)"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Center",
+   "color": "#5b8def",
+   "description": "Pan and tilt of the selection to 0: straight out.",
+   "lines": [
+    {
+     "command": "Pan 0"
+    },
+    {
+     "command": "Tilt 0"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Pan sweep",
+   "color": "#2fb5a5",
+   "background": true,
+   "description": "Swings the selection 30° right and back every 2 seconds, from where it points, until stopped (right-click → Stop, or Off Macro). With the programmer fade on, it moves smoothly.",
+   "lines": [
+    {
+     "command": "Pan +30",
+     "time": 2
+    },
+    {
+     "command": "Pan +-30",
+     "time": 2
+    },
+    {
+     "command": "Go Macro {self}",
+     "info": "Loops"
+    }
+   ]
+  },
+  {
+   "category": "Position",
+   "name": "Tilt nod",
+   "color": "#2fb5a5",
+   "background": true,
+   "description": "Nods the selection 15° up and back every 1.5 seconds, from where it points, until stopped.",
+   "lines": [
+    {
+     "command": "Tilt +15",
+     "time": 1.5
+    },
+    {
+     "command": "Tilt +-15",
+     "time": 1.5
+    },
+    {
+     "command": "Go Macro {self}",
+     "info": "Loops"
+    }
+   ]
+  },
+  {
+   "category": "Playback",
+   "name": "Go on an executor",
+   "color": "#56b870",
+   "description": "Asks for an executor and presses Go on it.",
+   "lines": [
+    {
+     "command": "Go Executor (Executor?)"
+    }
+   ]
+  },
+  {
+   "category": "Playback",
+   "name": "Load a cue",
+   "color": "#56b870",
+   "description": "Asks for an executor and a cue: the next Go there fires that cue.",
+   "lines": [
+    {
+     "command": "Load Cue (Cue?) Executor (Executor?)"
+    }
+   ]
+  },
+  {
+   "category": "Playback",
+   "name": "Store next cue",
+   "color": "#ef6b5b",
+   "description": "Asks for a sequence and stores the programmer in it as its next cue.",
+   "lines": [
+    {
+     "command": "Store Sequence (Sequence?)"
+    }
+   ]
+  }
+ ]
+}

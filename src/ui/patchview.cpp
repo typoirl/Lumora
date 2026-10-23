@@ -7,6 +7,7 @@
 #include "librarybrowser.h"
 #include "quickedit.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QHeaderView>
 #include <QComboBox>
@@ -746,7 +747,7 @@ PatchView::PatchView(AppContext *ctx, QWidget *parent) : QWidget(parent), m_ctx(
             refresh();
         }
     });
-    connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, ctx->show, [this](Show::Parts p) {
         if (p & Show::PatchPart)
             refresh();
     });

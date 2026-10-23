@@ -134,6 +134,7 @@ private:
     int m_effectId = 0;
     Effect m_effect;
     int m_layer = 0;
+    int m_pendingScroll = -1; // where the rebuilt details page goes back to, once it's laid out
     int m_builtLayer = -1;    // the layer and effect the details page was last built for
     int m_builtEffect = 0;
     bool m_loading = false;

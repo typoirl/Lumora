@@ -53,7 +53,11 @@ struct Swatch {
 
 // A small picker for an object's appearance (a sequence's color): the standard colors and the
 // gamut. Returns the color as "#rrggbb", an empty string for no color, or nothing if cancelled.
-std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title, const QString &current);
+// allowFollow: a "Follow fixtures" choice too (a sequence: the color its fixtures show), returned as "follow".
+std::optional<QString> pickAppearanceColor(QWidget *parent, const QString &title, const QString &current, bool allowFollow = false);
+// The color picker (gels, standard colors, temperatures, the gamut) in a window of its own, to
+// choose a light color with: the picked color, or nothing when cancelled.
+std::optional<LinearRgb> pickLightColor(AppContext *ctx, QWidget *parent, const QString &title, const LinearRgb &current);
 
 const QVector<Swatch> &gelLibrary();
 // The values a fixture of this mode needs to show a color (its emitters, CMY or the nearest wheel
@@ -176,9 +180,18 @@ public:
     QJsonObject saveOptions() const override;
     void loadOptions(const QJsonObject &o) override;
     void buildOptions(QuickEditor *) override {}
+    // Picking a color for something else (an effect step): the tabs only choose, nothing goes to
+    // the selection. colorChosen says what was picked.
+    void setPickOnly(const LinearRgb &current);
+    LinearRgb chosen() const { return m_chosen; }
+
+signals:
+    void colorChosen(const lumora::LinearRgb &color, const QString &name);
 
 private:
     void showTab(int i);
+    bool m_pickOnly = false;
+    LinearRgb m_chosen{1, 1, 1};
     void filterGels();
     void apply(const LinearRgb &c, const QColor &display, const QString &name, bool namesPreset = true);
     void refreshMarkers();

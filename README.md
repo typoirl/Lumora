@@ -7,7 +7,7 @@ A free, open source lighting console for Linux, macOS and Windows. Fixtures, gro
 
 ![Lumora's Program view: groups, color presets and the fixture sheet](docs/screenshot.png)
 
-Current version: **a.7.2.2** (alpha). Builds go on the [Releases](https://github.com/typoirl/Lumora/releases) page, and news is on [Discord](https://discord.gg/m2SY5fsR9p).
+Current version: **a.7.2.3** (alpha). Builds go on the [Releases](https://github.com/typoirl/Lumora/releases) page, and news is on [Discord](https://discord.gg/m2SY5fsR9p).
 
 ## User guide
 
@@ -16,14 +16,15 @@ Current version: **a.7.2.2** (alpha). Builds go on the [Releases](https://github
 ## Features
 
 - **Fixtures**: GDTF, Open Fixture Library and QLC+ files, plus a built-in library (generic types, Chauvet DJ and Professional, media and laser servers) and a browser for GDTF Share, OFL and QLC+. Pixel and multi-head fixtures as subfixtures (101.1), pan and tilt in degrees, a fixture editor.
-- **Programming**: a plain-English command line, encoders with an XY pad and framing shutters, a color picker with gels and a gamut, layered presets (Universal, Global, Selective), a preset builder, programmer fade, park, highlight, and undo.
+- **Programming**: a plain-English command line (with relative values: `Pan +10`), encoders with an XY pad and framing shutters, a color picker with gels and a gamut, layered presets (Universal, Global, Selective), a preset builder, programmer fade, park, highlight, and undo.
 - **Selection matrix**: lay the selection out in X and Y; spreads and effects run across it, down it or both.
 - **Effects**: layered waves, steps and shapes, laid out by spreads, stored in presets and cues, with ten BPM, ratio and rate masters.
-- **Cues and playback**: tracking cue lists built from blueprints (group + presets + spread), individual fade and delay times, cue triggers and macros, priorities, up to 99 executors per row with Go, GoBack, Off, Flash, Temp, Goto and more.
-- **Workspace**: views of windows on a grid, up to six screens, plots of the rig with live intensity and color, a playback monitor and macros.
+- **Cues and playback**: tracking cue lists built from blueprints (group + presets + spread), individual fade and delay times, cue triggers and macros, priorities, up to 99 executors per row with Go, GoBack, Off, Flash, Temp, Goto, Load and more; storing onto something that exists asks whether to overwrite, merge or remove.
+- **Workspace**: views of windows on a grid, up to six screens, plots of the rig with live intensity and color, an image pool for symbols and ground plans, a playback monitor, and macros with a library of ready-made ones.
 - **Control**: MIDI learn with pickup and motor/LED feedback; OSC over UDP or TCP.
 - **Output**: Art-Net and sACN (up to 2048 universes), Enttec DMX USB Pro and Open DMX.
 - **Shows**: one file with its fixture types inside, so a show opens on any computer.
+- **Light on hardware**: live windows redraw only what changed, and windows out of sight wait until they're shown, so Lumora runs on modest computers.
 
 On first launch Lumora opens a **demo show**: 8 moving washes, 4 profiles, 8 pixel bars and 4 blinders, with groups, presets, effects and four cue lists on executors 201–204. Press **Go** on 201 to start it.
 
@@ -51,9 +52,10 @@ Run the tests with `ctest --test-dir build`. The user guide is written in `docs/
 
 ```
 src/core/     show model, engine, outputs, MIDI, OSC, command line (no GUI)
-src/ui/       the Qt Widgets application
+src/ui/       the Qt Widgets application (devtools.cpp: the options that take the guide's pictures)
 tests/        unit tests for the core
 fixtures/     the built-in fixture library
+resources/    the app icon, the online library indexes and the macro library
 docs/         the user guide and its source
 third_party/  RtMidi and stb_image
 ```

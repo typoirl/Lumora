@@ -6,6 +6,7 @@
 #include "midi.h"
 #include "quickedit.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QComboBox>
 #include <QContextMenuEvent>
@@ -767,7 +768,7 @@ void ShaperView::mouseReleaseEvent(QMouseEvent *)
 // EncoderBar
 // ===========================================================================
 
-EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget(parent), m_ctx(ctx), m_main(mainBar)
+EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget(parent), m_main(mainBar), m_ctx(ctx)
 {
     setObjectName("encoderBar");
     setAttribute(Qt::WA_StyledBackground);
@@ -793,7 +794,7 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
         th->setSpacing(16);
         auto *word = new QLabel(tr("Encoders"), m_tucked);
         word->setProperty("role", "muted");
-        m_tuckedSelection = new QLabel(m_tucked);
+        m_tuckedSelection = new ElidedLabel(m_tucked);
         m_tuckedSelection->setProperty("role", "muted");
         m_tuckedSelection->setMinimumWidth(10);
         m_tuckedSelection->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
@@ -812,7 +813,7 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
     auto *left = new QVBoxLayout;
     left->setSpacing(6);
     left->addStretch(1);
-    m_selection = new QLabel(m_body);
+    m_selection = new ElidedLabel(m_body);
     m_selection->setProperty("role", "muted");
     m_selection->setFixedWidth(92 * 2 + 4);
     left->addWidget(m_selection);
@@ -903,9 +904,7 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
     h->addLayout(right);
 
     // Follow playbacks: a running cue or fader moves the dials just like the programmer does.
-    connect(ctx->engine, &Engine::frameDone, this, [this]() {   // every frame of output
-        if (!isVisible())
-            return;
+    auto *live = new LiveRefresh(this, [this]() {
         for (EncoderDial *d : m_dialArea->findChildren<EncoderDial *>())
             d->refresh();
         for (XyPad *pad : m_dialArea->findChildren<XyPad *>())
@@ -913,6 +912,7 @@ EncoderBar::EncoderBar(AppContext *ctx, QWidget *parent, bool mainBar) : QWidget
         for (ShaperView *v : m_dialArea->findChildren<ShaperView *>())
             v->refresh();
     });
+    connect(ctx->engine, &Engine::outputChanged, live, &LiveRefresh::request);   // when the output changes
 
     connect(m_prev, &QToolButton::clicked, this, [this]() {
         m_page = std::max(0, m_page - 1);
@@ -990,7 +990,6 @@ void EncoderBar::setHidden(bool hidden)
     m_hidden = hidden;
     m_body->setVisible(!hidden);
     m_tucked->setVisible(hidden);
-    QTimer::singleShot(0, this, [this]() { showSelectionText(); });   // once the strip has its width
     setFixedHeight(hidden ? 20 : 156);
     m_arrow->setText(hidden ? QStringLiteral("▴") : QStringLiteral("▾"));
     m_arrow->setToolTip(hidden ? tr("Show the encoders") : tr("Hide the encoders"));
@@ -1001,12 +1000,9 @@ void EncoderBar::setHidden(bool hidden)
 
 void EncoderBar::showSelectionText()
 {
-    m_selection->setText(m_selection->fontMetrics().elidedText(m_selText, Qt::ElideRight, m_selection->width()));
-    m_selection->setToolTip(m_selText);
-    if (m_tuckedSelection) {
-        m_tuckedSelection->setText(m_tuckedSelection->fontMetrics().elidedText(m_selText, Qt::ElideRight, std::max(10, m_tuckedSelection->width())));
-        m_tuckedSelection->setToolTip(m_selText);
-    }
+    m_selection->setFullText(m_selText);   // the labels fit it to their widths as they change
+    if (m_tuckedSelection)
+        m_tuckedSelection->setFullText(m_selText);
 }
 
 void EncoderBar::placeArrow()
@@ -1094,7 +1090,6 @@ int EncoderBar::dialsPerPage() const
 
 void EncoderBar::resizeEvent(QResizeEvent *)
 {
-    showSelectionText();
     placeArrow();
     rebuild();   // only rebuilds when the number of encoders that fit changes
 }

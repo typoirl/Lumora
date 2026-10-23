@@ -7,6 +7,7 @@
 #include <QElapsedTimer>
 #include <QMap>
 #include <QHash>
+#include <QJsonObject>
 #include <QObject>
 #include <QSet>
 #include <QTimer>
@@ -33,22 +34,26 @@ public:
     void setOutputs(OutputManager *outputs) { m_outputs = outputs; }
     void start(int hz = 40);
     void stop();
-    bool isRunning() const { return m_timer.isActive(); }
 
     // Advances playbacks by dt seconds and recomputes output. Public so tests can drive time.
     void tick(double dt);
+    // Where the running effects are in their cycles, to save with the show (and pick up again
+    // when it opens: a show opening takes them from its "effectPhases").
+    QJsonObject phasesJson() const;
 
     const QMap<int, QByteArray> &universes() const { return m_universes; }
     const RawTable &merged() const { return m_merged; }   // pre-grand-master attribute values
-    double frameRate() const { return m_fps; }
 
     // Intensity an executor currently contributes (0..1), for UI meters.
     static double executorMaster(const Executor &e, bool anySwop);
     static double sequenceMaster(Show &show, const Executor &e, bool anySwop);
 
 signals:
-    // After every frame of output: live views repaint on it, so they show what was just sent.
+    // After every frame of output (the effect editor's preview runs on it).
     void frameDone();
+    // After a frame whose values differ from the one before: live views repaint on it, so they
+    // show what was just sent, and rest while the stage doesn't change.
+    void outputChanged();
 
 private:
     void advance(Executor &e, double dt);
@@ -72,7 +77,8 @@ private:
     QElapsedTimer m_clock;
     QMap<int, QByteArray> m_universes;
     RawTable m_merged;
-    double m_fps = 0.0;
+    bool m_outputChanged = true;
+    bool snaps(int fid, const QString &attribute) const;   // the channel jumps instead of fading
     QHash<QString, double> m_phases;
     QSet<QString> m_seenPhases;
 };

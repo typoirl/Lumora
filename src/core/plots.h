@@ -20,13 +20,16 @@ struct PlotItem {
     QString text;                // Text, or a label under an object or picture
     QString color;               // Text: its color; Image: a tint for single-color icons ("" none)
     double fontSize = 14.0;      // Text
-    QByteArray image;            // Image: the file's bytes (SVG or PNG), kept in the show
-    QString imageName;           // the file or built-in icon it came from
+    int imageId = 0;             // Image: the picture in the show's image pool
+    int litImageId = 0;          // Image: the picture shown instead while what it's linked to is live (0: none)
+    QByteArray image;            // Image, in shows before the image pool: the file's bytes (moved
+    QString imageName;           //   into the pool when the show opens) and where it came from
     bool round = false;          // Fixture: drawn as a circle instead of a square
     int group = 0;               // items with the same group number move and are picked together (0: none)
     // Text, pictures and fixtures can stand for something else: tapped, they act like it.
     // "Fixture 21.3" toggles that fixture in the selection; "Group 3", "Preset 4.1", "Macro 2"…
-    // act like their pool tiles. Empty: the item's own behavior.
+    // act like their pool tiles. Any other command line runs when tapped ("Goto Cue 3 Sequence 5",
+    // "Copy Preset 4.2 At 4.101 /o"). Empty: the item's own behavior.
     QString link;
 
     QJsonObject toJson() const;
@@ -44,11 +47,14 @@ struct Plot {
     // Behind everything: a solid color filling the sheet, or a picture (an SVG ground plan, say)
     // at a place on the plot. One or the other; setting one clears the other.
     QString backgroundColor;
-    QByteArray backgroundImage;
+    int backgroundImageId = 0;     // a picture from the image pool
+    QByteArray backgroundImage;    // shows before the image pool (moved into the pool on opening)
     QString backgroundName;
     QRectF backgroundRect;
-    bool hasBackground() const { return !backgroundColor.isEmpty() || !backgroundImage.isEmpty(); }
+    bool hasBackgroundImage() const { return backgroundImageId > 0 || !backgroundImage.isEmpty(); }
+    bool hasBackground() const { return !backgroundColor.isEmpty() || hasBackgroundImage(); }
     void setBackgroundColor(const QString &color);
+    void setBackgroundImage(int imageId, const QRectF &rect);
     void setBackgroundImage(const QByteArray &bytes, const QString &name, const QRectF &rect);
     void clearBackground();
 

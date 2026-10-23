@@ -49,7 +49,12 @@ public:
     static FixtureSources *instance(AppContext *ctx);
     static QString sourceName(int source);
 
-    const QVector<Entry> &entries(int source) const { return m_entries[source]; }
+    // A source's list, read from its cache (or the bundled copy) the first time it's asked for.
+    const QVector<Entry> &entries(int source) const
+    {
+        const_cast<FixtureSources *>(this)->ensureIndex(source);
+        return m_entries[source];
+    }
     bool installed(const Entry &e) const;
     bool signedIn() const { return m_signedIn; }
     // remember: "Stay signed in". The session cookie is kept between runs, and the password is
@@ -88,6 +93,7 @@ private:
     };
     void saveCookies();
     void loadIndex(int source);
+    void ensureIndex(int source);
     void parseOflIndex(const QByteArray &json);
     void parseQlcIndex(const QByteArray &json);
     void parseGdtfList(const QByteArray &json);
@@ -102,6 +108,7 @@ private:
     AppContext *m_ctx = nullptr;
     QNetworkAccessManager *m_net = nullptr;
     QVector<Entry> m_entries[SourceCount];
+    bool m_indexLoaded[SourceCount] = {};
     QHash<QString, QString> m_oflMakers;
     bool m_signedIn = false;
     bool m_signingIn = false;

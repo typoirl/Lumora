@@ -12,7 +12,7 @@ This guide assumes you know lighting and DMX, but not any particular console.
 ### How this guide is organized
 
 1. **Getting started**: how Lumora works, installing and updating it, a tour of the screen, and a complete first show.
-2. **Setting up**: patching fixtures, fixture types, subfixtures (pixels and multi-head fixtures), outputs and MIDI.
+2. **Setting up**: patching fixtures, fixture types, subfixtures (pixels and multi-head fixtures), outputs, MIDI and OSC.
 3. **Programming**: selecting fixtures, the programmer, encoders, color, groups, presets, spreads and effects.
 4. **Cues and playback**: sequences, cues, blueprints, executors, and watching a show run.
 5. **The workspace**: views, windows, screens, and the windows you can add.
@@ -101,6 +101,10 @@ Open Windows' **Settings → Apps → Installed apps**, find **Lumora**, and cho
 
 ### First launch
 
+![The loading screen](images/loading.png)
+
+While Lumora starts, a loading screen shows its progress and, under the bar, what it's loading right now: the fixture library a file at a time, then the show and the screens that were open.
+
 The first time it starts, Lumora opens the **demo show**: eight moving washes, four profiles, eight pixel bars and four two-cell blinders, with groups, presets (some carrying effects), effects and four cue lists on executors 201–204: one each for the washes, the profiles and the pixel bars, and a Temp key for the blinders. Go to the **Playback** view and press **Go** on 201 to see it run. See [The demo show](#demo-show).
 
 After that, Lumora reopens the last show you used.
@@ -184,9 +188,9 @@ This tutorial takes you from an empty show to a short cue list you can play back
 
 ### Step 1: Start a new show
 
-1. Click **Show → New show**. Lumora asks whether to save the current show if it has changes.
+1. Tap **Show → New show**. Lumora asks whether to save the current show if it has changes.
 2. The new show has five empty views (Program, Sequences, Effects, Playback, Plot) and no fixtures.
-3. Click **Show → Save as…** and give it a name, so you can save as you go with **Show → Save** (or **Ctrl+S**).
+3. Tap **Show → Save as…** and give it a name, so you can save as you go with **Show → Save** (or **Ctrl+S**).
 
 ### Step 2: Patch some fixtures
 
@@ -194,12 +198,12 @@ You'll add four RGBW LED pars and two moving spots.
 
 ![The Patch screen, with Add to patch on the right](images/patch.png)
 
-1. Click **Patch** in the rail.
-2. In **Add to patch** on the right, type `RGBW` in the search box and click **RGBW LED Par** in the list.
+1. Tap **Patch** in the rail.
+2. In **Add to patch** on the right, type `RGBW` in the search box and tap **RGBW LED Par** in the list.
 3. Set **Mode** to *6-channel*, **Quantity** to 4 and **First ID** to 1. Leave **Name** empty (the fixtures will be called Par 1, Par 2…).
 4. **Address** shows `1` (universe) and the next free address. Leave it.
-5. Read the summary line: "IDs 1–4, 6 channels each, 1.001 to 1.024". Click **Add to patch**.
-6. Search for `Moving Head Spot`, pick it, choose the *16-channel* mode, Quantity 2, First ID 11, and click **Add to patch**. Lumora fills in the next free address (1.025).
+5. Read the summary line: "IDs 1–4, 6 channels each, 1.001 to 1.024". Tap **Add to patch**.
+6. Search for `Moving Head Spot`, pick it, choose the *16-channel* mode, Quantity 2, First ID 11, and tap **Add to patch**. Lumora fills in the next free address (1.025).
 
 The patch table on the left now lists your six fixtures with their IDs, types, modes and addresses.
 
@@ -207,18 +211,18 @@ The patch table on the left now lists your six fixtures with their IDs, types, m
 
 ### Step 3: Check the output
 
-1. Click **Outputs** in the rail. Universe 1 already has an output: Lumora adds one for every universe you patch, sending Art-Net on any network card.
+1. Tap **Outputs** in the rail. Universe 1 already has an output: Lumora adds one for every universe you patch, sending Art-Net on any network card.
 2. If you have a network DMX node, set its network card under **Network interface**, and make sure the node listens to the same Art-Net universe (the **Sent as** column). See [Outputs](#outputs).
 3. The **DMX monitor** at the bottom shows the 512 channels of the universe. Keep it in mind: it's the best way to check that Lumora is sending what you expect.
 
 ### Step 4: Select fixtures and set intensity
 
-1. Click **Program** in the rail.
-2. Click in the command line, type `Fixture 1 Thru 4` and press **Enter**. The four pars highlight in the fixture sheet and the encoder bar shows "4 fixtures selected".
+1. Tap **Program** in the rail.
+2. Tap in the command line, type `Fixture 1 Thru 4` and press **Enter**. The four pars highlight in the fixture sheet and the encoder bar shows "4 fixtures selected".
 3. Type `At 75` and press **Enter**. The pars go to 75%. In the fixture sheet their Dimmer column reads 75 in coral: coral means *in the programmer*.
 4. Try the encoder: drag the **Dimmer** knob up or down, or scroll over it.
 
-You can also select by clicking rows in the fixture sheet. Selections **add up**: clicking another row (or typing another fixture) adds it to what's already selected. Press **Clear** (or **Esc**) to start a new selection.
+You can also select by tapping rows in the fixture sheet. Selections **add up**: tapping another row (or typing another fixture) adds it to what's already selected. Press **Clear** (or **Esc**) to start a new selection.
 
 ### Step 5: Make a group
 
@@ -235,7 +239,7 @@ Now tapping the **Pars** tile selects the four pars.
 
 1. Tap the **Pars** group (clear first if anything else is selected).
 2. Make sure the Color tab of the presets pool is showing (tabs along its top: Dimmer, Position, Gobo, Color…).
-3. Click the **Color** button in the encoder bar and set **Red** to 100, **Green** to 0, **Blue** to 0 and **White** to 0 (drag the knobs, or double-click one to type a value).
+3. Tap the **Color** button in the encoder bar and set **Red** to 100, **Green** to 0, **Blue** to 0 and **White** to 0 (drag the knobs, or double-click one to type a value).
 4. Press **Store** and tap an empty slot in the Color presets pool. Right-click it and name it `My red`.
 5. Set the encoders to blue (Red 0, Green 0, Blue 100) and store another preset, `My blue`.
 
@@ -256,7 +260,7 @@ The new preset tiles show a color swatch. Tapping a preset tile applies it to th
 ### Step 8: Store more cues
 
 1. Tap **Pars** and **My red**. Tap **Spots**, type `At Full`.
-2. Press **Store** and tap executor 201 again. Cue 2 is stored after cue 1.
+2. Press **Store** and tap executor 201 again. Its sequence has one cue, so Lumora asks what to do: tap **Add Cue 2**. (With two or more cues it stores the next one straight away.)
 3. Clear twice. Tap **Pars**, type `At 0`. Store onto 201 again: cue 3 takes the pars out but leaves the spots up (tracking).
 4. Clear twice.
 
@@ -264,15 +268,15 @@ The new preset tiles show a color swatch. Tapping a preset tile applies it to th
 
 ![The Playback view with the demo show's cue lists on 201–204](images/executors.png)
 
-1. Click **Playback** in the rail. Executor 201 shows your sequence.
+1. Tap **Playback** in the rail. Executor 201 shows your sequence.
 2. Raise fader 201 (drag it up). Raising a fader from zero starts its sequence at cue 1.
 3. Press **Go** on executor 201 to move to cue 2, and again for cue 3. Each cue fades in over its fade time (2 seconds unless you change it).
-4. **Pause** holds a fade; **Flash** brings the sequence to full while you hold it.
+4. **GoBack** goes to the previous cue. Other key functions (**Pause**, **Flash**, **Temp**…) are a right-click away: see [Button functions](#button-functions).
 5. Pull the fader down to stop the sequence.
 
 ### Step 10: Adjust the cues
 
-1. Click **Sequences** in the rail. The sequence pool is on the left and its cues on the right.
+1. Tap **Sequences** in the rail. The sequence pool is on the left and its cues on the right.
 2. Double-click a cue's **Name** cell and type a name, such as `Blue look`.
 3. Double-click the **Fade** cell of cue 2 and type `5` for a five-second fade.
 4. Save the show with **Show → Save**.
@@ -307,10 +311,10 @@ The Patch screen (**Patch** in the rail) lists every fixture in the show on the 
 A new show starts on **All fixtures**; once it has fixtures, **In Show**. The header above the patch says how many types the show holds.
 
 1. Type part of the fixture's name or manufacturer in the search box.
-2. Click the fixture. If it isn't downloaded yet, Lumora gets it.
+2. Tap the fixture. If it isn't downloaded yet, Lumora gets it.
 3. Choose the **Mode**, the **Quantity**, the **First ID** and a **Name** (optional).
 4. **Address** has the universe and the start address. Lumora fills in the next free address. Clear the address field to add the fixtures *unpatched* (see below).
-5. Check the summary line, then click **Add to patch**.
+5. Check the summary line, then tap **Add to patch**.
 
 **Naming.** A name ending in a number counts on from it: "Spot 5" adds Spot 5, Spot 6, Spot 7… A name without a number starts at 1. An empty name uses the fixture type's short name.
 
@@ -349,7 +353,7 @@ A fixture type describes a fixture: its manufacturer and name, its modes, and fo
 | **GDTF Share** | The official GDTF library, mostly written by the manufacturers. Needs a free account at gdtf-share.com. |
 | **Open Fixture Library** | A community library at open-fixture-library.org. |
 | **QLC+** | The fixture definitions from the QLC+ project, with gobo images. |
-| **Lumora's library** | The files in the `fixtures` folder next to Lumora: a few generic fixtures. |
+| **Built in** | The fixture types that come with Lumora (the `fixtures` folder next to it): generic fixtures, the Chauvet DJ and Chauvet Professional ranges, and media and laser servers. |
 | **Your own** | Types built in the fixture editor. |
 
 ### The Fixture library window
@@ -417,6 +421,7 @@ Every attribute has a *default*: where it rests when nothing is playing. Lumora 
 | **Name** | The name shown for it. |
 | **Default** | Where the channel rests, in its own values: 0 for a dimmer at zero, 0° for pan in the middle. |
 | **Highlight** | Where **Highlight** puts it. Leave it empty (right-click → delete, or clear the cell) and Highlight leaves the channel alone. |
+| **Snap** | Ticked, the channel doesn't fade: in a cue's fade (after its delay) or a programmer fade it jumps straight to the new value, so a gobo or color wheel doesn't spin through the slots in between. On by default for gobo and color wheels and macros. |
 | **Min**, **Max** | The **value range**: the channel's value at each end of its DMX range. A dimmer is 0 to 100 (%); a 540° pan is -270 to 270, 0 the middle; a zoom might be 5 to 50 (°). Put the bigger number in **Min** for a channel that runs the other way. |
 | **DMX from**, **DMX to** | The **DMX range** the value range covers: 0 to 255, or 0 to 65535 for a 16-bit channel (one with a **Fine** slot). Narrow it when only part of the channel does the job, such as a dimmer that's full at 200. |
 | **Ranges** | How many named ranges it has. |
@@ -443,7 +448,7 @@ Ranges name parts of a channel's DMX range: color wheel slots, gobos, shutter mo
 
 ### Cells (pixel fixtures)
 
-To build a pixel bar: add one pixel's channels (for example an RGB group), select those rows, press **Cells…** and enter how many cells. The selected channels become cell 1 and are copied for the others after the last DMX slot. Channels without a cell number belong to the whole fixture (a master dimmer or strobe). A master Dimmer rests at full so the cells light up when programmed.
+To build a pixel bar: add one pixel's channels (for example an RGB group), select those rows, press **Cells…** and enter how many cells. The selected channels become cell 1 and are copied for the others after the last DMX slot. Channels without a cell number belong to the whole fixture (a master dimmer or strobe); see [Subfixtures](#subfixtures).
 
 ### Saving
 
@@ -481,7 +486,7 @@ Subfixtures are fixtures in every other way: store them in groups, give them pre
 
 ![Subfixtures nested in the fixture sheet](images/fixture-sheet.png)
 
-Subfixtures nest under their fixture. Click the arrow in front of an ID (or double-click the ID) to open or close a fixture. A fixture that is only pixels has no channels of its own, so its row is just a label over the cells; selecting that row selects every cell. A closed fixture with some of its cells selected is tinted amber, so you can see they're in there.
+Subfixtures nest under their fixture. Tap the arrow in front of an ID (or double-click the ID) to open or close a fixture. A fixture that is only pixels has no channels of its own, so its row is just a label over the cells; selecting that row selects every cell. A closed fixture with some of its cells selected is tinted amber, so you can see they're in there.
 
 ### Defaults
 
@@ -549,13 +554,13 @@ Any MIDI controller (a fader box, a keyboard, a pad controller) can drive Lumora
 
 1. Plug in your controller. Lumora listens to every MIDI input by default.
 2. Turn on **Learn MIDI** in the top bar. Controls you can map get a dashed magenta outline. Learn MIDI works on the executor windows already on screen (open a Playback view, or add an Executors window), and nothing pops up over the encoders.
-3. Click a fader, button or knob on any executor. It turns solid magenta while it listens.
+3. Tap a fader, button or knob on any executor. It turns solid magenta while it listens.
 4. Move a fader, turn a knob or press a key on your controller. It's mapped.
 5. Repeat for other controls, then turn Learn MIDI off.
 
 You can also right-click an executor and choose **MIDI learn: fader** (or a button), or on the MIDI tab pick an action (such as **Grand Master**) and press **Learn**.
 
-The **masters** map the same way: their faders and keys, in the Masters window. The **encoder bar** maps too: with Learn MIDI on, its knobs get the same outline and their number (E1, E2…). Click one and turn a knob or endless encoder on your controller. See [Encoders and MIDI](#encoders-midi).
+The **masters** map the same way: their faders and keys, in the Masters window. The **encoder bar** maps too: with Learn MIDI on, its knobs get the same outline and their number (E1, E2…). Tap one and turn a knob or endless encoder on your controller. See [Encoders and MIDI](#encoders-midi).
 
 Notes, control changes (CC), pitch bend (14-bit faders) and program changes all work. A control can only do one thing; learning it again moves it.
 
@@ -655,12 +660,12 @@ Almost everything starts with a **selection**: the fixtures you're about to chan
 
 - **The command line**: `Fixture 1 Thru 8`, `1 + 3 + 5`, `Fixture 1 Thru 10 - 5` (a bare number means Fixture).
 - **Groups**: tap a group tile, or type `Group 2`.
-- **The fixture sheet**: click rows. Click a selected row again to take it out.
-- **Fixture tiles**: the tile layout of the fixture sheet; Shift-click adds a range. A fixture with subfixtures has a small arrow in its bottom-right corner: click it to open the fixture, and its cells or heads follow it on a shared tray.
+- **The fixture sheet**: tap rows. Tap a selected row again to take it out.
+- **Fixture tiles**: the tile layout of the fixture sheet; Shift-click adds a range. A fixture with subfixtures has a small arrow in its bottom-right corner: tap it to open the fixture, and its cells or heads follow it on a shared tray.
 
 ### Selections add up
 
-Like most consoles, selections add up until you clear them. `1` then `3` then `Group 2` selects all of them. **Ctrl**-tap a group to take its fixtures back out. **Clear** (or **Esc**) empties the selection.
+Selections add up until you clear them. `1` then `3` then `Group 2` selects all of them. **Ctrl**-tap a group to take its fixtures back out. **Clear** (or **Esc**) empties the selection.
 
 ### Selection order
 
@@ -687,14 +692,15 @@ The **programmer** holds the values you're working on. Whatever is in it goes to
 - **At**: `At 50` sets intensity to 50%. `At Full` and `At Zero`; `At At` (pressing At twice) is full.
 - **Encoders**: drag, scroll or type a value (see [Encoders](#encoders)).
 - **Presets**: tap a preset tile, or type `Color.3` or `At Color.3`.
-- **Any attribute by name**: `Attribute Zoom At 30`. Pan and tilt take degrees: `Attribute Pan At -90`.
+- **Any attribute by name**: `Zoom 30` or `Attribute Zoom At 30`. Pan and tilt take degrees: `Pan -90`.
+- **Up or down from where it is**: `+` before a number adds it, `+-` takes it away: `Pan +10`, `Tilt +-10`, `Fixture 1 Thru 4 Red +20`, `At +10` (intensity). Each fixture moves from its own value (the programmer's, else what's on stage): pan at 25 with `Pan +-10` goes to 15. Pan and tilt go in degrees, the rest in their own values (% for a dimmer or a color).
 - **The color picker**: see [Color](#color).
 
 Values in the programmer show in **coral** in the fixture sheet and on the encoders.
 
 ### Clearing
 
-**Clear** works in steps, like on most consoles:
+**Clear** works in steps:
 
 1. If fixtures are selected, Clear deselects them (their values stay in the programmer).
 2. Pressed again with nothing selected, Clear empties the programmer.
@@ -741,7 +747,7 @@ Every fixture has a default for each attribute: where it rests when nothing play
 | `Fixture 101 Park` or `Park Fixture 101` | Everything on fixture 101 and its subfixtures. |
 | `Fixture 101 Intensity Park` | Only its intensity. Features work the same way: `Position`, `Gobo`, `Color`, `Beam`, `Focus`, `Control`. |
 | `Fixture 101 Attribute Pan Park` | Only its pan. |
-| `Attribute Pan Park` | Pan on the selected fixtures. Click **Pan** on the encoder bar to type the `Attribute Pan` part. |
+| `Attribute Pan Park` | Pan on the selected fixtures. Tap **Pan** on the encoder bar to type the `Attribute Pan` part. |
 | `Park Group 2 Position` | Position on every fixture in group 2. |
 
 An attribute parks at the value it has on stage at that moment. Parked attributes are saved with the show.
@@ -764,7 +770,7 @@ The encoder bar shows a knob for each attribute the selected fixtures have, one 
 
 ### Using the encoders
 
-- **Pick a feature** on the left: Dimmer, Position, Gobo, Color, Beam, Focus or Control. Features the selection doesn't have are greyed out.
+- **Pick a feature** on the left: Dimmer, Position, Gobo, Color, Beam, Focus or Control. Features the selection doesn't have are grayed out.
 - **The selection** shows just above the features: how many fixtures, and the spreads on them. It keeps the features' width however long it gets (hover for all of it), so nothing on the bar moves. With the bar tucked away, it shows beside **Encoders**.
 - **Drag** a knob up or down, or **scroll** over it.
 - **Double-click** a knob to type a value.
@@ -772,13 +778,11 @@ The encoder bar shows a knob for each attribute the selected fixtures have, one 
 - **Fine**, or holding **Shift** on the keyboard, makes small steps: dragging, scrolling and turning a MIDI encoder all go a tenth as far.
 - **‹ ›** page through more knobs. A page has up to five (change it in [Config](#interface)), fewer when they don't fit.
 - **Default** puts this feature's defaults in the programmer (twice: every attribute).
-- **Click a knob's name** to put `Attribute Pan` (or whichever it is) on the command line, ready for `Park`, `At 30` or `Unpark`.
+- **Tap a knob's name** to put `Attribute Pan` (or whichever it is) on the command line, ready for `Park`, `At 30` or `Unpark`.
 
 Values show, and are typed, in the channel's own units: percent for most, degrees for pan and tilt, or the value range the fixture type gives a channel. On a zoom of 5 to 50, `Attribute Zoom At 30` (or typing 30 after a double-click) sets it to 30.
 
-The ring around each knob shows where the value sits in its range. Coral means the value is in the programmer. The knobs follow the output live, with every frame Lumora sends (44 a second), so a cue fading in moves them too.
-
-The label above the categories says how many fixtures are selected, and the spread on them if there is one (see [Spreads](#spreads)).
+The ring around each knob shows where the value sits in its range. Coral means the value is in the programmer. The knobs follow the output live (up to 30 times a second, whenever it changes), so a cue fading in moves them too.
 
 The arrow in the bar's top-right corner hides it, leaving a thin strip with the arrow to bring it back.
 
@@ -790,17 +794,17 @@ The arrow in the bar's top-right corner hides it, leaving a thin strip with the 
 
 A MIDI knob or endless encoder maps to an encoder by its **place on the bar**, not by its attribute: map your first knob to the first encoder and it turns Pan on the Position page, Dimmer on the Dimmer page, and whatever comes first on the next page. Changing feature or page takes your controller with it.
 
-- **Learn it**: turn on **Learn MIDI**, click an encoder on the bar (it shows E1, E2…) and turn the control. Or right-click the encoder → **MIDI learn: encoder**, or pick **Encoder 1** on the MIDI tab.
+- **Learn it**: turn on **Learn MIDI**, tap an encoder on the bar (it shows E1, E2…) and turn the control. Or right-click the encoder → **MIDI learn: encoder**, or pick **Encoder 1** on the MIDI tab.
 - **Endless encoders and knobs** both work. An endless encoder (sending 65/63, or 1/127, for each step) moves the value a step at a time; a knob moves it as far as you turn it, from wherever it is, so nothing jumps when the page changes. Lumora guesses which you have from the first message; tick or untick **Endless** on the MIDI tab if it guessed wrong.
 - **Fine**: press Fine on the bar, or hold Shift on the keyboard while turning.
-- **The push**: right-click an encoder → **MIDI learn: push**, then press a button (or an encoder's push) on your controller. Pressing it opens that encoder's ranges, the same as right-clicking it. The push is only learned this way, not by clicking with Learn MIDI on.
+- **The push**: right-click an encoder → **MIDI learn: push**, then press a button (or an encoder's push) on your controller. Pressing it opens that encoder's ranges, the same as right-clicking it. The push is only learned this way, not by tapping with Learn MIDI on.
 - **Forget MIDI mappings** in the same right-click menu removes both.
 
 ### Framing shutters {#shapers}
 
 ![The Beam category with two profiles selected: the shaper view, its buttons and the blade knobs](images/shaper.png)
 
-When the selection has framing shutters, the **Beam** category shows them drawn over the beam, like a console's shaper view: the light grey circle is the beam, the dark grey blades cover it, and a white line marks each blade's edge. Blade 1 is at the top, 2 on the right, 3 at the bottom, 4 on the left; the whole picture turns with the module's rotation (**Blade rotation**).
+When the selection has framing shutters, the **Beam** category draws them over the beam: the light gray circle is the beam, the dark gray blades cover it, and a white line marks each blade's edge. Blade 1 is at the top, 2 on the right, 3 at the bottom, 4 on the left; the whole picture turns with the module's rotation (**Blade rotation**).
 
 - **Drag a blade's number** in or out to set its insertion. Press anywhere and the nearest handle is picked up.
 - **Drag its A or B end** to swivel the blade (**Ins + Rot**). On fixtures whose blades have two corners (A and B parameters), switch to **A + B** and the ends move each corner on its own, for triangles and slants.
@@ -819,7 +823,7 @@ Lumora programs pan and tilt in the fixture's physical degrees, with **0 in the 
 
 Presets, cues, defaults and effects all keep degrees. A Universal position preset therefore points fixtures with different ranges the same way.
 
-The ranges come from the fixture file (GDTF physical ranges, Open Fixture Library angles, QLC+ pan and tilt maximums). When a file doesn't say, Lumora assumes 540° pan and 270° tilt; you can set the real range in the fixture editor's **Degrees** column.
+The ranges come from the fixture file (GDTF physical ranges, Open Fixture Library angles, QLC+ pan and tilt maximums). When a file doesn't say, Lumora assumes 540° pan and 270° tilt; you can set the real range in the fixture editor's **Min** and **Max** columns.
 
 On the command line, `Attribute Pan At -90` and `Attribute Tilt At 45` take degrees. `Full` and `Zero` mean the ends of the range.
 
@@ -848,7 +852,7 @@ Four tabs:
 - **Gels**: Rosco and Lee gels by number or name. Type to filter.
 - **Standard**: named colors plus a hue/saturation field.
 - **Temperature**: 1800–10000 K. Fixtures with warm and cool white blend them.
-- **Gamut**: click on a CIE 1931 diagram. The outline is what the selected fixtures can actually make: their emitters' colors (red, green, blue, the whites, amber, lime…) and everything in between. An RGB fixture shows a triangle, one with more emitters a bigger shape, a fixture with only warm and cool white a short line between the two, and a color-wheel fixture its wheel's colors. A click outside it gives the nearest color they can make. With nothing selected it shows a typical RGB LED.
+- **Gamut**: tap on a CIE 1931 diagram. The outline is what the selected fixtures can actually make: their emitters' colors (red, green, blue, the whites, amber, lime…) and everything in between. An RGB fixture shows a triangle, one with more emitters a bigger shape, a fixture with only warm and cool white a short line between the two, and a color-wheel fixture its wheel's colors. A tap outside it gives the nearest color they can make. With nothing selected it shows a typical RGB LED.
 
 Whatever you pick goes to the selected fixtures using what they have: RGB (with white, amber, lime or UV) mixing, CMY, or the nearest named slot of a color wheel.
 
@@ -876,7 +880,7 @@ The selection isn't only a list: every selected fixture has a place on a grid, *
 - Selecting adds fixtures along **X**, in order: `Fixture 1 Thru 4` fills X 0 to 3.
 - **Next Y** (`NextY`, or the key on the command keys) starts the next Y: `Fixture 1 Thru 4 NextY Fixture 5 Thru 8` makes two rows of four.
 - Positions can be given outright: `Fixture 5 Grid 3/1` puts fixture 5 at X 3, Y 1. `Grid 2/1` moves where the next selected fixture goes. `Grid 0/0 Thru 3/1` lays the selection out over that area, filling X first.
-- In the **Selection matrix** window (**+ → Selection matrix**), each fixture is a square. **Drag a box** over empty space to pick several (Ctrl or Shift adds to the pick), or click one; Ctrl-click picks or unpicks one. Then **drag** the picked fixtures: they move together, keeping their shape, and fixtures in the way take the cells they left. Right-click for **Pick all**, **Next Y**, **All along X, in selection order** (back to one line), or to take fixtures out of the selection.
+- In the **Selection matrix** window (**+ → Selection matrix**), each fixture is a square. **Drag a box** over empty space to pick several (Ctrl or Shift adds to the pick), or tap one; Ctrl-click picks or unpicks one. Then **drag** the picked fixtures: they move together, keeping their shape, and fixtures in the way take the cells they left. Right-click for **Pick all**, **Next Y**, **All along X, in selection order** (back to one line), or to take fixtures out of the selection.
 
 Clearing the selection clears the matrix. Coordinates start at 0.
 
@@ -888,12 +892,13 @@ Group 3, **Pixel bars**, is the eight pixel bars as 8 × 8: each bar's cells alo
 
 A group stored from a selection keeps the X/Y layout: selecting the group later puts the fixtures back where they were. Groups stored before keep a single line along X.
 
+## Groups {#groups}
 
 ![Groups and color presets pools](images/pools.png)
 
 A **group** is a stored selection, in order.
 
-- **Store a group**: select fixtures, press **Store**, tap an empty group slot. Or type `Store Group 3 "Front"`.
+- **Store a group**: select fixtures, press **Store**, tap an empty group slot. Or type `Store Group 3 "Front"`. Storing onto a group that exists asks: Overwrite, Merge or Remove (see [Storing onto something that exists](#store-existing)).
 - **Use it**: tap the tile (adds its fixtures to the selection), or type `Group 3`. **Ctrl**-tap takes its fixtures out.
 - **Edit it**: right-click the tile: **Name**, **Update with selection** (replaces its fixtures with the current selection), **Delete**.
 - A group tile is outlined when the selection is exactly that group.
@@ -915,7 +920,7 @@ There are eight pools: **Dimmer**, **Position**, **Gobo**, **Color**, **Beam**, 
 1. Select fixtures and set the values (for example a color).
 2. Press **Store** and tap an empty slot in the right pool, or type `Store Color.5 "Deep blue"`.
 
-Only the programmer values that belong to the pool's feature are stored. Storing into an existing preset merges; add `/overwrite` to replace it.
+Only the programmer values that belong to the pool's feature are stored. Storing onto a preset that exists asks what to do: **Overwrite**, **Merge global**, **Merge selective** or **Remove** (see [Storing onto something that exists](#store-existing)).
 
 ### The Preset builder {#preset-builder}
 
@@ -1028,7 +1033,7 @@ Spread Every 2 Offset 2                   every other fixture, starting with the
 Spread Wings 2 Blocks 2                   change the active spread
 Spread Phase -360 Thru 0                  phase range in degrees
 Spread Direction Backward                 forward, backward, inward, outward, random
-Store Spread 3 "Evens"                     keep it in the pool
+Store Spread 3 "Evens"                    keep it in the pool
 Blueprint Cue 1 Group 2 Effect 1 Spread 3 use it on a blueprint line
 ```
 
@@ -1067,13 +1072,13 @@ Each layer has a **speed** multiplier and a **phase offset**, so a color can rol
 
 ### How effects spread across fixtures {#effect-spreads}
 
-How an effect rolls across the fixtures (its phase, blocks, groups, wings and direction) comes from a [spread](#spreads) in the pool. Each effect has one, chosen under **Spread** in the effect editor; effects that share a spread change together when you edit it. Effects made before this, and ones from the library, get the pool spread that matches their layout (made for them if there's none, named like "Chase 360°" or "Together"). **None** keeps the effect's own layout.
+How an effect rolls across the fixtures (its phase, blocks, groups, wings and direction) comes from a [spread](#spreads) in the pool. Each effect has one, chosen under **Spread** in the effect editor; effects that share a spread change together when you edit it. Effects from the library, and ones from older shows, get the pool spread that matches their layout (made for them if there's none, named like "Chase 360°" or "Together"). **None** keeps the effect's own layout.
 
 A spread on the selection when you run the effect, or on the blueprint line it's in, lays it out instead.
 
 ### Along X, Y or both {#effect-axes}
 
-Each effect runs along the [selection matrix](#selection-matrix)'s **X**, its **Y**, or both: tick **Runs X** and **Y** in the effect editor. Every effect starts on X only, which is how they always ran. On Y, a 4 × 2 block chases top row then bottom row; with both, the X and Y phases add together, so the wave runs corner to corner. The X spread lays out the X direction and the Y spread the Y direction.
+Each effect runs along the [selection matrix](#selection-matrix)'s **X**, its **Y**, or both: tick **Runs X** and **Y** in the effect editor. A new effect runs on X only. On Y, a 4 × 2 block chases top row then bottom row; with both, the X and Y phases add together, so the wave runs corner to corner. The X spread lays out the X direction and the Y spread the Y direction.
 
 ### The Effects pool
 
@@ -1085,7 +1090,7 @@ In the demo show the **Effects** view has the ten [rate masters](#rate-masters) 
 
 ### The effect editor
 
-Add it with **+ → Effect editor**. It shows the effect's **name** and **seconds per cycle** (with the BPM it makes), its **layers** (add with **+ Dimmer**, **+ Position**, **+ Color**, **+ Attributes**), the selected layer's settings, and a live **preview**: one row per selected fixture across one cycle, with a playhead that moves with every frame of output. **Run on selection** starts it.
+Add it with **+ → Effect editor**. It shows the effect's **name** and **seconds per cycle** (with the BPM it makes), its **layers** (add with **+ Dimmer**, **+ Position**, **+ Color**, **+ Attributes**), the selected layer's settings, and a live **preview**: one row per selected fixture across one cycle, with a playhead that runs with the effect. **Run on selection** starts it.
 
 ### On the command line
 
@@ -1112,16 +1117,32 @@ Storing a cue stores the running effects. Blueprint lines can carry effects on a
 
 | Tap | Stores |
 | --- | --- |
-| A group slot | The selection as a group. |
-| A preset slot | The programmer's values for that pool's feature. |
-| A sequence slot (in a sequence pool) | A cue into that sequence. |
-| An executor | The next cue of its sequence. An empty executor gets a new sequence. |
+| A group slot | The selection as a group (onto one that exists, it asks). |
+| A preset slot | The programmer's values for that pool's feature (onto one that exists, it asks). |
+| A sequence slot (in a sequence pool) | The next cue of that sequence (with one cue, it asks). |
+| An executor | The next cue of its sequence (a sequence with one cue asks what to do). An empty executor gets a new sequence. |
 | A view in the rail | The windows on screen into that view. |
 | A spread slot | The active spread. |
 
 When the view has no executor window, Store shows a tile for every executor in the 100, 200, 300 and 400 rows where the encoders usually are. **Esc** cancels Store.
 
 You can also type: `Store Cue 5`, `Store Group 3 "Front"`, `Store Color.1 "Red" /overwrite`, `Store Sequence 2 Cue 1.5`, `Store Cue 1 Thru 40` (a whole run of empty cues).
+
+### Storing onto something that exists {#store-existing}
+
+![Store onto Preset Color.1: Overwrite, Merge global, Merge selective, Remove or Cancel](images/store-existing.png)
+
+Storing onto a group, a preset or a cue that's already there asks what to do. The answers are always in the same order:
+
+| Store onto | Overwrite | Merge | Add cue | Remove |
+| --- | --- | --- | --- | --- |
+| A group | The selection replaces the group. | **Merge**: the selection's new fixtures join it (in a new row of its layout when it has one). | — | The selection comes out of it. |
+| A preset | The programmer replaces it. | **Merge global** (per fixture type) or **Merge selective** (per fixture): the programmer's values join it in that layer. | — | The programmer's attributes (and effects) come out of it. |
+| A sequence with one cue, or a cue | The programmer replaces the cue. | **Merge**: the programmer's values join the cue. | **Add Cue 2**: a new cue after it (a sequence with one cue). | The programmer's attributes (and effects) come out of the cue. |
+
+**Cancel** stores nothing. A sequence with more than one cue doesn't ask: Store adds its next cue. A group, preset or cue left empty by **Remove** is deleted.
+
+On the command line, an option answers ahead: `Store Group 3 /merge`, `Store Color.1 /selective`, `Store Sequence 2 /new`, `Store Cue 4 /remove`, `/overwrite` (or `/o`). A macro line that stores onto something that exists without one of these asks too.
 
 ## Sequences and cues {#sequences}
 
@@ -1136,7 +1157,7 @@ A **sequence** is a list of **cues**. The **Sequences** view has the **sequence 
 - **Name**.
 - **Priority**: Low, LTP, HTP or Ultra (see [Priority](#priority)).
 - **Off when overridden**: Yes or No.
-- **Appearance…**: the sequence's color. Pick a standard color or any hue in the color field, or type it as hex (`#E04050`) or as red, green and blue (0–255); **No color** takes it away. It shows as a chip on its pool tile, a stripe along the top of its executors and a tint in their faders.
+- **Appearance…**: the sequence's color. Pick a standard color or any hue in the color field, or type it as hex (`#E04050`) or as red, green and blue (0–255); **No color** takes it away. **Follow fixtures** takes the color its fixtures show on stage while it plays (its first cue's colors while it's off), so an executor running a color chase changes color with it (`Appearance Sequence 2 Follow`). It shows as a chip on its pool tile, a stripe along the top of its executors and a tint in their faders.
 - **Assign to executor…** and **Delete sequence**.
 
 Tiles show the priority in the corner when it isn't LTP.
@@ -1151,7 +1172,7 @@ Tiles show the priority in the corner when it isn't LTP.
 | **Name** | A name for the cue. |
 | **Fade** | Seconds the cue takes to fade in. |
 | **Delay** | Seconds to wait before the fade starts. |
-| **Trigger** | How the cue starts: **Go**, **Wait** or **Follow** (see below). Click or right-click it to choose. |
+| **Trigger** | How the cue starts: **Go**, **Wait** or **Follow** (see below). Tap or right-click it to choose. |
 | **Wait** | Seconds, for a Wait trigger. Typing one makes the cue a Wait. |
 | **Macro** | A macro that runs as the cue starts: type its number (empty or 0 for none), or right-click for a list. Select several cues to give them all the same one. `Cue 3 Macro 2`. |
 | **Notes** | Notes for the operator ("Wait for the actor to sit"). |
@@ -1174,7 +1195,7 @@ Double-click or right-click a cell to edit it. Select several cues (Ctrl-click o
 
 | Priority | How it plays |
 | --- | --- |
-| **Low** | Below everything. Its values only show where nothing else has any, and they never turn other sequences off. Its effects still run over values from higher priorities (see [Effects and priority](#effect-priority)). |
+| **Low** | Below everything. Its values only show where nothing else has any, and they never turn higher sequences off (another Low sequence they do). Its effects still run over values from higher priorities (see [Effects and priority](#effect-priority)). |
 | **LTP** | The default. Latest takes precedence for every attribute, intensity included: the sequence that went most recently wins. |
 | **HTP** | Above LTP. Among HTP sequences, the highest intensity wins; other attributes are latest takes precedence. |
 | **Ultra** | Above everything, the programmer included. |
@@ -1196,13 +1217,11 @@ Effects only compete with other effects. For each fixture and attribute the effe
 | Then a second Low color effect | It takes over from the first, the newest Low effect winning. The first stays on underneath. |
 | A position and a circle on one executor, then a position on another | The first executor is overridden and turns off. |
 
-An effect fades with its cue's fade: in with the cue, out as the next cue comes in or the executor goes off.
-
 **Stomp.** Calling a preset onto fixtures that are running an effect in the programmer stops that effect on those fixtures, for the features the preset has values for. The preset's own effects then start.
 
 ### Off when overridden
 
-On by default. When other sequences have taken over every value a sequence has (each fixture and attribute it controls now comes from another sequence), it turns itself off, at once. So ten sequences holding only color replace each other: turning one on turns the previous one off. A sequence with values is judged by its values, and its effects go with it. A sequence with only effects is judged by its effects, and only other sequences' effects take those, never values: a position doesn't turn a circle off. A sequence held on by a Flash, Temp or Swop key stays on, values and effects from **Low** sequences never turn anything off, two **HTP** sequences never take intensity from each other, and the programmer never turns a sequence off. Turn the option off to keep a sequence running underneath.
+On by default. When other sequences have taken over every value a sequence has (each fixture and attribute it controls now comes from another sequence), it turns itself off once the cue that took them has finished its fade: until then it plays on underneath, so effects don't snap off and back on. So ten sequences holding only color replace each other: turning one on turns the previous one off. A sequence with values is judged by its values, and its effects go with it. A sequence with only effects is judged by its effects, and only other sequences' effects take those, never values: a position doesn't turn a circle off. A sequence held on by a Flash, Temp or Swop key stays on, values and effects from **Low** sequences turn off only other Low sequences (two Low color effects replace each other), two **HTP** sequences never take intensity from each other, and the programmer never turns a sequence off. Turn the option off to keep a sequence running underneath.
 
 ### Cue triggers {#cue-triggers}
 
@@ -1214,7 +1233,7 @@ Each cue has a **trigger**: how it starts.
 | **Wait** | Its wait time after the cue before it started, by itself. `Wait 5`: five seconds after the previous cue's Go. |
 | **Follow** | By itself, as soon as the cue before it has finished (its delay and fade). |
 
-The trigger belongs to the cue it starts: to have cue 3 run straight after cue 2, set cue **3** to Follow. Click (or right-click) the **Trigger** cell and choose Go, Wait… (it asks for the seconds) or Follow; with several cues selected, they all change. On the command line: `Cue 3 Follow`, `Cue 3 Wait 5`, `Cue 3 Go`. A run of Follow and Wait cues plays by itself; with **Wrap to first cue** on and the first cue set to Follow or Wait, the sequence loops. Pausing the playback holds the clock too.
+The trigger belongs to the cue it starts: to have cue 3 run straight after cue 2, set cue **3** to Follow. Tap (or right-click) the **Trigger** cell and choose Go, Wait… (it asks for the seconds) or Follow; with several cues selected, they all change. On the command line: `Cue 3 Follow`, `Cue 3 Wait 5`, `Cue 3 Go`. A run of Follow and Wait cues plays by itself; with **Wrap to first cue** on and the first cue set to Follow or Wait, the sequence loops. Pausing the playback holds the clock too.
 
 ### Individual fade and delay times {#individual-times}
 
@@ -1230,7 +1249,7 @@ Values without individual times use the cue's. The cue counts as finished when t
 
 ### The Off line
 
-Every sequence ends with a greyed-out **Off** line. Its **Fade** and **Delay** are the times the playback fades out with when the executor is turned off (an Off button or `Off Executor 201`). Intensity fades down and everything else holds until the fade ends. Letting go of a flash or pulling a fader to zero still stops at once.
+Every sequence ends with a grayed-out **Off** line. Its **Fade** and **Delay** are the times the playback fades out with when the executor is turned off (an Off button or `Off Executor 201`). Intensity fades down and everything else holds until the fade ends. Letting go of a flash or pulling a fader to zero still stops at once.
 
 The Off line has a **Trigger** too. Set it to **Follow** and the sequence turns itself off once the last cue has finished; **Wait** turns it off that many seconds after the last cue started. This comes before **Wrap to first cue**. Left on **Go** with wrapping off, **Go** on the last cue turns the sequence off, and the next Go starts it from the top. On the command line: `Cue Off Follow`, `Cue Off Wait 5`, `Cue Off Go`, `Cue Off Fade 3`.
 
@@ -1265,7 +1284,7 @@ Select a cue and use the **Blueprint** table under the cue list:
 | --- | --- |
 | **Name** | A name for the line. |
 | **Group** | The group it applies to. |
-| **Presets** | Click to choose presets: a tab per pool plus **All presets**. Tick a preset's box or click its name to add it or take it out. Intensity comes from a Dimmer preset (the demo has Full, 25% and Out). |
+| **Presets** | Tap to choose presets: a tab per pool plus **All presets**. Tick a preset's box or tap its name to add it or take it out. Intensity comes from a Dimmer preset (the demo has Full, 25% and Out). |
 | **Every**, **Offset** | Take every Nth fixture of the group, starting from this one. |
 | **Spread** | A spread from the pool: which of the group's fixtures, and how the line's effects spread across them. |
 | **Fixtures** | How many fixtures the line reaches. |
@@ -1315,7 +1334,7 @@ The Playback view stacks encoders 301–310 over faders 201–210, with buttons 
 - `Assign Sequence 2 At Executor 202`, or press **Shift+A** (or type `Assign`), tap a sequence, then tap an executor: anywhere on it, not just its title.
 - Right-click a sequence in the pool → **Assign to executor…**
 
-**Unassign** (right-click) removes it. Right-click → **Appearance…** sets the sequence's color, shown along the top of the executor. The sequence's number shows small and grey beside its name on the executor, like the executor's own number.
+**Unassign** (right-click) removes it. Right-click → **Appearance…** sets the sequence's color (see [The sequence pool](#sequences)). The sequence's number shows small and gray beside its name on the executor, like the executor's own number.
 
 ### Rate masters {#rate-masters}
 
@@ -1328,18 +1347,20 @@ Ten **rate masters** set the speed of the effects that follow them. Each works i
 | **Ratio** | A multiplier in musical steps: ×1/16, ×1/8, ×1/4, ×1/2, ×1 (the middle), ×2, ×4, ×8, ×16. |
 
 - **Make an effect follow one**: in the effect editor, pick it under **Rate master**, or `Assign Effect 3 At RateMaster 2`. An effect following a master ignores its own speed setting in BPM mode; in Rate and Ratio modes the master multiplies it.
-- **Put one on an executor**: right-click an executor → **Assign rate master**, or `Assign RateMaster 1 At Executor 210`. Its fader sets the value and its buttons are **Learn** (tap tempo: tap it in time), **Reset** (back to 100 %, 120 BPM or ×1) and **Freeze** (stops every effect following it where it is).
+- **Put one on an executor**: right-click an executor → **Assign rate master**, or `Assign RateMaster 1 At Executor 210`. Its fader sets the value and its buttons are **Learn** (tap tempo: tap it in time), **Reset** (back to 100 %, 120 BPM or ×1) and **Freeze** (stops every effect following it where it is). Right-click the executor to choose what each key does (Learn, Reset, Freeze or nothing) and the master's **type** (Rate, BPM or Ratio); those choices only show on an executor with a rate master, and a sequence's fader and button functions only on one with a sequence.
+
 ![The Masters window, with an effect following one](images/rate-masters.png)
 
+
 - **The Masters window** (+ → Masters) shows all ten as faders, ten across in one row, drawn like the 200 executors: the name and value at the top, a key, and the fader (the dotted line marks 100 % or ×1). In a new show master 1 is BPM, master 2 a ratio and the rest rates. The key is **Learn** on a BPM master (tap it in time to set the tempo) and **Reset** on the others (back to 100 %, ×1 or 120 BPM); right-click → **Its key** switches it either way. Drag the fader, press the key, and right-click to name it, pick its mode, type a value, reset or freeze it, or give it an **Appearance…** (a color, shown along its top and on executors it's on, as for sequences; `Appearance RateMaster 2 "Blue"`). **Show it as Button** turns that master into one big key instead of a fader (`RateMaster 4 Button`, `RateMaster 4 Fader`).
-- **MIDI**: the faders and keys map like executors. Turn on **Learn MIDI** and click a master's fader or key, then move the control; or right-click it → **MIDI learn: fader** or **MIDI learn: button**. The button does what the key does (Learn or Reset). Faders get pickup like executor faders. **Forget MIDI mappings** removes them; the MIDI tab lists them as **Master 3 Fader** and **Master 3 Key**.
+- **MIDI**: the faders and keys map like executors. Turn on **Learn MIDI** and tap a master's fader or key, then move the control; or right-click it → **MIDI learn: fader** or **MIDI learn: button**. The button does what the key does (Learn or Reset). Faders get pickup like executor faders. **Forget MIDI mappings** removes them; the MIDI tab lists them as **Master 3 Fader** and **Master 3 Key**.
 - **On the command line**: `RateMaster 2 At 128` sets it (percent in Rate mode, BPM in BPM mode, the multiplier in Ratio mode); `RateMaster 2` taps it; `Label RateMaster 2 "Chase"` names it.
 
 ### One sequence on several executors
 
 A sequence can sit on as many executors as you like, and they play it **together**: it's one playback. Put sequence 1 on 101, 201, 301 and 401, set 301's push to Pause and 401's key to Off (and 201's fader to X-fade), and **Go** on 101 starts it, 301 pauses the fade, 201 crossfades to the next cue by hand, and 401 turns it off. All of them show the same cue. Master faders of the same sequence move together.
 
-### Button functions
+### Button functions {#button-functions}
 
 Fader executors have three keys, the others one. Right-click an executor to change what each does, or tap a key after `Assign Flash At` (`Assign Flash At Executor 201 Button 3`):
 
@@ -1349,13 +1370,14 @@ Fader executors have three keys, the others one. Right-click an executor to chan
 | **GoBack** | Goes to the previous cue. |
 | **Pause** | Holds a fade; press again to continue. |
 | **Flash** | Full while held, back when released. |
-| **Temp** | On while held, at the fader's level. Unlike Flash it uses the times: it comes in with the first cue's fade and goes out with the Off line's fade and delay. |
+| **Temp** | On while held, at the fader's level. Unlike Flash it uses the times: it comes in with the first cue's fade and goes out with the Off line's fade and delay. With a Temp fader on the sequence, see **Temp** under [Fader functions](#fader-functions). |
 | **Toggle** | On, then off. |
 | **On** / **Off** | On, or off (with the sequence's off time). |
 | **Swop** | Like Flash, and everything else goes dark while held. |
 | **Select** | Selects the sequence (for the Sequence editor and Cue commands). |
 | **Top** | Back to the first cue. |
 | **Goto** | Shows the sequence's cues to pick one: see [Goto](#goto). |
+| **Load** | Shows the same list: the cue picked waits for the next **Go**. See [Load](#load). |
 
 ### Goto {#goto}
 
@@ -1365,13 +1387,21 @@ An executor button set to **Goto** (right-click → its button → **Goto**, or 
 
 On the command line, `Goto Cue 3 Executor 201` goes straight there, and `Goto Cue 3 Executor 201 Fade 2` takes 2 seconds instead, for every value.
 
-### Fader functions
+### Load {#load}
+
+![Load: the same list as Goto, with Cue 3 loaded](images/load.png)
+
+**Load** picks the cue the next **Go** fires, without going there yet. A button set to **Load** (`Assign Load At Executor 201 Button 3`), or `Load Executor 201`, opens the same list as Goto: tap a cue, or type its number and press **Enter**. The loaded cue shows in red on the executor (**Load 3**), in the list, and in the Playback monitor (**Loaded:**). The next Go, from any key, command or macro, fires it in its own fade and times, then the list carries on from there. A loaded cue waits while the playback is off, and is kept with the show.
+
+`Load Cue 3 Executor 201` (or `Load Cue 3 Sequence 5`) loads it straight away; `Load Executor 201 /clear` takes the load back.
+
+### Fader functions {#fader-functions}
 
 | Function | Does |
 | --- | --- |
 | **Master** | The fader scales the sequence's intensity. Raising it from zero starts the sequence; pulling it to zero stops it. |
 | **X-fade** | The fader runs the fade to the next cue by hand. |
-| **Temp** | The sequence is on while the fader is up, at its level. |
+| **Temp** | A temporary takeover, by hand. Raising it from zero starts the sequence on its first cue; the fader is the fade: at 30 % every attribute (intensity, color, position, effects…) is 30 % of the way from what's underneath to the cue's value (snapping channels go all the way as soon as it moves). What it covers keeps running underneath: Off when overridden never turns anything off for a Temp fader, nor turns the Temp fader's sequence off. Back at zero the sequence is off and the stage is what was underneath. Moved by hand, the fader is the timing: the cue's fade and the Off line's times aren't used. A **Temp** key on the same sequence always follows the times: held, it takes the sequence all the way in the cue's fade (from wherever the fader had it); let go, it goes out in the Off line's fade and delay, and the fader is back at 0. Moving the fader during that Off fade takes over by hand from there. |
 
 `Assign XFade At Executor 201` sets a fader's function.
 
@@ -1385,7 +1415,7 @@ Each row holds up to **99 executors** per page: 101–199, 201–299, 301–399 
 
 ### Off, then tap
 
-Press a playback key with nothing else on the command line (**Off**, the **O** shortcut, or **On**, **Go**, **GoBack**, **Pause**, **Top**, **Goto** on the command keys), then tap an executor: it does that to the executor. **O** then a tap on 201 is `Off Executor 201`.
+Press a playback key with nothing else on the command line (**Off**, the **O** shortcut, or **On**, **Go**, **GoBack**, **Pause**, **Top**, **Goto**, **Load** on the command keys), then tap an executor: it does that to the executor. **O** then a tap on 201 is `Off Executor 201`.
 
 ### Playback commands
 
@@ -1394,6 +1424,8 @@ Go Executor 201                go (also GoBack, Off, Pause, Top)
 Goto Cue 3 Executor 201        jump to a cue (in its own fade)
 Goto Cue 3 Executor 201 Fade 2 jump to it in 2 s
 Goto Executor 201              show its cues to pick one
+Load Cue 3 Executor 201        the next Go fires cue 3
+Load Executor 201              show its cues to pick the one to load
 Executor 201 At 75             set a fader
 Top Executor 201               back to the first cue
 Off Executor 201               off, with the sequence's off time
@@ -1401,17 +1433,24 @@ Off Executor 201               off, with the sequence's off time
 
 On the keyboard: **Space** is Go and **Shift+Space** is Go Back for the selected sequence; **O** is Off.
 
-### How playbacks combine
-
-Sequences combine by [priority](#priority): by default everything is **latest takes precedence**, intensity included (the sequence that went last wins), and sequences that lose all their values turn off. The programmer is on top of every sequence but Ultra ones. The executor's fader (as Master) scales its intensity, including effects. The **grand master** scales everything; **blackout** turns everything off.
-
 ### Executor windows
 
 ![An executor grid, from 101](images/executor-grid.png)
 
 Add an Executors window with **+ → Executors**: one row of executors. **+ → Executor grid** shows them as a grid instead, like a pool: from 101 by default, as many as fit.
 
-Right-click either window's tab to set, like a pool's grid, **Executors wide** and **Executors tall** (0 fits as many as there's room for), and the **Row** (101, 201, 301 or 401) or the **First executor**. A grid runs across, then down, and stops at the end of the row's 99: a grid from 101 that's 10 wide and 3 tall shows 101–130. A grid with a set size (both wide and tall set) fills its window: resize the window and the executors grow or shrink with it. Every executor window has the page control, and they all follow the same page.
+Right-click either window's tab to set, like a pool's grid, **Executors wide** and **Executors tall** (0 fits as many as there's room for), and the **Row** (101, 201, 301 or 401) or the **First executor**. A grid runs across, then down, and stops at the end of the row's 99: a grid from 101 that's 10 wide and 3 tall shows 101–130. A grid with a set size (both wide and tall set) fills its window: resize the window and the executors grow or shrink with it. Every executor window has the page control, and they all follow the same page, unless one is locked to a page of its own (see [Window options](#views)).
+
+## Images {#images}
+
+![The image pool beside the Rig plot](images/images.png)
+
+The **image pool** holds the show's pictures: Lumora's own symbols (slots 1–15 in a new show: arrow, truss, stage, speaker, person, star, circle, square, triangle, door, camera, fog, moving wash, moving profile and a conventional profile) and anything you import. They're kept in the show file, so the show has them on any computer. Add the pool with **+ → Images**; the Plot view has it under the plots pool.
+
+- **Import**: tap an empty slot and pick one or more files (SVG, PNG, JPEG, BMP or GIF); they go into that slot and the free ones after it. Or press **Store** and tap a slot, or drop files from your file manager onto the window.
+- **Use**: right-click an image to put it on the plot that's showing, or make it that plot's background. From a plot, **Add ▾ → Image from the pool**. On the command line: `Assign Image 16 At Plot 1`.
+- **Change**: right-click to rename it (`Label Image 16 "Ground plan"`), **Replace with a file…** (everything using it changes), **Export…** it to a file, or delete it (`Delete Image 16`; plots that used it show it as missing).
+- **Move and copy**: `Move Image 16 At 30` (plots follow it to its new number), `Copy Image 16 At 31`.
 
 ## Plots {#plots}
 
@@ -1421,7 +1460,7 @@ A **plot** is a sheet you lay out to work from: fixtures where they hang, pool o
 
 ### Fixtures on a plot
 
-Fixtures and subfixtures show their **intensity and color** live, redrawn with every frame of output: the symbol lights in the color the fixture is making, as bright as its intensity, with a level bar along the bottom. A selected fixture has a yellow outline; a fixture with values in the programmer has a coral dot in its corner. Pixels and other subfixtures go on as small dots.
+Fixtures and subfixtures show their **intensity and color** live, redrawn whenever the output changes (up to 30 times a second): the symbol lights in the color the fixture is making, as bright as its intensity, with a level bar along the bottom. A selected fixture has a yellow outline; a fixture with values in the programmer has a coral dot in its corner. Pixels and other subfixtures go on as small dots.
 
 - **Tap** a fixture to add it to the selection; tap it again to take it out. The selection keeps the order you tapped in.
 - **Drag a box** on an empty part of the sheet to add everything inside it, left to right and top to bottom.
@@ -1435,7 +1474,11 @@ Groups, presets, sequences, executors, effects, macros, views, spreads, rate mas
 
 - **Add ▾ → Selected fixtures** puts them on in a row under what's there (ones already on it are skipped). On the command line: `Assign Fixture 1 Thru 8 At Plot 1`, `Assign Fixture 21.1 Thru 21.8 At Plot 1`, or `Store Fixture 101 Thru 108 At Plot 1` (Store and Assign do the same here). A plot that doesn't exist yet is made.
 - **Add ▾ → Pool object…** picks one from a list (tabs for each kind, and a search), or `Assign Group 3 At Plot 1` (or `Store Group 3 At Plot 1`), `Assign Preset 4.1 At Plot 1` (or `Color.1`), `Assign Sequence 2 At Plot 1`, `Assign Executor 1.201 At Plot 1`, and likewise Macro, Effect, View, Spread, RateMaster and Plot.
-- **Add ▾ → Text** writes a label; **Icon** picks one of the built-in icons (arrow, truss, stage, speaker, person, star, shapes, door, camera, fog, moving wash, moving profile and a conventional profile); **Picture or SVG file…** adds any SVG, PNG or JPEG; **Background → Image…** puts a picture (an SVG ground plan, say) behind everything, and **Background → Solid color…** colors the whole sheet. A plot has one background: adding another replaces it. Pictures are kept in the show file, so the show still has them on another computer.
+- **Add ▾ → Text** writes a label.
+- **Add ▾ → Image from the pool** puts a picture from the [image pool](#images) on the plot: Lumora's symbols (arrow, truss, stage, speaker, person and so on) or anything imported. **Import a picture into the pool…** brings in a file and puts it on. On the command line: `Assign Image 16 At Plot 1`.
+- **Add ▾ → Background → Image from the pool…** puts a picture (an SVG ground plan, say) behind everything, and **Solid color…** colors the whole sheet. A plot has one background: adding another replaces it.
+
+Pictures on a plot are the pool's images, by number: replace Image 16 in the pool and every plot showing it changes. Right-click a picture on the plot to swap it for another from the pool. A picture whose image was deleted from the pool shows as missing until you choose another.
 
 ### Editing
 
@@ -1450,6 +1493,8 @@ The truss icon stretches: drag it longer and it adds sections rather than stretc
 **Groups.** Pick several items, right-click one and choose **Group these**: from then on, picking any of them picks them all, so they move, arrange and are removed together. **Ungroup** splits them up again. To resize one of them, ungroup first.
 
 **Links.** Text, icons and pictures can stand in for a fixture or a pool object. Right-click one → **Link to a fixture or pool object…** and pick it from the list (below): tabs for fixtures, groups, presets, sequences, executors, effects, macros, masters, spreads, views and plots, and a search (type a name or number, Enter takes the first match). Tapping it then does exactly what tapping that fixture or tile does, and it gets a colored outline while the fixture is selected or the object is in use. **Unlink** makes it plain again. The demo's UPSTAGE label is linked to Group 2.
+
+A link can also be any command line (type it in **Or a command to run**): tapped, it runs. Two kinds also light up: a Goto (`Goto Cue 3 Sequence 12`, or `… Executor 5.216`) while that playback sits on that cue, and a preset copy (`Copy Preset 4.2 At 4.101 /o`) while the target holds what the source does. A picture can show **another picture while it's live** (right-click → **While live, show another picture…**): an outlined swatch that turns filled when its color is on. That makes a color grid: one row of pictures per group, each running `Goto Cue n Sequence s` on a sequence with a cue per color, filled where the color is on; and an effect's two colors chosen by copying color presets into the two presets it uses, the tile of the copied color lit.
 
 ![Linking a plot item: pick a fixture or pool object](images/link-picker.png)
 
@@ -1514,6 +1559,20 @@ In the command history, lines a macro ran show which macro ran them.
 - **Colors**: `Appearance Sequence 2 "Red"`, `Appearance Macro 4 "#ff8800"` or `Appearance RateMaster 1 "Blue"` recolors a sequence, macro or rate master (`Off` takes the color away). Names are the standard colors: Red, Orange, Yellow, Lime, Green, Sea green, Cyan, Sky blue, Blue, Purple, Magenta, Pink, White.
 - **Other macros**: `Go Macro 5` starts macro 5. A macro's own number as its last line (with a Follow time) makes it loop until you stop it.
 
+### The macro library {#macro-library}
+
+![The macro library: ready-made macros by category, with what each does and its lines](images/macro-library.png)
+
+Lumora comes with a library of ready-made macros. Open it with **Library…** in the Macros pool's header, or right-click an empty slot → **From library…**. Pick a macro to see what it does and its lines; tick several (or a whole category) and press **Import**: they go into free slots from the **From slot** number on, and edit like any other macro.
+
+| Category | Macros |
+| --- | --- |
+| Basics | Save show (`SaveShow`), Clear all, Blackout, Highlight, Stop every macro, Undo, Programmer fade 2 s, Programmer fade off |
+| Selection and spreads | Next fixture, Previous fixture, Whole selection, Spread every 2, Spread off, Spread from the pool (asks which) |
+| Intensity | Selection at full, Selection out, Dimmer +10, Dimmer -10, Set a level (asks once, kept as `$level`) |
+| Position | Pan left and right 10°, Tilt up and down 10° (`Pan +-10`, `Tilt +10`: from where each fixture points), Nudge pan, Nudge tilt, Nudge pan and tilt (ask how far), Center, Pan sweep and Tilt nod (loop until stopped) |
+| Playback | Go on an executor, Load a cue, Store next cue (each asks which) |
+
 The demo show has four: **Blue washes** (foreground), **Washes, tap for next** (background, with Waits: tap it to step through executor 201's cues), **Profiles in**, and **Profiles to the audience**, which the Pixel bars cue list's last cue runs.
 
 ## Playback monitor {#playback-monitor}
@@ -1528,7 +1587,7 @@ The demo show has four: **Blue washes** (foreground), **Washes, tap for next** (
 
 ### Views
 
-A **view** is a saved layout of windows. The rail lists the show's views; tap one to show it. Views are stored in the show file, like a console's screens.
+A **view** is a saved layout of windows. The rail lists the show's views; tap one to show it. Views are stored in the show file.
 
 - Change the windows of a view as much as you like. Tapping the view again brings back what was stored. A changed view shows in italics with a dot. Going to a different view drops the changes too: the view you left is back to what was stored, unmarked, so store changes you want to keep before you leave.
 - To keep the changes, press **Store** (the views light up red) and tap the view, or right-click it → store the changes, or type `Store View 2`.
@@ -1564,8 +1623,9 @@ On the command line: `View 2`, `Store View 5 "Busking"`, `Label View 2 "Name"`, 
 | **Plot** | One plot: fixtures live, pool objects to tap, text and pictures. |
 | **Plots** | The plot pool. |
 | **Presets** | A preset pool, with tabs for each feature. |
-| **Masters** | The ten effect masters (BPM, ratio and rate). |
+| **Masters** | The ten [rate masters](#rate-masters) (Rate, BPM and Ratio). |
 | **Help** | This guide, with a search. |
+| **Images** | The image pool (see [Images](#images)). |
 | **Sequence editor** | The selected sequence's cues and blueprint. |
 | **Selection matrix** | The selected fixtures laid out X and Y (see [Selection matrix](#selection-matrix)). |
 | **Sequences** | The sequence pool. |
@@ -1583,9 +1643,9 @@ Windows sit on a grid, and never overlap. Drag a window's header to move it; dra
 
 Right-click a window's tab for its options:
 
-- **Pools** (groups, presets, effects, spreads, views, sequences): **Grid** sets tiles wide × tall (0 × 0 fits as many as there's room for), the **tile size**, and **Lock position**. The top left of every pool has ▲, the slot in the top-left corner (type a number to jump there), and ▼. Scrolling moves a row at a time.
+- **Pools** (groups, presets, effects, spreads, views, sequences): **Grid** sets tiles wide × tall (0 × 0 fits as many as there's room for), the **tile size**, and **Lock position**. The top left of every pool has ▲, the slot in the top-left corner (type a number to jump there), and ▼. Scrolling moves a row at a time. A locked pool stays where it is and hides that whole bar (with the preset pool's type tabs), so the window is all tiles.
 - **Fixtures**: **Table** or **Tiles** layout, and which fixtures to show (all, patched, selected, or in the programmer).
-- **Executors** and **Executor grid**: executors wide × tall, which row or first executor.
+- **Executors** and **Executor grid**: executors wide × tall, which row or first executor, and **Locked to page**: a page of its own (0 follows the current page). A locked window shows that page whatever page the rest go to and its MIDI mappings act on that page. It has no page bar: its tab has a lock and says the page ("Faders 201–210 · Busking", or "· Page 3" when the page has no name).
 - **Playback monitor**: sequence (or follow the last Go), columns, banner.
 
 Options are saved per window, so two windows of the same kind can look different.
@@ -1594,10 +1654,10 @@ Options are saved per window, so two windows of the same kind can look different
 
 The **Fixtures** window lists every fixture with its current values by feature: ID, Name, Patch (address), Dimmer, Position, Gobo, Color, Beam, Focus and Control.
 
-- **Coral** values are in the programmer; white values are away from their default; grey values are at rest.
+- **Coral** values are in the programmer; white values are away from their default; gray values are at rest.
 - Values show as **preset names** wherever they come from a preset, in the programmer or from a running cue. While a cue is fading, or a master pulls the level down, you see the number instead.
 - **Effects show by name** the same way, in the feature they move: a dimmer chase reads "Chase" in the Dimmer column, and an effect over a preset reads "Blue · Rainbow". Effects from the programmer and from running cues both show.
-- **Click rows** to add fixtures to the selection; click again to take them out.
+- **Tap rows** to add fixtures to the selection; tap again to take them out.
 - **Drag a column heading** to reorder columns; drag the line at a heading's right edge to resize. The order is kept with the view.
 - **Subfixtures** nest under their fixture with an arrow (see [Subfixtures](#subfixtures)).
 
@@ -1674,7 +1734,8 @@ At Full / At Zero / At At       full, zero, full
 At Color.3                      apply a preset (also just Color.3)
 Attribute Zoom At 30            any attribute, in its own values (% or its range)
 Attribute Pan At -90            pan and tilt in degrees
-Fixture 5 Attribute Pan At 45   select and set in one go
+Fixture 5 Pan 45                select and set in one go
+Pan +10 / Tilt +-10 / At +10    up or down from where each fixture is
 Flip                            same direction from the other side
 Default / Default All           defaults into the programmer
 Remove                          drop the selection's values
@@ -1699,6 +1760,9 @@ Store Group 3 "Front"
 Store Color.1 "Red" /overwrite
 Store Color.3 /selective        store one layer
 Store Cue 5 / Store Cue 1 Thru 40 / Store Sequence 2 Cue 1.5
+Store Group 3 /merge            onto one that exists: /overwrite, /merge, /remove
+Store Color.1 /global           a preset: /overwrite, /global, /selective, /remove
+Store Sequence 2 /new           one cue: /overwrite, /merge, /new, /remove
 Store Default [/overwrite] / Delete Default
 Store View 5 "Busking"
 Store Spread 3 "Evens"
@@ -1730,7 +1794,8 @@ Remove Fixture 3 Thru 5 Cue 2
 ```
 Go Executor 201 / GoBack Executor 201 / Off Executor 201 / Pause Executor 201
 Top Executor 201
-Goto Cue 3 Executor 201
+Goto Cue 3 Executor 201 / Goto Executor 201
+Load Cue 3 Executor 201 / Load Executor 201
 Executor 201 At 75
 Assign Sequence 2 At Executor 202
 Assign Flash At Executor 201
@@ -1759,9 +1824,11 @@ Label RateMaster 2 "Chase"
 RateMaster 4 Button / RateMaster 4 Fader
 ```
 
-### Undo, selection matrix, programmer fade, OSC
+### Images, undo, selection matrix, programmer fade, OSC
 
 ```
+Assign Image 16 At Plot 1                 a picture from the image pool on a plot
+Label Image 16 "Ground plan" / Delete Image 16 / Move Image 16 At 30
 Fixture 1 Thru 4 NextY Fixture 5 Thru 8   two rows of four
 Fixture 5 Grid 3/1                        fixture 5 at X 3, Y 1
 Grid 2/1                                  next selected fixture goes at X 2, Y 1
@@ -1790,6 +1857,7 @@ Off Macro 3 / Off Macro         stop it, or all of them
 Store Macro 3 "Name" / Label Macro 3 "Name" / Copy Macro 3 At 5 / Move Macro 3 At 5 / Delete Macro 3
 Appearance Macro 3 "Orange" / Appearance Sequence 2 "#ff0000" / Appearance RateMaster 1 "Blue" / Appearance Macro 3 Off
 SetVar $name = 50               then $name in any command
+SaveShow                        save the show (as Ctrl+S)
 ```
 
 ### Views
@@ -1800,7 +1868,7 @@ View 2 / Store View 2 / Label View 2 "Name" / Move View 2 At 6 / Copy View 2 At 
 
 ### Tapping to finish a command
 
-Commands can finish by tapping, as on most consoles. Press **Move**, tap a preset, then tap the slot it should go to. The same works for **Copy**, **Delete**, **Update**, **Remove**, **Label** (asks for the name) and **Assign** (tap a sequence, then an executor). Type `Assign Flash At` and tap an executor's button to give that button the function, or tap its fader or knob for a fader function. Moving something keeps the cues, blueprints and effects that use it pointing at it.
+Commands can finish by tapping. Press **Move**, tap a preset, then tap the slot it should go to. The same works for **Copy**, **Delete**, **Update**, **Remove**, **Label** (asks for the name) and **Assign** (tap a sequence, then an executor). Type `Assign Flash At` and tap an executor's button to give that button the function, or tap its fader or knob for a fader function. Moving something keeps the cues, blueprints and effects that use it pointing at it.
 
 ## Keyboard shortcuts and the command keys {#shortcuts}
 
@@ -1834,27 +1902,29 @@ Commands can finish by tapping, as on most consoles. Press **Move**, tap a prese
 | **Ctrl+L** | Select last | **Ctrl+Z** | [Undo](#undo) |
 | **Ctrl+Y** | Redo | **Ctrl+K** | Command keys |
 
-The Alt keys put a preset pool on the command line ready for its number, so **Alt+C** then **3** is `Color.3`; they work while you're typing a command too. Digits, `.`, `+` and `-` type themselves. Shortcuts pause while you're typing in a text field (naming something, typing a command, a number box), and **Insert** turns them on and off; the **Shortcuts** button in the top bar shows which. Clicking anything that isn't a text field ends typing so shortcuts work again.
+The Alt keys put a preset pool on the command line ready for its number, so **Alt+C** then **3** is `Color.3`; they work while you're typing a command too. Digits, `.`, `+` and `-` type themselves. Shortcuts pause while you're typing in a text field (naming something, typing a command, a number box), and **Insert** turns them on and off; the **Shortcuts** button in the top bar shows which. Tapping anything that isn't a text field ends typing so shortcuts work again.
 
 ## Show files {#show-files}
 
 **Show → New show**, **New demo show**, **Open…**, **Save** and **Save as…** manage shows. Shows are saved in the **Lumora** folder in your **Documents** (Lumora makes it), named after the show, unless you pick somewhere else; **Open…** starts there too. The show takes its file's name: **Save as…** with a new name (from the demo show too) renames it, and the top bar shows it. A show is a single file holding everything about the show:
 
 - The patch and every fixture type it uses (so it opens the same on any computer).
-- Groups, presets, spreads, sequences, cues, blueprints, effects and shapes.
-- Executors, pages and their names.
+- Groups, presets, spreads, sequences, cues, blueprints, effects, shapes, macros, plots and images.
+- Executors, pages and their names, and rate masters.
+- What's playing: running cues, fades partway through and effects in their cycles carry on when the show opens. Loaded cues and parked attributes too.
 - Views, each window's state, and the view on each screen.
-- MIDI mappings, faders per page, and whether keyboard shortcuts are on.
+- MIDI mappings, executors per row, encoders per page, new cue times, programmer fade, and whether keyboard shortcuts are on.
 - Stored defaults.
 
 Lumora keeps only this on the computer itself:
 
 - **DMX outputs and their network interface**: the outputs and the defaults for new universes.
+- **OSC lines**: their ports, addresses, prefixes and switches.
 - **Window placement and screens**, and the interface size, since these depend on the monitors.
 - **The last show**, so it reopens at startup.
 - **Fixture library details**: your GDTF Share user name and the downloaded-file cache.
 
-Shows saved by older versions of Lumora open in newer ones and are brought up to date when they're opened (pan and tilt values become degrees, recipe lines become blueprint lines, and so on).
+Shows saved by older versions of Lumora open in newer ones and are brought up to date when they're opened (pan and tilt values become degrees, recipe lines become blueprint lines, pictures on plots move into the image pool with Lumora's symbols, and so on).
 
 ## Troubleshooting {#troubleshooting}
 
@@ -1898,23 +1968,26 @@ A cue or blueprint line with a red or orange dot uses a group, preset, effect or
 | **Default** | Where an attribute rests when nothing plays. |
 | **Effect** | Values that move by themselves: chases, waves, circles. |
 | **Executor** | An on-screen (or MIDI) fader, button or knob that plays a sequence. |
-| **Individual times** | Fade and delay times of their own on some values of a cue, spread across the fixtures. |
-| **Macro** | A list of commands that runs line by line, with Follow times or Waits for a tap. |
-| **Plot** | A sheet with fixtures showing their intensity and color, pool objects to tap, text and pictures. |
 | **Feature** | A family of attributes: Dimmer, Position, Gobo, Color, Beam, Focus, Control. |
 | **Fixture type** | The description of a fixture's channels (a profile or personality). |
 | **GDTF** | General Device Type Format, a standard fixture file format. |
 | **Group** | A stored selection of fixtures. |
 | **HTP** | Highest takes precedence: how intensity combines among HTP-priority sequences. |
+| **Image pool** | The show's pictures, numbered like any pool, for plots. |
+| **Individual times** | Fade and delay times of their own on some values of a cue, spread across the fixtures. |
+| **Load** | Picking the cue the next Go fires, without going there yet. |
 | **LTP** | Latest takes precedence: the default priority, for every attribute. |
-| **OSC** | Open Sound Control: messages over the network, from apps and other systems. |
+| **Macro** | A list of commands that runs line by line, with Follow times or Waits for a tap. |
 | **Off when overridden** | A sequence turns itself off once others have taken all its values. |
-| **Priority** | Low, LTP, HTP or Ultra: which sequence wins. |
+| **OSC** | Open Sound Control: messages over the network, from apps and other systems. |
 | **Park** | Holding attributes at their current output, over everything else. |
 | **Patch** | Which fixture is at which DMX address. |
+| **Plot** | A sheet with fixtures showing their intensity and color, pool objects to tap, text and pictures. |
 | **Preset** | Named, referenced values for one feature. |
+| **Priority** | Low, LTP, HTP or Ultra: which sequence wins. |
 | **Programmer** | The values you're working on, on top of everything. |
 | **Programmer fade** | A time for programmer changes to fade in, instead of snapping. |
+| **Rate master** | A master that sets the speed of the effects following it: a rate, a tempo (BPM) or a ratio. |
 | **Selection** | The fixtures you're about to change. |
 | **Selection matrix** | Where each selected fixture sits, X across and Y down, for effects and spreads. |
 | **Sequence** | A list of cues. |
@@ -1926,114 +1999,42 @@ A cue or blueprint line with a red or orange dot uses a group, preset, effect or
 
 ## What's new {#whats-new}
 
-### a.7.2.2
+### a.7.2.3
 
-**New**
+**Programming**
 
-- **Undo**: **Ctrl+Z** takes back the last command, store, delete or edit; over a plot, the plot's last edit. **Ctrl+Y** redoes. `Undo` and `Redo` on the command line and in macros. See [Undo](#undo).
-- **OSC**: Setup's MIDI page is now **Control**, with **MIDI** and **OSC** tabs. OSC lines over UDP or TCP, each with its ports, a prefix, and switches for playback, command lines and feedback. Executors, keys, cues, groups, fixtures, presets, masters, encoders and more answer to OSC, and tablets get full feedback. `SendOSC` sends OSC from macros and cues. See [OSC](#osc).
-- **Companion**: a Bitfocus Companion module for Lumora, over OSC: executor keys with names and live cues, playback, faders, command keys, masters and encoders. See [Companion](#osc).
-- **Selection matrix**: selected fixtures sit on a grid, X across and Y down: `NextY`, `Grid 2/1`, `Fixture 5 Grid 3/1`, or the **Selection matrix** window (square cells; drag a box to pick fixtures and drag them together). Groups keep their layout. See [Selection matrix](#selection-matrix).
-- **Effects and spreads along X and Y**: effects run along X, Y or both; each spread works along X, Y or both, and an X and a Y spread stack.
-- **Spreads modifier**: the X and Y spreads side by side, to change live. Store and a tap on the Spreads pool keeps them (`Store Spread 5`, `/x` or `/y` for one); clearing the selection resets them. See [Spreads modifier](#spread-modifier).
-- **Programmer fade**: programmer changes fade over a time you set (**Show → Config**, or `ProgFade 3` / `ProgFade Off`). See [Programmer fade](#prog-fade).
-- **Preset builder**: **Show → Preset builder…** makes dimmer, color, gobo and beam presets from the patch: the standard colors plus gels and color temperatures if you want them, from the slot you choose. See [The Preset builder](#preset-builder).
-- **Goto**: an executor key function, and `Goto Executor 201`, show the sequence's cues in a touch-sized list to pick one. `Goto Cue 3 Executor 201 Fade 2` sets a fade of your own. See [Goto](#goto).
-- **Cue macros**: a **Macro** column in the cue list runs a macro as the cue starts (`Cue 3 Macro 2`). The playback monitor has **Trigger** and **Macro** columns.
-- **Help built in**: **F1** opens this guide inside Lumora, with a search. **+ → Help** adds it to a view.
-- **A new demo show**: 8 moving washes, 4 profiles, 8 pixel bars and 4 two-cell blinders, with a cue list each for the washes, profiles and pixel bars, and a Temp key for the blinders (0.7 s off). Its blueprint lines use every preset that carries an effect, several with spreads. See [The demo show](#demo-show).
-- **Built-in fixtures**: a generic moving wash and a two-cell blinder; the generic profile has a 27-channel mode with gobos, gobo rotation, prism and frost.
-- **Installer**: `.lumora` files open in Lumora.
+- **Relative values**: `Pan +10`, `Tilt +-10`, `Fixture 1 Thru 4 Zoom +5`, `At +10` move each fixture up or down from where it is, for any attribute. Attributes can also be set by name: `Fixture 5 Pan 45`, `Zoom 30`.
+- **Storing onto something that exists asks** what to do, always in the same order: **Overwrite**, **Merge** (for a preset **Merge global** or **Merge selective**), **Add Cue 2** for a sequence with one cue, **Remove**, or **Cancel**. A sequence with more cues still takes its next cue, and `/overwrite`, `/merge`, `/global`, `/selective`, `/new` and `/remove` answer ahead on the command line. See [Storing onto something that exists](#store-existing).
+- **Macro library**: ready-made macros to import, from saving the show (`SaveShow`, new) and clearing to relative pan and tilt nudges and loops. See [The macro library](#macro-library).
+- **Snap** in the fixture editor: a tick box per channel; a snapping channel jumps instead of fading through the values in between. On by default for gobo and color wheels and macros.
+- Effect steps' colors are picked in the full color picker (gels, standard colors, temperatures and the gamut).
 
-**Changed**
+**Playback**
 
-- **Show → Config** (was Interface settings) also sets the fade and delay new cues get, and programmer fade.
-- **Patch**: Add to patch has **In Show** (the types this show has) and **All fixtures** (built in, GDTF Share, the Open Fixture Library and QLC+). Built-in types aren't part of a show until they're patched.
-- **Executors**: up to 99 in each row. Faders have three keys, **Go**, **GoBack** and **Off** by default. **Off** (the **O** shortcut, and the other playback keys) then a tap on an executor does that to it. An executor grid with a set size grows and shrinks with its window.
-- **Masters**: the window is now **Masters**; master 1 is BPM and master 2 a ratio in a new show. Each master's key is **Learn** or **Reset**, faders and keys map to MIDI, and masters take an **Appearance** color.
-- **Encoder bar**: the selection sits just above the features at a fixed width, so the encoders don't move; with the bar tucked away it shows beside **Encoders**.
-- **Live views at the output's frame rate**: plots, the effect editor's preview and the encoder bar redraw with every frame sent (44 a second).
-- **Top bar**: Learn MIDI beside Shortcuts, then **+**; the screens button (**▣ 1**) at the far right; the frame rate is gone.
-- **The Program view** adds the help, the selection matrix with the spreads modifier, and the spreads pool.
-- **Plots**: backgrounds (an image or a solid color) from **Add → Background**; linking an item picks from a list with tabs and a search.
-- **The color gamut follows the fixtures**: the Gamut tab outlines what the selected fixtures can make.
-- **The show name follows the file**, and a tidier Appearance dialog with hex and RGB values.
+- **Temp faders** are a real temporary takeover: every attribute, effects included, goes from what's underneath to the sequence's values as far as the fader is up, by hand, and what's underneath keeps running and comes back at zero. A **Temp key** on the same sequence follows the times: in with the cue's fade while held, out with the Off line's times when let go (the fader goes back to 0). See [Fader functions](#fader-functions).
+- **Load**: a key function and `Load Executor 201` open the Goto list to pick the cue the next Go fires (`Load Cue 3 Executor 201` directly). The executor, the list and the Playback monitor show what's loaded. See [Load](#load).
+- **Playbacks are saved with the show**: what's running when you save carries on where it was when the show opens: the cue, a fade partway through, effects in their cycles, a loaded cue.
+- **Playback by sequence number**: `Goto Cue 3 Sequence 5`, `Go Sequence 5`, `Off Sequence 5` (the executor it's on), and `Cue 1 Thru 14 Sequence 5 Fade 3` sets the fade (or delay, trigger, macro) of a run of cues at once.
+- **Rate masters on executors**: right-click to choose what each key does (Learn, Reset, Freeze or nothing) and the master's type (Rate, BPM or Ratio).
+- **Effects crossfade**: one effect-only sequence taking over from another fades between the effects instead of through the rest values (white).
+- **Off when overridden** works between **Low** sequences (two Low color effects replace each other), and a sequence turns off only once the cue that overrode it has finished its fade.
+- **Flash and Temp** keys let go again (they stayed on as if Go had been pressed).
 
-**Fixed**
+**Plots and the workspace**
 
-- 63 QLC+ fixtures (the American DJ Flat Par QA12X among them) wouldn't download ("Expected character data"). Every QLC+ and Open Fixture Library fixture now loads.
-- Editing a plot no longer marks its view as changed; blueprint preset tick boxes work; squeezed windows stay readable.
+- **Image pool**: the show's pictures, numbered like any pool: Lumora's symbols and anything you import. Plots place them by number, so replacing one changes it everywhere. See [Images](#images).
+- **Plot pictures that light up**: a picture can show a second picture while what it's linked to is live, and a link can be any command line. See [Plots](#plots).
+- **Executor appearance: Follow fixtures**: the executor takes the color its fixtures show on stage (`Appearance Sequence 2 Follow`).
+- **Locked windows**: an executor window locked to a page (right-click its tab → **Locked to page**) shows a lock and the page's name on its tab instead of a page bar, and a locked pool hides its header bar.
+- **Window tabs** squeeze in a narrow window instead of sliding out of sight.
+- **Loading screen**: the logo, a progress bar and what's loading right now.
 
-### a.7.2.1
+**Faster on modest computers**
 
-- The user guide, README and interface text are tidied up and describe Lumora on its own terms.
-- The Playback monitor window has a new internal name; views saved by earlier versions still open it.
+- Starting takes about a third less time and about 15 % less memory, and with cues and effects running the Playback and Plot views use about half the processor time. Live windows (the plot, encoders, executors, the fixture sheet) redraw only what changed, up to 30 times a second, and windows out of sight catch up when they're shown.
 
-### a.7.2.0
+**Also fixed**
 
-- **Lumora's source is on GitHub**: [github.com/typoirl/Lumora](https://github.com/typoirl/Lumora). This release collects everything up to a.7.1.14 (below): plots, macros, rate masters, individual fade and delay times, MIDI encoders, and the built-in Chauvet library with gobo pictures.
-
-### a.7.1.14
-
-- **Encoders on MIDI**: knobs and endless encoders map to the encoder bar by place, so the first one turns Pan on Position and Dimmer on Dimmer. Learn MIDI and click an encoder, or right-click it for **MIDI learn: encoder** and **MIDI learn: push**; the push opens the encoder's ranges. Endless encoders and plain knobs are both understood (an **Endless** column on the MIDI screen). See [Encoders and MIDI](#encoders-midi).
-- **Shift for fine**: hold Shift on the keyboard while turning a MIDI encoder for small steps, as when dragging or scrolling.
-- **Five encoders a page** by default, changeable in **Interface settings**.
-- **Hide the encoder bar** with the arrow in its corner, and add **Encoders** windows (**+ → Encoders**), each with its own feature, page and count.
-- **Plots: align and distribute**: **Align ▾** in Edit (and the right-click menu) lines up picked things by their edges or centers, or spaces them out evenly, relative to the last picked, first picked, biggest, smallest, the picked things or the whole plot. Groups move as one.
-- **Plots: zoom per window, kept in the view**: each plot window keeps its own zoom, position and lock, and recalling the view brings them back.
-- **Plots: right-click an empty spot** for Edit, Add, Align, zoom, **Lock zoom and position** and **Hide the top bar** (the window's tab has them too).
-- **Plots: Store works like Assign**: `Store Fixture 101 Thru 108 At Plot 1`, `Store Group 3 At Plot 1`. The Add menu reads **Selected fixtures** and **Pool object…**.
-
-### a.7.1.13
-
-- **Gobo pictures for the Chauvet moving heads**: 25 built-in Chauvet fixtures (Intimidator, Maverick and Rogue spots, beams and hybrids) now show their gobos on the encoders, in the fixture sheet and on gobo presets, taken from the manufacturers' GDTF files on GDTF Share.
-- Fixture files in the Open Fixture Library format can carry gobo pictures of their own: a top-level `images` object (name to base64 PNG or SVG) and an `image` name on a wheel slot.
-- **Plots: arrange, group and link.** Right-click an item in Edit for **Bring to front**, **Bring forward**, **Send backward** and **Send to back**. **Group these** joins picked items so they're picked and moved together (**Ungroup** splits them). Text, icons and pictures can be **linked** to a fixture or any pool object: tapping one acts like that fixture or tile, and it lights while that's in use. See [Plots](#plots).
-- **A truss that grows**: stretching the truss icon adds sections instead of stretching them, and it stands upright when it's taller than it is wide.
-- **New plot icons**: a moving wash, a moving profile and a conventional profile.
-
-### a.7.1.12
-
-- **Plots**: sheets you lay out with fixtures and subfixtures, pool objects, text, icons and pictures (SVG too, as icons or a background). Fixtures show their intensity and color live; tap them to add them to the selection or take them out, or drag a box round several. Pool objects work like their pool tiles. **+** and **−** zoom, and the zoom can be locked. A **Plots** pool, a **Plot** window and a Plot view, `Plot 2` and `Assign … At Plot 2` on the command line. See [Plots](#plots).
-
-### a.7.1.11
-
-- **Individual times in the Fade and Delay columns**: no separate columns. A cue whose values have individual times shows the range they span in its Fade or Delay (`0 thru 3`); typing a range there spreads new ones across the cue's fixtures, and typing one number gives the cue that time again. Blueprint lines have **Fade** and **Delay** of their own, spread across the line's fixtures (and its effects) in the group's order; they override the cue's times. Pressing **T** while typing a time types *thru*. See [Individual fade and delay times](#individual-times).
-- **Spreads no longer hold times**: individual times live on the command line and in those columns. Shows that kept times in a spread move them onto the blueprint lines that used it.
-- **Effects use spreads from the pool**: each effect references one, and every existing effect now points at the spread matching its layout. Pick it in the effect editor.
-- **Relative effects**: Dimmer and Attributes layers can add to what's underneath, with points from -100 to 100, so an effect can take a running executor's level down. A plot draws the wave around zero. New library effect: **Dip**.
-- **Color effects drive every emitter**: amber, orange, yellow, lime, mint, cyan, indigo, purple, magenta, warm and cool white, and hue/saturation on virtual-color fixtures; the color picker uses the same mix.
-- **Playback monitor** (was Playback status) follows the last sequence started with Go unless it's locked.
-- **Rate masters in the Effects view** of the demo show, under the effects pool.
-- **Macro lines edit like the command line**: keywords complete, or shortcut keys type them when shortcuts are on.
-- **The effect editor keeps its scroll position** when you change a point (picking a color on a color effect used to jump back to the top).
-- **Chauvet fixtures built in**: the Chauvet DJ and Chauvet Professional ranges are in the Built in library.
-
-### a.7.1.10
-
-- **Individual fade and delay times**, spread across the selection in its order: `At 100 Fade 0 Thru 4`, `Delay 0 Thru 2 Thru 0`, `Time 3`, and `Cue 3 Fade 0 Thru 5` or a range typed in the cue list. See [Individual fade and delay times](#individual-times).
-- **Spreads carry times**: a fade and delay range in a spread on a blueprint line times that line's fixtures, values and effects alike, in the spread's layout.
-- **Temp buttons use the times**: in with the first cue's fade, out with the Off line's.
-- **Macros**: a pool of command lists with colors, Follow times and Waits, foreground or background, popups, @, variables and Appearance commands. See [Macros](#macros).
-- **Framing shutters** in the encoder bar: drag the blades over the beam, Ins + Rot or A + B, with Link and resets. A generic profile with framing shutters is built in, and the demo show has two. See [Framing shutters](#shapers).
-- **The Rate masters window** is ten faders in one row, like the 200 executors; right-click one to make it a Learn button instead.
-
-### a.7.1.9
-
-- **Rate masters**: ten masters for effect speed, in Rate, BPM or Ratio mode, with tap tempo, reset and freeze. Assign them to executors and effects; there's a Rate masters window and `RateMaster` commands. See [Rate masters](#rate-masters).
-- **More window grid on other screens**: the encoder bar stays on screen 1, and screens 2–6 get 20 rows of grid instead of 16.
-- **Sequence numbers on executors**, small and grey beside the sequence name.
-- **Shift+A, tap a sequence, tap an executor** assigns it, with the tap landing anywhere on the executor.
-- **Standard colors** are now Red, Orange (between the old orange and amber), Yellow, Lime, Green, Sea green, Cyan, Sky blue, Blue, Purple (Congo and Violet together), Magenta, Pink and White, last. Lavender is gone. The demo show's color presets follow, plus a **3200K** warm white preset.
-- **Fixture library**: a **Built in** tab for Lumora's own fixtures, and every library is grouped by manufacturer, opening as you search. New built-in fixtures for **Pangolin BEYOND** (FB3 4/8/12/16 ch, Mid 32 ch, Max 50 ch) and **Resolume Arena** (Composition and Layer from the DMX Auto Map).
-- **More parameters** in the fixture editor: infinite pan and tilt, Orange, Mint and Purple emitters, additive Magenta and Yellow, Prism 2, Frost 2, framing blades, virtual strobe, hue/saturation, movement macros and more. Fixture files map continuous pan/tilt, a second prism or frost, and blades to them.
-- **Edit several channels at once** in the fixture editor: select them and right-click a cell, for example to give red, green and blue the same cell.
-- **Go on the last cue turns the sequence off** when the Off line's trigger is Go and wrapping is off.
-- **Effects show in the fixture sheet** by name, like presets.
-
-### a.7.1.8
-
-- **Effects run in a layer of their own**: they move around whatever value wins underneath instead of fighting it. A circle on one executor and a position on another both keep running, and the circle goes round the new position. See [Effects and priority](#effect-priority).
-- **A Low effect runs over an LTP preset.** A Low color effect keeps running when an LTP color preset comes in; a newer Low color effect takes over from it.
-- **Off when overridden** judges a sequence with values by its values, and an effect-only sequence by its effects, so a position no longer turns off a circle, but an executor with a position and a circle still goes when a later position takes over.
-- **Stomp**: calling a preset onto fixtures running a programmer effect on that feature stops the effect for those fixtures.
+- The **Preset builder** crashed on **Add color temperatures** (and gels).
+- The effect editor jumped to the top when a step changed from a color to a preset.
+- **Show → Config** has shorter fields, with the Programmer fade tick box beside its time.

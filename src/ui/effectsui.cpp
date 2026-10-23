@@ -6,6 +6,7 @@
 #include "fixturesheet.h"
 #include "quickedit.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QCheckBox>
 #include <QColorDialog>
@@ -26,6 +27,8 @@
 #include <QPushButton>
 #include <QScrollArea>
 #include <QScrollBar>
+
+#include <utility>
 #include <QSlider>
 #include <QSpinBox>
 #include <QSplitter>
@@ -198,7 +201,7 @@ EffectsPanel::EffectsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Eff
         ed->addAction(tr("Delete"), [show, id]() { show->deleteEffect(id); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & (Show::EffectsPart | Show::ProgrammerPart)) {
             refresh();
             refreshRunning();
@@ -324,13 +327,12 @@ EffectPreview::EffectPreview(AppContext *ctx, QWidget *parent) : QWidget(parent)
 {
     setMinimumHeight(140);
     // Every frame of output, so the preview runs with the lights.
-    connect(ctx->engine, &Engine::frameDone, this, [this]() {
-        if (!isVisible())
-            return;
+    auto *live = new LiveRefresh(this, [this]() {
         const double cycle = std::max(0.05, m_effect.cycle);
         m_playhead = std::fmod(QDateTime::currentMSecsSinceEpoch() / 1000.0 / cycle, 1.0);
         update();
     });
+    connect(ctx->engine, &Engine::frameDone, live, &LiveRefresh::request);
 }
 
 void EffectPreview::setEffect(const Effect &e)
@@ -834,6 +836,11 @@ EffectEditor::EffectEditor(AppContext *ctx, QWidget *parent) : QWidget(parent), 
     m_scroll->setFrameShape(QFrame::NoFrame);
     m_details = nullptr;
     m_detailsLayout = nullptr;
+    // A rebuilt page goes back where it was as soon as it's tall enough for it.
+    connect(m_scroll->verticalScrollBar(), &QScrollBar::rangeChanged, this, [this](int, int max) {
+        if (m_pendingScroll >= 0 && max >= m_pendingScroll)
+            m_scroll->verticalScrollBar()->setValue(std::exchange(m_pendingScroll, -1));
+    });
     split->addWidget(m_scroll);
     split->setStretchFactor(1, 3);
     bv->addWidget(split, 1);
@@ -1130,11 +1137,12 @@ QWidget *EffectEditor::pointEditor(int index)
         swatch->setStyleSheet(QStringLiteral("QPushButton { background: %1; border: 1px solid %2; min-width: 90px; }").arg(c.name(), theme::line.name()));
         swatch->setToolTip(tr("Pick a color"));
         h->addWidget(swatch, 1);
-        connect(swatch, &QPushButton::clicked, this, [this, index, c]() {
-            const QColor picked = QColorDialog::getColor(c, this, tr("Point color"));
-            if (!picked.isValid())
+        connect(swatch, &QPushButton::clicked, this, [this, index, pt]() {
+            // The same picker as the Color window: gels, standard colors, temperatures, the gamut.
+            const auto chosen = pickLightColor(m_ctx, this, tr("Step color"), LinearRgb{pt.r, pt.g, pt.b});
+            if (!chosen)
                 return;
-            const LinearRgb lin = toLinear(picked);
+            const LinearRgb lin = *chosen;
             EffectPoint &p = m_effect.layers[m_layer].points[index];
             p.r = lin.r;
             p.g = lin.g;
@@ -1193,11 +1201,19 @@ void EffectEditor::buildLayerDetails()
     // A fresh details page each time; the old one goes once any event it's handling is done.
     // Rebuilding the same layer (a color picked, a step added) keeps the page where it was
     // scrolled to.
-    const int keepScroll = m_builtLayer == m_layer && m_builtEffect == m_effectId ? m_scroll->verticalScrollBar()->value() : 0;
+    // (Several rebuilds in a row keep the first one's place: the page in between was never shown.)
+    const bool same = m_builtLayer == m_layer && m_builtEffect == m_effectId;
+    const int keepScroll = !same ? 0 : m_pendingScroll >= 0 ? m_pendingScroll : m_scroll->verticalScrollBar()->value();
     m_builtLayer = m_layer;
     m_builtEffect = m_effectId;
+    m_pendingScroll = keepScroll > 0 ? keepScroll : -1;
     if (keepScroll > 0)
-        QTimer::singleShot(0, this, [this, keepScroll]() { m_scroll->verticalScrollBar()->setValue(keepScroll); });
+        QTimer::singleShot(250, this, [this, keepScroll]() {   // never got that tall: as far as it goes
+            if (m_pendingScroll == keepScroll) {
+                m_pendingScroll = -1;
+                m_scroll->verticalScrollBar()->setValue(keepScroll);
+            }
+        });
     if (QWidget *old = m_scroll->takeWidget()) {
         old->hide();
         old->deleteLater();

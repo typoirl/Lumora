@@ -2,10 +2,12 @@
 #include "macrosui.h"
 
 #include "appcontext.h"
+#include "macrolibrary.h"
 #include "colorpicker.h"
 #include "quickedit.h"
 #include "shortcuts.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -14,6 +16,11 @@
 #include <QStyledItemDelegate>
 #include <QDialogButtonBox>
 #include <QDoubleSpinBox>
+#include <QFile>
+#include <QSpinBox>
+#include <QSplitter>
+#include <QToolButton>
+#include <QTreeWidget>
 #include <QHBoxLayout>
 #include <QHeaderView>
 #include <QLabel>
@@ -106,6 +113,7 @@ MacrosPanel::MacrosPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Macro
                 m_ctx->run(QStringLiteral("Store Macro %1").arg(id));
                 openMacroEditor(m_ctx, id, this);
             });
+            ed->addAction(tr("From library…"), [this, id]() { MacroLibraryDialog::open(m_ctx, id, this); });
             ed->popup(pos);
             return;
         }
@@ -137,10 +145,16 @@ MacrosPanel::MacrosPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Macro
         ed->addAction(tr("Delete macro"), [this, id]() { m_ctx->run(QStringLiteral("Delete Macro %1").arg(id)); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & Show::MacrosPart)
             refresh();
     });
+    // The library, from the pool's header (or right-click an empty slot → From library…).
+    auto *lib = new QToolButton(this);
+    lib->setText(tr("Library…"));
+    lib->setToolTip(tr("Ready-made macros to import into the pool"));
+    connect(lib, &QToolButton::clicked, this, [this]() { MacroLibraryDialog::open(m_ctx, 1, this); });
+    headerLayout()->addWidget(lib);
     followStore(ctx);
     refresh();
 }
@@ -376,6 +390,155 @@ void MacroEditorDialog::move(int delta)
     m_macro.background = m.background;
     load();
     m_lines->selectRow(to);
+}
+
+// ===========================================================================
+// Library
+// ===========================================================================
+
+void MacroLibraryDialog::open(AppContext *ctx, int fromSlot, QWidget *parent)
+{
+    auto *d = new MacroLibraryDialog(ctx, fromSlot, parent);
+    d->setAttribute(Qt::WA_DeleteOnClose);
+    d->show();
+    d->raise();
+    d->activateWindow();
+}
+
+MacroLibraryDialog::MacroLibraryDialog(AppContext *ctx, int fromSlot, QWidget *parent) : QDialog(parent)
+{
+    setWindowTitle(tr("Macro library"));
+    resize(900, 560);
+    QFile f(QStringLiteral(":/macros/library.json"));
+    const QVector<LibraryMacro> library = f.open(QIODevice::ReadOnly) ? parseMacroLibrary(f.readAll()) : QVector<LibraryMacro>();
+
+    auto *v = new QVBoxLayout(this);
+    auto *intro = new QLabel(tr("Tick the macros to import, or pick one. They go into free slots of the Macros pool, "
+                                "where they edit like any other macro."), this);
+    intro->setProperty("role", "muted");
+    intro->setWordWrap(true);
+    v->addWidget(intro);
+
+    auto *split = new QSplitter(this);
+    auto *tree = new QTreeWidget(split);
+    tree->setHeaderHidden(true);
+    tree->setRootIsDecorated(true);
+    QHash<QString, QTreeWidgetItem *> cats;
+    for (int i = 0; i < library.size(); ++i) {
+        const LibraryMacro &lm = library[i];
+        QTreeWidgetItem *&cat = cats[lm.category];
+        if (!cat) {
+            cat = new QTreeWidgetItem(tree, {lm.category});
+            cat->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate);
+            cat->setCheckState(0, Qt::Unchecked);
+            QFont bold = cat->font(0);
+            bold.setBold(true);
+            cat->setFont(0, bold);
+            cat->setExpanded(true);
+        }
+        auto *it = new QTreeWidgetItem(cat, {lm.macro.name});
+        it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
+        it->setCheckState(0, Qt::Unchecked);
+        it->setData(0, Qt::UserRole, i);
+        QPixmap dot(10, 10);   // its tile color (a plain one when it has none)
+        dot.fill(lm.macro.color.isEmpty() ? theme::faint : QColor(lm.macro.color));
+        it->setIcon(0, QIcon(dot));
+    }
+
+    auto *detail = new QWidget(split);
+    auto *dv = new QVBoxLayout(detail);
+    dv->setContentsMargins(8, 0, 0, 0);
+    auto *title = new QLabel(detail);
+    title->setFont(theme::uiFont(14, QFont::DemiBold));
+    auto *about = new QLabel(detail);
+    about->setWordWrap(true);
+    auto *mode = new QLabel(detail);
+    mode->setProperty("role", "muted");
+    auto *lines = makeTable(detail, {tr("Command"), tr("Then"), tr("Note")}, 26, QAbstractItemView::NoEditTriggers);
+    dv->addWidget(title);
+    dv->addWidget(about);
+    dv->addWidget(mode);
+    dv->addWidget(lines, 1);
+    split->addWidget(tree);
+    split->addWidget(detail);
+    split->setStretchFactor(0, 2);
+    split->setStretchFactor(1, 3);
+    v->addWidget(split, 1);
+
+    auto show = [=](QTreeWidgetItem *it) {
+        const QVariant idx = it ? it->data(0, Qt::UserRole) : QVariant();
+        if (!idx.isValid()) {
+            title->setText(it ? it->text(0) : QString());
+            about->setText(it ? tr("Tick the category to import all of it.") : QString());
+            mode->clear();
+            lines->setRowCount(0);
+            return;
+        }
+        const LibraryMacro &lm = library[idx.toInt()];
+        title->setText(lm.macro.name);
+        about->setText(lm.description);
+        mode->setText(lm.macro.background ? tr("Runs in the background") : tr("Runs in the foreground"));
+        lines->setRowCount(int(lm.macro.lines.size()));
+        for (int r = 0; r < lm.macro.lines.size(); ++r) {
+            const MacroLine &l = lm.macro.lines[r];
+            QString cmd = l.command;
+            cmd.replace(QStringLiteral("{self}"), tr("(its own number)"));
+            const QString then = l.wait == MacroWait::Wait ? tr("Wait") : l.time > 0 ? tr("Follow %1 s").arg(l.time) : tr("Follow");
+            lines->setItem(r, 0, new QTableWidgetItem(cmd));
+            lines->setItem(r, 1, new QTableWidgetItem(then));
+            lines->setItem(r, 2, new QTableWidgetItem(l.info));
+        }
+        lines->resizeColumnToContents(0);
+    };
+    connect(tree, &QTreeWidget::currentItemChanged, this, [show](QTreeWidgetItem *cur) { show(cur); });
+
+    auto *bottom = new QHBoxLayout;
+    bottom->addWidget(new QLabel(tr("From slot"), this));
+    auto *slot = new QSpinBox(this);
+    slot->setRange(1, 9999);
+    slot->setValue(std::max(1, fromSlot));
+    bottom->addWidget(slot);
+    auto *note = new QLabel(this);
+    note->setProperty("role", "muted");
+    bottom->addWidget(note, 1);
+    auto *import = new QPushButton(tr("Import"), this);
+    import->setProperty("role", "primary");
+    auto *close = new QPushButton(tr("Close"), this);
+    bottom->addWidget(import);
+    bottom->addWidget(close);
+    v->addLayout(bottom);
+
+    connect(close, &QPushButton::clicked, this, &QDialog::close);
+    connect(import, &QPushButton::clicked, this, [=]() {
+        // The ticked macros, or the one picked when none are ticked.
+        QVector<int> chosen;
+        for (int c = 0; c < tree->topLevelItemCount(); ++c)
+            for (int k = 0; k < tree->topLevelItem(c)->childCount(); ++k)
+                if (QTreeWidgetItem *it = tree->topLevelItem(c)->child(k); it->checkState(0) == Qt::Checked)
+                    chosen << it->data(0, Qt::UserRole).toInt();
+        if (chosen.isEmpty() && tree->currentItem() && tree->currentItem()->data(0, Qt::UserRole).isValid())
+            chosen << tree->currentItem()->data(0, Qt::UserRole).toInt();
+        if (chosen.isEmpty()) {
+            note->setText(tr("Tick or pick a macro first"));
+            return;
+        }
+        Show *sh = ctx->show;
+        int id = slot->value(), first = 0, last = 0;
+        for (int i : chosen) {
+            while (sh->macro(id))
+                ++id;
+            sh->setMacro(library[i].numbered(id));
+            if (!first)
+                first = id;
+            last = id++;
+        }
+        const QString where = first == last ? tr("Macro %1").arg(first) : tr("Macros %1 thru %2").arg(first).arg(last);
+        note->setText(tr("Imported: %1").arg(where));
+        emit ctx->status(tr("Macro library: %1 imported").arg(where));
+        slot->setValue(id);
+    });
+    if (tree->topLevelItemCount() && tree->topLevelItem(0)->childCount())
+        tree->setCurrentItem(tree->topLevelItem(0)->child(0));
 }
 
 } // namespace lumora

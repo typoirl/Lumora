@@ -1,13 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #pragma once
 
+#include "show.h"
+
 #include <QAbstractItemView>
 #include <QStyledItemDelegate>
 #include <QVector>
 #include <QColor>
 #include <QString>
 #include <QStringList>
+#include <QElapsedTimer>
+#include <QLabel>
+#include <QTimer>
 #include <QToolButton>
+
+#include <functional>
 
 class QPainter;
 class QRect;
@@ -31,7 +38,6 @@ public:
     explicit FittingToolButton(const QString &text, QWidget *parent = nullptr);
     void setFullText(const QString &text);
     void setShortText(const QString &text);   // tried before cutting letters off ("Ctl")
-    QString fullText() const { return m_full; }
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
 
@@ -44,6 +50,21 @@ private:
     int padding() const;   // the button's width around its text
     QString m_full, m_short;
     mutable int m_pad = -1;
+};
+
+// A label that fits its text to its width with "…" at the end, whenever either changes; the
+// whole text is its tooltip.
+class ElidedLabel : public QLabel {
+public:
+    using QLabel::QLabel;
+    void setFullText(const QString &text);
+
+protected:
+    void resizeEvent(QResizeEvent *ev) override;
+
+private:
+    void elide();
+    QString m_full;
 };
 
 // "2", "1.5": seconds the way cue lists show them.
@@ -68,5 +89,30 @@ public:
 
 // The color a Color (or All) preset makes, for swatches; invalid for other presets.
 QColor presetSwatch(const Preset &p);
+
+// Show changes for a window: `handler` runs at once while the window is visible; a hidden one
+// (another view, a tab behind) collects the parts that changed and runs it once when shown, so
+// windows nobody is looking at don't rebuild after every command.
+void onShowChanged(QWidget *window, Show *show, std::function<void(Show::Parts)> handler);
+
+// Runs `update` for a live view at most every `ms` milliseconds (30 times a second by
+// default), however often it's asked: the output changes 44 times a second, and a view that
+// redraws with every frame costs more than it shows. The last request is never dropped.
+class LiveRefresh : public QObject {
+public:
+    LiveRefresh(QWidget *view, std::function<void()> update, int ms = 33);
+    void request();
+
+protected:
+    bool eventFilter(QObject *obj, QEvent *ev) override;   // shown again: catch up
+
+private:
+    bool m_missed = false;   // asked while hidden
+    QWidget *m_view;
+    std::function<void()> m_update;
+    QTimer m_timer;
+    QElapsedTimer m_last;
+    int m_ms;
+};
 
 } // namespace lumora

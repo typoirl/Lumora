@@ -37,8 +37,14 @@ QJsonObject PlotItem::toJson() const
         o["fontSize"] = fontSize;
         break;
     case Image:
-        o["image"] = QString::fromLatin1(image.toBase64());
-        o["imageName"] = imageName;
+        if (imageId > 0) {
+            o["imageId"] = imageId;
+        } else {
+            o["image"] = QString::fromLatin1(image.toBase64());
+            o["imageName"] = imageName;
+        }
+        if (litImageId > 0)
+            o["litImage"] = litImageId;
         break;
     }
     if (group)
@@ -64,6 +70,8 @@ PlotItem PlotItem::fromJson(const QJsonObject &o)
     it.text = o["text"].toString();
     it.color = o["color"].toString();
     it.fontSize = std::clamp(o["fontSize"].toDouble(14.0), 4.0, 400.0);
+    it.imageId = std::max(0, o["imageId"].toInt(0));
+    it.litImageId = std::max(0, o["litImage"].toInt(0));
     it.image = QByteArray::fromBase64(o["image"].toString().toLatin1());
     it.imageName = o["imageName"].toString();
     it.group = std::max(0, o["group"].toInt(0));
@@ -77,6 +85,13 @@ void Plot::setBackgroundColor(const QString &color)
     backgroundColor = color;
 }
 
+void Plot::setBackgroundImage(int imageId, const QRectF &rect)
+{
+    clearBackground();
+    backgroundImageId = imageId;
+    backgroundRect = rect;
+}
+
 void Plot::setBackgroundImage(const QByteArray &bytes, const QString &name, const QRectF &rect)
 {
     clearBackground();
@@ -88,6 +103,7 @@ void Plot::setBackgroundImage(const QByteArray &bytes, const QString &name, cons
 void Plot::clearBackground()
 {
     backgroundColor.clear();
+    backgroundImageId = 0;
     backgroundImage.clear();
     backgroundName.clear();
     backgroundRect = QRectF();
@@ -145,10 +161,16 @@ QJsonObject Plot::toJson() const
         o["zoomLocked"] = true;
     if (!backgroundColor.isEmpty())
         o["backgroundColor"] = backgroundColor;
-    if (!backgroundImage.isEmpty())
-        o["backgroundImage"] = QJsonObject{{"image", QString::fromLatin1(backgroundImage.toBase64())}, {"name", backgroundName},
-                                           {"x", backgroundRect.x()}, {"y", backgroundRect.y()},
-                                           {"w", backgroundRect.width()}, {"h", backgroundRect.height()}};
+    if (hasBackgroundImage()) {
+        QJsonObject b{{"x", backgroundRect.x()}, {"y", backgroundRect.y()}, {"w", backgroundRect.width()}, {"h", backgroundRect.height()}};
+        if (backgroundImageId > 0) {
+            b["imageId"] = backgroundImageId;
+        } else {
+            b["image"] = QString::fromLatin1(backgroundImage.toBase64());
+            b["name"] = backgroundName;
+        }
+        o["backgroundImage"] = b;
+    }
     return o;
 }
 
@@ -172,9 +194,11 @@ Plot Plot::fromJson(const QJsonObject &o)
     p.backgroundColor = o["backgroundColor"].toString(p.backgroundColor);
     if (o.contains("backgroundImage")) {
         const QJsonObject b = o["backgroundImage"].toObject();
-        p.setBackgroundImage(QByteArray::fromBase64(b["image"].toString().toLatin1()), b["name"].toString(),
-                             QRectF(b["x"].toDouble(), b["y"].toDouble(), std::max(4.0, b["w"].toDouble(800)),
-                                    std::max(4.0, b["h"].toDouble(600))));
+        const QRectF r(b["x"].toDouble(), b["y"].toDouble(), std::max(4.0, b["w"].toDouble(800)), std::max(4.0, b["h"].toDouble(600)));
+        if (b["imageId"].toInt(0) > 0)
+            p.setBackgroundImage(b["imageId"].toInt(), r);
+        else
+            p.setBackgroundImage(QByteArray::fromBase64(b["image"].toString().toLatin1()), b["name"].toString(), r);
     }
     p.zoom = std::clamp(o["zoom"].toDouble(1.0), 0.1, 8.0);
     p.panX = o["panX"].toDouble(0);

@@ -24,6 +24,7 @@ public:
 
 protected:
     void resizeEvent(QResizeEvent *ev) override;
+    void showEvent(QShowEvent *ev) override;
 
 private:
     struct Section {
@@ -34,6 +35,8 @@ private:
         QString text;         // its own text (to search)
     };
     void load();
+    void ensureLoaded();   // reads the guide the first time it's needed
+    bool m_loaded = false;
     void fillList();
     void showChapter(int chapter, const QString &headingTitle = QString());
     void highlight();

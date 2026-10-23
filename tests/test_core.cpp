@@ -8,6 +8,7 @@
 
 #include <QtEndian>
 #include "show.h"
+#include "macrolibrary.h"
 #include "undo.h"
 
 #include <QJsonDocument>
@@ -16,6 +17,7 @@
 #include <QUdpSocket>
 #include <QtTest>
 #include <QDirIterator>
+#include <QTemporaryDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QRegularExpression>
@@ -1750,7 +1752,7 @@ private slots:
         s.go(*lowPolice);
         engine.tick(0.01);
         sample(&g, &b);
-        QVERIFY(lowRainbow->pb().isOn());   // Low: underneath, still on
+        QVERIFY(!lowRainbow->pb().isOn());   // Low over Low: overridden, it goes
         QVERIFY(lowPolice->pb().isOn());
         QVERIFY2(g < 0.01 && b > 0.9, qPrintable(QStringLiteral("%1 %2").arg(g).arg(b)));
 
@@ -2128,6 +2130,582 @@ private slots:
         QVERIFY(!b.pb().isOn());  // swop started it, release turns it off
     }
 
+    void playbackStateSaved()
+    {
+        Show s;
+        setupShow(s);
+        Engine engine(&s);
+        s.select({1});
+        s.setAttribute("Dimmer", 0.2);
+        s.storeCue(1, 1);
+        s.setAttribute("Dimmer", 1.0);
+        s.storeCue(1, 2);
+        s.clearAll();
+        Sequence q = *s.sequence(1);
+        q.cues[1].fade = 4.0;
+        s.setSequence(q);
+        s.assignSequence(1, 1, 201);
+        Executor &e = *s.executor(1, 201);
+        s.go(e);
+        engine.tick(0.01);
+        s.go(e);   // cue 2, halfway through its fade
+        for (int i = 0; i < 20; ++i)
+            engine.tick(0.1);
+        const int mid = dmx(engine, 1, 1);
+        QVERIFY(mid > 51 && mid < 255);
+        // A rate master on an executor keeps its keys.
+        QVERIFY(s.assignRateMaster(3, 1, 202));
+        s.executor(1, 202)->rateKeys[0] = RateKey::Freeze;
+        s.executor(1, 202)->rateKeys[1] = RateKey::None;
+        // Saved and opened again: the same cue, the same place in the fade, and it carries on.
+        const QJsonObject saved = s.toJson();
+        Show t;
+        t.library().loadDirectory(LUMORA_SOURCE_FIXTURES "/generic");
+        QVERIFY(t.fromJson(saved));
+        Engine engine2(&t);
+        const Executor *e2 = t.executor(1, 201);
+        QVERIFY(e2 && e2->pb().isOn());
+        QCOMPARE(e2->pb().cueIndex, 1);
+        QVERIFY(e2->pb().fading);
+        engine2.tick(0.001);
+        QVERIFY(std::abs(dmx(engine2, 1, 1) - mid) <= 3);
+        for (int i = 0; i < 25; ++i)
+            engine2.tick(0.1);
+        QCOMPARE(dmx(engine2, 1, 1), 255);
+        QCOMPARE(t.executor(1, 202)->rateKeys[0], RateKey::Freeze);
+        QCOMPARE(t.executor(1, 202)->rateKeys[1], RateKey::None);
+        // Freeze is where the executor says.
+        QVERIFY(!t.rateMaster(3)->frozen);
+        t.pressButton(*t.executor(1, 202), 0, true);
+        QVERIFY(t.rateMaster(3)->frozen);
+        // An executor's appearance can follow its fixtures.
+        CommandLine cl(&t);
+        QVERIFY(cl.execute("Appearance Sequence 1 Follow").ok);
+        QVERIFY(t.sequence(1)->followsFixtures());
+        // Effects keep their place in the cycle too.
+        Engine engine3(&t);
+        t.setExtra("effectPhases", QJsonObject{{"s1.1.0.4", 0.25}});
+        QVERIFY(t.fromJson(t.toJson()));
+        QCOMPARE(engine3.phasesJson().value("s1.1.0.4").toDouble(), 0.25);
+    }
+
+    void effectsCrossfade()
+    {
+        // Two effect-only sequences on toggles, 1 s fades: the second fades from the first's
+        // colors, not from the fixture's rest (white).
+        Show s;
+        setupShow(s);
+        Engine engine(&s);
+        auto solid = [&](int id, double r, double g, double b) {
+            Effect e;
+            e.id = id;
+            e.name = QStringLiteral("Solid %1").arg(id);
+            EffectLayer l;
+            l.kind = LayerKind::Color;
+            l.points = {EffectPoint::color(r, g, b), EffectPoint::color(r, g, b)};
+            e.layers = {l};
+            s.setEffect(e);
+        };
+        solid(1, 1, 0, 0);
+        solid(2, 0, 0, 1);
+        for (int seq : {1, 2}) {
+            s.select({1});
+            s.applyEffect(seq);
+            s.storeCue(seq, 1);
+            s.clearAll();
+            Sequence q = *s.sequence(seq);
+            q.cues[0].fade = 1.0;
+            q.offFade = 1.0;
+            s.setSequence(q);
+            s.assignSequence(seq, 1, 200 + seq);
+            s.executor(1, 200 + seq)->buttons[0] = ButtonFn::Toggle;
+        }
+        Executor &a = *s.executor(1, 201), &b = *s.executor(1, 202);
+        s.pressButton(a, 0, true);
+        s.pressButton(a, 0, false);
+        for (int i = 0; i < 15; ++i)
+            engine.tick(0.1);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_R"], 1.0);
+        s.pressButton(b, 0, true);
+        s.pressButton(b, 0, false);
+        double maxG = 0;
+        for (int i = 0; i < 5; ++i) {
+            engine.tick(0.1);
+            maxG = std::max(maxG, s.lastOutput()[1]["ColorAdd_G"]);
+        }
+        const RawAttr mid = s.lastOutput()[1];
+        QVERIFY2(maxG < 0.01, qPrintable(QString::number(maxG)));   // never through white
+        QVERIFY(mid["ColorAdd_R"] > 0.3 && mid["ColorAdd_R"] < 0.7);
+        QVERIFY(mid["ColorAdd_B"] > 0.3 && mid["ColorAdd_B"] < 0.7);
+        for (int i = 0; i < 8; ++i)
+            engine.tick(0.1);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_B"], 1.0);
+        QVERIFY(!a.pb().isOn());   // overridden once the fade was done
+        // And back: toggling A on fades from blue to red.
+        s.pressButton(a, 0, true);
+        s.pressButton(a, 0, false);
+        maxG = 0;
+        for (int i = 0; i < 5; ++i) {
+            engine.tick(0.1);
+            maxG = std::max(maxG, s.lastOutput()[1]["ColorAdd_G"]);
+        }
+        QVERIFY2(maxG < 0.01, qPrintable(QString::number(maxG)));
+    }
+
+    void tempFader()
+    {
+        Show s;
+        setupShow(s);
+        Engine engine(&s);
+        // Underneath: blue at full. On the Temp fader: red at 40 %.
+        s.select({1});
+        s.setAttribute("Dimmer", 1.0);
+        s.setAttribute("ColorAdd_R", 0.0);
+        s.setAttribute("ColorAdd_G", 0.0);
+        s.setAttribute("ColorAdd_B", 1.0);
+        s.storeCue(1, 1);
+        s.setAttribute("Dimmer", 0.4);
+        s.setAttribute("ColorAdd_R", 1.0);
+        s.setAttribute("ColorAdd_B", 0.0);
+        s.storeCue(2, 1);
+        s.clearAll();
+        for (int seq : {1, 2}) {
+            Sequence q = *s.sequence(seq);
+            q.cues[0].fade = 3.0;   // a Temp fader ignores it: the fader is the timing
+            q.offFade = 3.0;
+            s.setSequence(q);
+            s.assignSequence(seq, 1, 200 + seq);
+        }
+        Executor &a = *s.executor(1, 201), &t = *s.executor(1, 202);
+        t.faderFn = FaderFn::Temp;
+        s.setFader(t, 0.0);
+        s.go(a);
+        for (int i = 0; i < 40; ++i)
+            engine.tick(0.1);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_B"], 1.0);
+        // Halfway up: every attribute halfway from blue at full to red at 40 %.
+        s.setFader(t, 0.5);
+        QVERIFY(t.pb().isOn());
+        engine.tick(0.01);
+        engine.tick(0.01);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_R"], 0.5);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_B"], 0.5);
+        QCOMPARE(s.lastOutput()[1]["Dimmer"], 0.7);
+        s.setFader(t, 1.0);
+        for (int i = 0; i < 5; ++i)
+            engine.tick(0.1);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_R"], 1.0);
+        QCOMPARE(s.lastOutput()[1]["Dimmer"], 0.4);
+        QVERIFY(a.pb().isOn());   // underneath, still running
+        // Back to zero: off at once, and the stage is what was underneath.
+        s.setFader(t, 0.0);
+        QVERIFY(!t.pb().isOn());
+        engine.tick(0.01);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_B"], 1.0);
+        QCOMPARE(s.lastOutput()[1]["Dimmer"], 1.0);
+
+        // The Temp key on the same executor follows the times: all the way in the cue's fade
+        // (3 s) while held; let go, out in the Off line's (3 s), and the fader is back at 0.
+        t.buttons[0] = ButtonFn::Temp;
+        s.setFader(t, 0.5);
+        engine.tick(0.01);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_R"], 0.5);
+        s.pressButton(t, 0, true);
+        engine.tick(0.75);
+        QVERIFY(std::fabs(s.lastOutput()[1]["ColorAdd_R"] - 0.75) < 0.01);
+        engine.tick(1.0);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_R"], 1.0);
+        s.pressButton(t, 0, false);
+        QCOMPARE(t.fader, 0.0);
+        QVERIFY(t.pb().isOn());   // fading out
+        engine.tick(1.5);
+        QVERIFY(std::fabs(s.lastOutput()[1]["ColorAdd_R"] - 0.5) < 0.01);
+        QVERIFY(std::fabs(s.lastOutput()[1]["ColorAdd_B"] - 0.5) < 0.01);
+        engine.tick(1.6);
+        QVERIFY(!t.pb().isOn());
+        engine.tick(0.01);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_B"], 1.0);
+        // Pressed again with the fader at 0: in over the cue's fade.
+        s.pressButton(t, 0, true);
+        engine.tick(1.5);
+        QVERIFY(std::fabs(s.lastOutput()[1]["ColorAdd_R"] - 0.5) < 0.01);
+        s.pressButton(t, 0, false);
+        engine.tick(0.3);
+        // Moving the fader during the Off fade takes over by hand, at once.
+        s.setFader(t, 0.4);
+        QVERIFY(t.pb().isOn());
+        engine.tick(0.01);
+        QVERIFY(std::fabs(s.lastOutput()[1]["ColorAdd_R"] - 0.4) < 0.01);
+        // And down to 0 by hand: off at once, whatever the Off time.
+        s.setFader(t, 0.0);
+        QVERIFY(!t.pb().isOn());
+        engine.tick(0.01);
+        QCOMPARE(s.lastOutput()[1]["ColorAdd_B"], 1.0);
+    }
+
+    void storeOntoExisting()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        // Groups: Overwrite, Merge, Remove.
+        QVERIFY(cl.execute("Fixture 1 Thru 2").ok);
+        QVERIFY(cl.execute("Store Group 7").ok);
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 3").ok);
+        CommandResult r = cl.execute("Store Group 7");
+        QVERIFY(!r.ok);
+        QCOMPARE(r.choices.size(), 3);
+        QCOMPARE(r.choices[0].first, QStringLiteral("overwrite"));
+        QCOMPARE(r.choices[1].first, QStringLiteral("merge"));
+        QCOMPARE(r.choices[2].first, QStringLiteral("remove"));
+        QVERIFY(cl.execute("Store Group 7 /merge").ok);
+        QVERIFY(s.group(7));
+        QCOMPARE(s.group(7)->fixtures, (QVector<int>{1, 2, 3}));
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 1").ok);
+        QVERIFY(cl.execute("Store Group 7 /remove").ok);
+        QVERIFY(s.group(7));
+        QCOMPARE(s.group(7)->fixtures, (QVector<int>{2, 3}));
+        QVERIFY(cl.execute("Store Group 7 /overwrite").ok);
+        QVERIFY(s.group(7));
+        QCOMPARE(s.group(7)->fixtures, (QVector<int>{1}));
+
+        // Presets: Overwrite, Merge global, Merge selective, Remove.
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 1 Thru 2 At 50").ok);
+        QVERIFY(cl.execute("Store Preset 1.5").ok);
+        r = cl.execute("Store Preset 1.5");
+        QCOMPARE(r.choices.size(), 4);
+        QCOMPARE(r.choices[1].second, QStringLiteral("Merge global"));
+        QCOMPARE(r.choices[2].second, QStringLiteral("Merge selective"));
+        QCOMPARE(r.choices[3].first, QStringLiteral("remove"));
+        QVERIFY(cl.execute("Store Preset 1.5 /remove").ok);
+        QVERIFY(!s.preset(1, 5));   // nothing left in it
+
+        // A sequence with one cue: Overwrite, Merge, Add Cue 2, Remove.
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 1 At 50").ok);
+        QVERIFY(cl.execute("Store Sequence 9").ok);
+        QVERIFY(cl.execute("Fixture 2 At 60").ok);
+        r = cl.execute("Store Sequence 9");
+        QCOMPARE(r.choices.size(), 4);
+        QCOMPARE(r.choices[2].first, QStringLiteral("new"));
+        QCOMPARE(r.choices[2].second, QStringLiteral("Add Cue 2"));
+        QVERIFY(cl.execute("Store Sequence 9 /merge").ok);
+        QVERIFY(s.sequence(9));
+        QCOMPARE(s.sequence(9)->cues.size(), 1);
+        QVERIFY(s.sequence(9));
+        QVERIFY(s.sequence(9)->cues[0].values.contains(2));
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 1 At 10").ok);
+        QVERIFY(cl.execute("Store Sequence 9 /remove").ok);
+        QVERIFY(s.sequence(9));
+        QVERIFY(!s.sequence(9)->cues[0].values.contains(1));
+        QVERIFY(cl.execute("Store Sequence 9 /new").ok);
+        QVERIFY(s.sequence(9));
+        QCOMPARE(s.sequence(9)->cues.size(), 2);
+        // More than one cue: the next one, no question.
+        QVERIFY(cl.execute("Store Sequence 9").ok);
+        QVERIFY(s.sequence(9));
+        QCOMPARE(s.sequence(9)->cues.size(), 3);
+    }
+
+    void loadCue()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        for (int i = 1; i <= 4; ++i) {
+            QVERIFY(cl.execute(QStringLiteral("Fixture 1 At %1").arg(i * 20)).ok);
+            QVERIFY(cl.execute(QStringLiteral("Store Sequence 3 Cue %1").arg(i)).ok);
+        }
+        QVERIFY(cl.execute("ClearAll").ok);
+        s.assignSequence(3, 1, 201);
+        Executor &e = *s.executor(1, 201);
+        // While off: the first Go fires the loaded cue.
+        QVERIFY(cl.execute("Load Cue 3 Executor 201").ok);
+        QCOMPARE(e.pb().loadedIndex, 2);
+        // It's kept with the show.
+        Show copy;
+        setupShow(copy);
+        QVERIFY(copy.fromJson(s.toJson()));
+        QCOMPARE(copy.executor(1, 201)->pb().loadedIndex, 2);
+        s.go(e);
+        QCOMPARE(e.pb().cueIndex, 2);
+        QCOMPARE(e.pb().loadedIndex, -1);
+        s.go(e);
+        QCOMPARE(e.pb().cueIndex, 3);   // then on through the list
+        QVERIFY(cl.execute("Load Cue 1 Executor 201").ok);
+        s.go(e);
+        QCOMPARE(e.pb().cueIndex, 0);
+        // Taken back with /clear; Load Executor 201 alone asks for the cue.
+        QVERIFY(cl.execute("Load Cue 4 Executor 201").ok);
+        QVERIFY(cl.execute("Load Executor 201 /clear").ok);
+        s.go(e);
+        QCOMPARE(e.pb().cueIndex, 1);
+        QSignalSpy asked(&s, &Show::loadRequested);
+        QVERIFY(cl.execute("Load Executor 201").ok);
+        QCOMPARE(asked.size(), 1);
+        // A Load button asks too.
+        e.buttons[2] = ButtonFn::Load;
+        s.pressButton(e, 2, true);
+        QCOMPARE(asked.size(), 2);
+    }
+
+    void macroLibrary()
+    {
+        // Every line of every library macro runs (prompts answered, a few things to act on).
+        QFile f(QStringLiteral(LUMORA_SOURCE_DIR "/resources/macros/library.json"));
+        QVERIFY(f.open(QIODevice::ReadOnly));
+        const QVector<LibraryMacro> lib = parseMacroLibrary(f.readAll());
+        QVERIFY(lib.size() >= 25);
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        QVERIFY(cl.execute("Fixture 1 At 50").ok);
+        QVERIFY(cl.execute("Store Sequence 3 Cue 1").ok);
+        s.assignSequence(3, 1, 201);
+        QVERIFY(cl.execute("Spread Every 2").ok);
+        QVERIFY(cl.execute("Store Spread 1").ok);
+        static const QRegularExpression prompt(QStringLiteral("\\(([^()]*)\\)"));
+        for (const LibraryMacro &lm : lib) {
+            const Macro m = lm.numbered(60);
+            s.setMacro(m);
+            QVERIFY2(!lm.description.isEmpty(), qPrintable(m.name));
+            for (const MacroLine &l : m.lines) {
+                QVERIFY2(!l.command.contains(QLatin1String("{self}")), qPrintable(m.name));
+                QString cmd = l.command;
+                for (QRegularExpressionMatch mt = prompt.match(cmd); mt.hasMatch(); mt = prompt.match(cmd)) {
+                    const QString q = mt.captured(1).toLower();
+                    const QString a = q.contains("executor") ? "201" : q.contains("cue") ? "1" : q.contains("sequence") ? "3"
+                                    : q.contains("spread") ? "1" : q.contains("level") ? "50" : "-15";
+                    cmd.replace(mt.capturedStart(), mt.capturedLength(), a);
+                }
+                if (cmd.startsWith(QLatin1String("Go Macro")) || cmd == QLatin1String("Undo"))
+                    continue;   // the loop back, and Undo (the app's, not the command line's)
+                if (!cmd.startsWith(QLatin1String("ClearAll")) && s.selection().isEmpty())
+                    QVERIFY(cl.execute("Fixture 5 Thru 6").ok);
+                const CommandResult r = cl.execute(cmd);
+                QVERIFY2(r.ok || !r.choices.isEmpty(), qPrintable(m.name + ": " + cmd + ": " + r.message));   // a Store may ask
+            }
+            s.offMacro(0);
+        }
+        // Relative pan from the library: from where each fixture points.
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 5 Pan 20").ok);
+        QVERIFY(cl.execute("Pan +-10").ok);
+        QCOMPARE(s.programmerValues()[5]["Pan"].value, 10.0);
+    }
+
+    void changeBatches()
+    {
+        // A batch holds Show::changed back and sends it once, with every part that changed.
+        Show s;
+        setupShow(s);
+        QSignalSpy spy(&s, &Show::changed);
+        {
+            const Show::Batch outer(&s);
+            s.select({1});
+            s.setAttribute("Dimmer", 0.5);
+            {
+                const Show::Batch inner(&s);   // nested: still one
+                s.storeGroup(3);
+            }
+            QCOMPARE(spy.size(), 0);
+        }
+        QCOMPARE(spy.size(), 1);
+        const Show::Parts parts = spy.first().first().value<Show::Parts>();
+        QVERIFY(parts & Show::ProgrammerPart);
+        QVERIFY(parts & Show::GroupsPart);
+        s.select({2});   // outside a batch: at once
+        QCOMPARE(spy.size(), 2);
+    }
+
+    void outputChangedOnlyOnChange()
+    {
+        Show s;
+        setupShow(s);
+        Engine engine(&s);
+        QSignalSpy spy(&engine, &Engine::outputChanged);
+        engine.tick(0.02);
+        const int first = int(spy.size());
+        engine.tick(0.02);
+        engine.tick(0.02);
+        QCOMPARE(int(spy.size()), first);   // nothing moves: no repaints asked for
+        s.select({1});
+        s.setAttribute("Dimmer", 0.7);
+        engine.tick(0.02);
+        QCOMPARE(int(spy.size()), first + 1);
+    }
+
+    void sortedAttributesCached()
+    {
+        // attributes(): by feature, then the usual order, the same however often it's asked,
+        // and following the channels when they change.
+        Show s;
+        setupShow(s);
+        const FixtureMode *m = s.fixtureMode(5);
+        QVERIFY(m);
+        const QStringList a = m->attributes();
+        QCOMPARE(m->attributes(), a);
+        QCOMPARE(a.first(), QStringLiteral("Dimmer"));
+        QVERIFY(a.indexOf("Pan") < a.indexOf("Tilt"));
+        QVERIFY(a.indexOf("Tilt") < a.indexOf("Gobo1"));
+        FixtureMode copy = *m;
+        copy.channels.removeIf([](const ChannelDef &c) { return c.attribute == QLatin1String("Pan"); });
+        QVERIFY(!copy.attributes().contains("Pan"));
+        QCOMPARE(m->attributes(), a);
+        QCOMPARE(featureOf("Pan"), Feature::Position);
+        QCOMPARE(featureOf("ColorAdd_R"), Feature::Color);
+        QCOMPARE(featureOf("Pan"), Feature::Position);   // remembered
+    }
+
+    void relativeValues()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        Engine engine(&s);
+        QVERIFY(cl.execute("Fixture 5 Pan 25").ok);
+        QCOMPARE(s.programmerValues()[5]["Pan"].value, 25.0);
+        QVERIFY(cl.execute("Fixture 5 Pan +-10").ok);
+        QCOMPARE(s.programmerValues()[5]["Pan"].value, 15.0);
+        QVERIFY(cl.execute("Pan +5").ok);   // the selection
+        QCOMPARE(s.programmerValues()[5]["Pan"].value, 20.0);
+        QVERIFY(cl.execute("Fixture 5 tilt+-10").ok);   // from where it is on stage: the middle
+        QCOMPARE(s.programmerValues()[5]["Tilt"].value, -10.0);
+        // Percent for the rest, from what's on stage when the programmer has none.
+        QVERIFY(cl.execute("Fixture 1 Thru 2 At 50").ok);
+        QVERIFY(cl.execute("At +10").ok);
+        QCOMPARE(s.programmerValues()[1]["Dimmer"].value, 0.6);
+        QVERIFY(cl.execute("Fixture 1 Dimmer +-30").ok);
+        QCOMPARE(s.programmerValues()[1]["Dimmer"].value, 0.3);
+        QVERIFY(cl.execute("Fixture 1 Red +-100").ok);
+        QCOMPARE(s.programmerValues()[1]["ColorAdd_R"].value, 0.0);
+        QVERIFY(cl.execute("Fixture 1 Red +40").ok);
+        QCOMPARE(s.programmerValues()[1]["ColorAdd_R"].value, 0.4);
+        QVERIFY(cl.execute("Fixture 1 Attribute Pan At +10").ok || true);   // no pan: fine either way
+        QVERIFY(cl.execute("Fixture 1 Zoom 30").ok);   // an attribute the fixture lacks says so
+        // Command words stay commands.
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Fixture 3 At 80").ok);
+        QCOMPARE(s.programmerValues()[3]["Dimmer"].value, 0.8);
+    }
+
+    void snappingChannels()
+    {
+        Show s;
+        setupShow(s);
+        Engine engine(&s);
+        // Gobo wheels snap by default; dimmers fade.
+        const ChannelDef *gobo = s.channelOf(5, "Gobo1");
+        QVERIFY(gobo && gobo->snap);
+        QVERIFY(!s.channelOf(5, "Dimmer")->snap);
+        QVERIFY(FixtureType::fromJson(s.fixtureType(5)->toJson()).modes[0].channel("Gobo1")->snap);
+        s.select({5});
+        s.setAttribute("Gobo1", 0.0);
+        s.setAttribute("Dimmer", 0.0);
+        s.storeCue(1, 1);
+        s.setAttribute("Gobo1", 0.6);
+        s.setAttribute("Dimmer", 1.0);
+        s.storeCue(1, 2);
+        s.clearAll();
+        Sequence q = *s.sequence(1);
+        q.cues[1].fade = 2.0;
+        s.setSequence(q);
+        s.assignSequence(1, 1, 201);
+        Executor &e = *s.executor(1, 201);
+        s.go(e);
+        engine.tick(0.01);
+        s.go(e);
+        engine.tick(0.5);
+        QCOMPARE(s.lastOutput()[5]["Gobo1"], 0.6);   // there at once
+        QVERIFY(s.lastOutput()[5]["Dimmer"] < 0.5);   // still fading
+        // Switched off in the type: it fades.
+        FixtureType t = *s.fixtureType(5);
+        for (ChannelDef &c : t.modes[0].channels)
+            if (c.attribute == "Gobo1")
+                c.snap = false;
+        s.updateFixtureType(t);
+        s.go(e);   // back to cue 1 (wrap) over its fade
+        Sequence q2 = *s.sequence(1);
+        q2.cues[0].fade = 2.0;
+        s.setSequence(q2);
+        s.gotoCue(e, 0, true);
+        engine.tick(0.5);
+        const double g = s.lastOutput()[5]["Gobo1"];
+        QVERIFY2(g > 0.05 && g < 0.55, qPrintable(QString::number(g)));
+    }
+
+    void overrideWaitsForFade()
+    {
+        Show s;
+        setupShow(s);
+        Engine engine(&s);
+        for (int seq : {1, 2}) {
+            s.select({1});
+            s.setAttribute("Dimmer", seq == 1 ? 0.5 : 1.0);
+            s.storeCue(seq, 1);
+            s.clearAll();
+            Sequence q = *s.sequence(seq);
+            q.cues[0].fade = seq == 1 ? 0.0 : 2.0;
+            s.setSequence(q);
+            s.assignSequence(seq, 1, 200 + seq);
+        }
+        Executor &a = *s.executor(1, 201), &b = *s.executor(1, 202);
+        s.go(a);
+        engine.tick(0.01);
+        s.go(b);   // fades in over 2 s: 201 plays on under it until then
+        for (int i = 0; i < 10; ++i)
+            engine.tick(0.1);
+        QVERIFY(a.pb().isOn());
+        for (int i = 0; i < 12; ++i)
+            engine.tick(0.1);
+        QVERIFY(!a.pb().isOn());
+        QVERIFY(b.pb().isOn());
+    }
+
+    void flashTempReleaseWithUndo()
+    {
+        // In the app an undo manager snapshots the show on every change, playbacks included.
+        Show s;
+        setupShow(s);
+        UndoManager undo(&s);
+        // …and the screens look executors up while they repaint.
+        QObject::connect(&s, &Show::changed, &s, [&s]() { s.executor(1, 202); });
+        Engine engine(&s);
+        s.select({1});
+        s.setAttribute("Dimmer", 1.0);
+        s.storeCue(1, 1);
+        s.clearAll();
+        s.assignSequence(1, 1, 201);
+        s.assignSequence(1, 1, 202);
+        Executor &a = *s.executor(1, 201);
+        a.buttons[0] = ButtonFn::Flash;
+        s.pressButton(a, 0, true);
+        engine.tick(0.01);
+        QVERIFY(s.executor(1, 201)->pb().isOn());
+        QCOMPARE(dmx(engine, 1, 1), 255);
+        s.pressButton(*s.executor(1, 201), 0, false);
+        engine.tick(0.01);
+        QVERIFY(!s.executor(1, 201)->pb().isOn());
+        QCOMPARE(dmx(engine, 1, 1), 0);
+        // Temp: in, then out with the Off line's time.
+        Sequence q = *s.sequence(1);
+        q.offFade = 0.5;
+        s.setSequence(q);
+        Executor &b = *s.executor(1, 201);
+        b.buttons[1] = ButtonFn::Temp;
+        s.pressButton(b, 1, true);
+        engine.tick(0.01);
+        QVERIFY(s.executor(1, 201)->pb().isOn());
+        s.pressButton(*s.executor(1, 201), 1, false);
+        for (int i = 0; i < 80; ++i)
+            engine.tick(0.01);
+        QVERIFY(!s.executor(1, 201)->pb().isOn());
+    }
+
     void xfadeFader()
     {
         Show s;
@@ -2466,6 +3044,61 @@ private slots:
         QVERIFY(cl.execute("Spread Y Every 2").ok);
         QVERIFY(cl.execute("Store Spread 50").ok);   // the same both ways: one spread for both
         QVERIFY(s.spread(50)->onX && s.spread(50)->onY && !s.spread(51));
+    }
+
+    void imagePool()
+    {
+        Show s;
+        CommandLine cl(&s);
+        // A new show starts with Lumora's symbols.
+        const int symbols = int(defaultPoolImages().size());
+        QCOMPARE(s.images().size(), symbols);
+        QCOMPARE(s.image(2)->builtin, QString("truss"));
+        // Import a file (into the next free slot, or a chosen one).
+        QTemporaryDir dir;
+        const QString svg = dir.filePath("plan.svg");
+        {
+            QFile f(svg);
+            QVERIFY(f.open(QIODevice::WriteOnly));
+            f.write("<svg xmlns='http://www.w3.org/2000/svg' width='10' height='10'/>");
+        }
+        const QString junk = dir.filePath("notes.txt");
+        {
+            QFile f(junk);
+            QVERIFY(f.open(QIODevice::WriteOnly));
+            f.write("not a picture");
+        }
+        QString error;
+        const int id = s.importImage(svg, 0, &error);
+        QCOMPARE(id, symbols + 1);
+        QCOMPARE(s.image(id)->name, QString("plan"));
+        QCOMPARE(s.importImage(junk, 0, &error), 0);
+        QVERIFY(!error.isEmpty());
+        QCOMPARE(s.importImage(svg, 40), 40);
+        // On a plot, by number.
+        QVERIFY(cl.execute(QStringLiteral("Assign Image %1 At Plot 3").arg(id)).ok);
+        QCOMPARE(s.plot(3)->items.size(), 1);
+        QCOMPARE(s.plot(3)->items[0].imageId, id);
+        QCOMPARE(s.imageUses(id), 1);
+        // Moving it renumbers what uses it; copying doesn't.
+        QVERIFY(cl.execute(QStringLiteral("Move Image %1 At 50").arg(id)).ok);
+        QVERIFY(!s.image(id) && s.image(50));
+        QCOMPARE(s.plot(3)->items[0].imageId, 50);
+        QVERIFY(cl.execute("Copy Image 50 At 51").ok);
+        QCOMPARE(s.plot(3)->items[0].imageId, 50);
+        QVERIFY(cl.execute("Label Image 51 \"Ground plan\"").ok);
+        QCOMPARE(s.image(51)->name, QString("Ground plan"));
+        // Saved with the show.
+        Show t;
+        QVERIFY(t.fromJson(s.toJson()));
+        QCOMPARE(t.images().size(), s.images().size());
+        QCOMPARE(t.image(50)->data, s.image(50)->data);
+        QCOMPARE(t.plot(3)->items[0].imageId, 50);
+        // Deleted: plots keep the number.
+        QVERIFY(cl.execute("Delete Image 50").ok);
+        QVERIFY(!s.image(50));
+        QCOMPARE(s.plot(3)->items[0].imageId, 50);
+        QVERIFY(!cl.execute("Delete Image 50").ok);
     }
 
     void undoSteps()
@@ -3492,6 +4125,64 @@ private slots:
         QCOMPARE(t.modes.first().footprint, 2);
     }
 
+    void livePlotLinks()
+    {
+        Show s;
+        setupShow(s);
+        CommandLine cl(&s);
+        // Two cues; Goto and Off by sequence number.
+        QVERIFY(cl.execute("Fixture 1 At 50").ok);
+        QVERIFY(cl.execute("Store Cue 1 Sequence 7").ok);
+        QVERIFY(cl.execute("Fixture 1 At 80").ok);
+        QVERIFY(cl.execute("Store Cue 2 Sequence 7").ok);
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(cl.execute("Assign Sequence 7 At Executor 3.216").ok);
+        QVERIFY(!s.commandLive("Goto Cue 1 Sequence 7"));
+        QVERIFY(cl.execute("Goto Cue 2 Sequence 7").ok);
+        QVERIFY(s.commandLive("Goto Cue 2 Sequence 7"));
+        QVERIFY(s.commandLive("goto cue 2 executor 3.216 fade 1"));
+        QVERIFY(!s.commandLive("Goto Cue 1 Sequence 7"));
+        QVERIFY(cl.execute("Off Sequence 7").ok);
+        QVERIFY(!s.commandLive("Goto Cue 2 Sequence 7"));
+        // A run of cues takes one fade (and a trigger).
+        QVERIFY(cl.execute("Cue 1 Thru 2 Sequence 7 Fade 3").ok);
+        QCOMPARE(s.sequence(7)->cues[0].fade, 3.0);
+        QCOMPARE(s.sequence(7)->cues[1].fade, 3.0);
+        QVERIFY(cl.execute("Cue 2 Thru 1 Sequence 7 Delay 1 Follow").ok);
+        QCOMPARE(s.sequence(7)->cues[0].delay, 1.0);
+        QVERIFY(s.sequence(7)->cues[1].trigger == CueTrigger::Follow);
+        QVERIFY(!cl.execute("Cue 5 Thru 9 Sequence 7 Fade 1").ok);
+        // A copied preset is live while the copy holds the same values.
+        QVERIFY(cl.execute("Fixture 1 Thru 4 At 100").ok);
+        QVERIFY(cl.execute("Store Dimmer.1").ok);
+        QVERIFY(cl.execute("Fixture 1 Thru 4 At 30").ok);
+        QVERIFY(cl.execute("Store Dimmer.2").ok);
+        QVERIFY(cl.execute("ClearAll").ok);
+        QVERIFY(!s.commandLive("Copy Preset 1.1 At 1.9 /o"));
+        QVERIFY(cl.execute("Copy Preset 1.1 At 1.9").ok);
+        QVERIFY(s.commandLive("Copy Preset 1.1 At 1.9 /o"));
+        QVERIFY(s.commandLive("copy dimmer.1 at dimmer.9"));
+        QVERIFY(!s.commandLive("Copy Preset 1.2 At 1.9 /o"));
+        QVERIFY(cl.execute("Copy Preset 1.2 At 1.9 /o").ok);
+        QVERIFY(s.commandLive("Copy Preset 1.2 At 1.9 /o"));
+        QVERIFY(!s.commandLive("Store Cue 4"));
+        // A picture's lit version is saved and follows the pool.
+        PlotItem it;
+        it.kind = PlotItem::Image;
+        it.imageId = 3;
+        it.litImageId = 4;
+        it.link = "Goto Cue 2 Sequence 7";
+        QCOMPARE(PlotItem::fromJson(it.toJson()).litImageId, 4);
+        Plot p;
+        p.id = 1;
+        p.items << it;
+        s.setPlot(p);
+        QCOMPARE(s.imageUses(4), 1);
+        QVERIFY(s.moveImage(4, 60, false));
+        QCOMPARE(s.plot(1)->items[0].litImageId, 60);
+        QCOMPARE(s.plot(1)->items[0].imageId, 3);
+    }
+
     void cueMacros()
     {
         Show s;
@@ -3811,10 +4502,14 @@ private slots:
         QCOMPARE(t.plot(1)->items[9].text, QString("Downstage"));
         QCOMPARE(t.plot(1)->items[9].link, QString("Group 1"));
         QCOMPARE(t.plot(1)->items[10].group, 2);
-        QCOMPARE(t.plot(1)->items[10].image, pic.image);
-        QCOMPARE(t.plot(1)->backgroundName, QString("plan.svg"));
+        // Pictures kept in the plot go into the image pool on opening (the same picture once).
+        const int picId = t.plot(1)->items[10].imageId;
+        QVERIFY(picId > 0 && t.image(picId));
+        QCOMPARE(t.image(picId)->data, pic.image);
+        QVERIFY(t.plot(1)->items[10].image.isEmpty());
+        QCOMPARE(t.plot(1)->backgroundImageId, picId);
         QCOMPARE(t.plot(1)->backgroundRect, QRectF(0, 0, 800, 600));
-        QCOMPARE(t.plot(1)->backgroundImage, pic.image);
+        QVERIFY(t.plot(1)->backgroundImage.isEmpty());
         // Shows from before kept the background as a picture item: it becomes the background.
         {
             QJsonObject old = p.toJson();

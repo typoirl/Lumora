@@ -4,6 +4,7 @@
 #include "fixturetype.h"
 #include "macros.h"
 #include "model.h"
+#include "images.h"
 #include "plots.h"
 
 #include <QJsonArray>
@@ -48,12 +49,13 @@ public:
         ParkPart = 1 << 10,
         MacrosPart = 1 << 11,
         PlotsPart = 1 << 12,
-        AllParts = 0x1fff,
+        ImagesPart = 1 << 13,
+        AllParts = 0x3fff,
     };
     Q_DECLARE_FLAGS(Parts, Part)
 
     enum class SelectMode { Replace, Add, Remove };
-    enum class StoreMode { Merge, Overwrite };
+    enum class StoreMode { Merge, Overwrite, Remove };   // Remove: takes the programmer's content out
 
     explicit Show(QObject *parent = nullptr);
 
@@ -134,7 +136,7 @@ public:
     // ---- Groups ----------------------------------------------------------
     const QMap<int, Group> &groups() const { return m_groups; }
     const Group *group(int id) const;
-    bool storeGroup(int id, const QString &name = QString());
+    bool storeGroup(int id, const QString &name = QString(), StoreMode mode = StoreMode::Overwrite);
     void setGroup(const Group &g);
     void deleteGroup(int id);
 
@@ -143,6 +145,7 @@ public:
     const Preset *preset(int type, int id) const;
     // layer: Universal, Global (Type) or Selective (Fixture); empty means the pool's default
     // (Universal for Dimmer and Color, Selective for the rest). Other layers are kept on merge.
+    bool removeFromPreset(int type, int id);   // the programmer's content out of the preset
     bool storePreset(int type, int id, StoreMode mode = StoreMode::Merge, const QString &name = QString(),
                      std::optional<PresetScope> scope = std::nullopt);
     bool presetValue(const Preset &p, int fid, const QString &attribute, double *out) const;
@@ -167,7 +170,6 @@ public:
     void setGridCursor(const QPoint &at);              // Grid 2/1: where the next selected fixtures go
     void placeInGrid(const QVector<int> &fids, const QPoint &at);   // along X from there (Fixture 5 Grid 3/2)
     void fillGridArea(const QPoint &from, const QPoint &to);        // the selection, X then Y, inside the area
-    void setGridPosition(int fid, const QPoint &at);   // swaps with a fixture already there
     // Moves these fixtures by an offset, keeping their shape; fixtures in the way take the
     // cells they left. Nothing goes below X 0 or Y 0.
     void moveInGrid(const QVector<int> &fids, const QPoint &offset);
@@ -196,8 +198,6 @@ public:
     // selection now. Each returns what it did.
     QString stepSelection(int direction);
     QString wholeSelection();
-    int stepIndex() const { return m_stepIndex; }        // -1: not stepping
-    int stepCount() const { return int(m_stepList.size()); }
     // Select Last: the selection from before the last Clear (or replacement) comes back; the
     // current one is kept in its place, so doing it twice swaps back.
     bool reselectLast();
@@ -303,6 +303,27 @@ public:
     void resetRateMaster(int id);        // 100% / 120 BPM / ×1
     void pressRateMasterKey(int id);     // the key on its strip: tap (Learn) or Reset
     void toggleRateMasterFreeze(int id);
+    // ---- Images: the show's picture pool (plots place them by number) ----
+    const PoolImage *image(int id) const;
+    QList<PoolImage> images() const { return m_images.values(); }
+    void setImage(const PoolImage &img);                  // adds or replaces
+    int nextFreeImage(int from = 1) const;
+    // Adds a picture: into slot `id` (replacing what's there), or the first free slot from 1
+    // when id is 0. Returns the slot, or 0 when the file isn't a picture Lumora can draw.
+    int importImage(const QString &path, int id = 0, QString *error = nullptr);
+    int addImage(const QByteArray &data, const QString &name, const QString &file = QString(), int id = 0);
+    void deleteImage(int id);                             // plots keep the number (and show it missing)
+    bool moveImage(int from, int to, bool copy);          // moving renumbers what uses it
+    int imageUses(int id) const;                          // pictures and backgrounds on plots
+    // Puts a pool image on a plot as a picture, under what's there (making the plot if needed).
+    bool addImageToPlot(int plotId, int imageId);
+    static bool imageDataUsable(const QByteArray &data);  // SVG, PNG, JPEG, BMP or GIF that loads
+    // Whether a command a plot item runs when tapped is "live" now, so the item can show it: a
+    // Goto ("Goto Cue 3 Sequence 5", "Goto Cue 2 Executor 5.216") while that playback sits on that
+    // cue, a preset copy ("Copy Preset 4.2 At 4.101 /o") while the target holds what the source
+    // does. False for anything else.
+    bool commandLive(const QString &command) const;
+
     // ---- Plots: fixtures and pool objects laid out on a sheet, with text and pictures ----
     const Plot *plot(int id) const;
     QList<Plot> plots() const { return m_plots.values(); }
@@ -361,9 +382,11 @@ public:
     // fader pulled to zero).
     void off(Executor &e, bool immediately = false);
     void togglePause(Executor &e);
+    // Load: the next Go on the playback fires this cue (-1: back to the next in the list).
+    void loadCue(Executor &e, int cueIndex);
     void pressButton(Executor &e, int button, bool down);
     void setFader(Executor &e, double value);
-    void notifyExecutors() { emit changed(ExecutorsPart); }
+    void notifyExecutors() { notifyChanged(ExecutorsPart); }
     bool anySwopHeld() const;   // a Swop button is down on a running playback
 
     // ---- spread -------------------------------------------------------------
@@ -441,7 +464,7 @@ public:
     {
         m_extra[key] = o;
         if (markChanged)
-            emit changed(SettingsPart);
+            notifyChanged(SettingsPart);
     }
     void removeExtra(const QString &key) { m_extra.remove(key); }
 
@@ -462,6 +485,7 @@ public:
         QMap<int, Executor> executors;
         QVector<RateMaster> rateMasters;
         QMap<int, Macro> macros;
+        QMap<int, PoolImage> images;
         QVector<int> selection;
         RawTable parked;
         ValueTable programmer;
@@ -485,12 +509,42 @@ public:
     QMap<int, Plot> plotsSnapshot() const { return m_plots; }
     void restorePlots(const QMap<int, Plot> &plots);
 
+    // Many changes as one: while a Batch lives, changed() is held back, then sent once with
+    // every part that changed (building a show, running a command), so windows refresh once
+    // instead of after every step. Batches nest.
+    class Batch {
+    public:
+        explicit Batch(Show *show) : m_show(show) { ++m_show->m_batchDepth; }
+        ~Batch()
+        {
+            if (--m_show->m_batchDepth == 0 && m_show->m_batchParts) {
+                const Parts parts = m_show->m_batchParts;
+                m_show->m_batchParts = {};
+                emit m_show->changed(parts);
+            }
+        }
+        Batch(const Batch &) = delete;
+        Batch &operator=(const Batch &) = delete;
+
+    private:
+        Show *m_show;
+    };
+    void notifyChanged(Parts parts)
+    {
+        if (m_batchDepth > 0)
+            m_batchParts |= parts;
+        else
+            emit changed(parts);
+    }
+
 signals:
     void changed(lumora::Show::Parts parts);
     void message(const QString &text);   // short status feedback for the UI
     void viewRecallRequested(int id);
     void plotRequested(int id);   // "Plot 3": show it in the plot windows
-    void gotoRequested(int page, int executor);   // a Goto button, or "Goto Executor 201": pick a cue
+    void gotoRequested(int page, int executor);
+    void loadRequested(int page, int executor);
+    void saveRequested();   // SaveShow: the screens save the show to its file   // a Load button, or "Load Executor 201": pick a cue   // a Goto button, or "Goto Executor 201": pick a cue
     void oscSendRequested(int line, const QString &message);   // SendOSC 1 "/address,i,5"
 
 private:
@@ -515,6 +569,9 @@ private:
     QVector<RateMaster> m_rateMasters;   // always RateMaster::kCount, ids 1…
     QMap<int, Macro> m_macros;
     QMap<int, Plot> m_plots;
+    QMap<int, PoolImage> m_images;
+    void resetImages();             // the built-in symbols, as a new show has them
+    void imagesIntoPool();          // pictures kept in plots (older shows) move into the pool
     QVector<MacroRun> m_macroRuns;
     MacroExecutor m_macroExec;
     QHash<QString, QString> m_macroVars;
@@ -537,6 +594,8 @@ private:
     void putProgrammer(int fid, const QString &attribute, ValueRef r);
     ValueTable m_defaults;
     RawTable m_lastOutput;
+    int m_batchDepth = 0;
+    Parts m_batchParts;
     QJsonObject m_extra;
     int m_page = 1;
     QMap<int, QString> m_pageNames;

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "appcontext.h"
+#include "choicedialog.h"
 
 #include <QApplication>
 #include <QInputDialog>
@@ -14,10 +15,10 @@ bool AppContext::tapTarget(const QString &object, const QString &currentName)
     if (line.isEmpty())
         return false;
     const QStringList words = line.split(' ');
-    // Off, On, Go, GoBack, Pause, Top or Goto on its own (a shortcut key, or the command keys),
+    // Off, On, Go, GoBack, Pause, Top, Goto or Load on its own (a shortcut key, or the command keys),
     // then a tap on an executor or sequence: that playback.
     if (words.size() == 1 && (object.startsWith(QLatin1String("Executor ")) || object.startsWith(QLatin1String("Sequence ")))) {
-        static const QStringList playback = {"Off", "On", "Go", "GoBack", "Pause", "Top", "Goto"};
+        static const QStringList playback = {"Off", "On", "Go", "GoBack", "Pause", "Top", "Goto", "Load"};
         for (const QString &v : playback)
             if (v.compare(words[0], Qt::CaseInsensitive) == 0) {
                 setCommandLine(QString());
@@ -112,6 +113,11 @@ bool AppContext::runMacroLine(const Macro &m, const MacroLine &line, const QStri
     }
     m_macroSource = was;
     return true;
+}
+
+int AppContext::askChoice(const QString &title, const QString &question, const QStringList &answers)
+{
+    return ChoiceDialog::ask(nullptr, title, question, answers);
 }
 
 } // namespace lumora

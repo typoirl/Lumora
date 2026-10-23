@@ -4,6 +4,8 @@
 #include "commandline.h"
 
 #include <QDateTime>
+#include <QFile>
+#include <QFileInfo>
 #include <QJsonArray>
 #include <QRegularExpression>
 #include <QSet>
@@ -22,6 +24,7 @@ int execKey(int page, int number) { return page * 1000 + number; }
 Show::Show(QObject *parent) : QObject(parent)
 {
     resetRateMasters();
+    resetImages();
 }
 
 void Show::resetRateMasters()
@@ -34,7 +37,7 @@ void Show::resetRateMasters()
 void Show::setName(const QString &n)
 {
     m_name = n;
-    emit changed(SettingsPart);
+    notifyChanged(SettingsPart);
 }
 
 void Show::clearShow()
@@ -53,6 +56,7 @@ void Show::clearShow()
     resetRateMasters();
     m_macros.clear();
     m_plots.clear();
+    resetImages();
     m_macroRuns.clear();
     m_macroVars.clear();
     m_lastGoSequence = 0;
@@ -81,7 +85,7 @@ void Show::clearShow()
     m_progFadeTime = 2.0;
     m_defaultCueFade = 2.0;
     m_defaultCueDelay = 0.0;
-    emit changed(AllParts);
+    notifyChanged(AllParts);
 }
 
 // ===========================================================================
@@ -416,7 +420,7 @@ bool Show::addFixture(const Fixture &f, QString *error)
     copy.master = copy.cell = copy.head = copy.sub = copy.parent = 0;
     m_fixtures.insert(f.fid, copy);
     rebuildCells();
-    emit changed(PatchPart);
+    notifyChanged(PatchPart);
     return true;
 }
 
@@ -424,7 +428,7 @@ bool Show::importFixtureFile(const QString &path, QString *error, QString *typeI
 {
     if (!m_library.importFile(path, error, typeId))
         return false;
-    emit changed(PatchPart);
+    notifyChanged(PatchPart);
     return true;
 }
 
@@ -440,9 +444,14 @@ Show::Snapshot Show::snapshot() const
     s.effects = m_effects;
     s.shapes = m_shapes;
     s.progEffects = m_progEffects;
+    // Its own copy at once: the show's executors are held by reference while playbacks start and
+    // stop (and those emit changes that take snapshots); sharing the data would leave such a
+    // reference pointing into the snapshot after the next write.
     s.executors = m_executors;
+    s.executors.detach();
     s.rateMasters = m_rateMasters;
     s.macros = m_macros;
+    s.images = m_images;
     s.selection = m_selection;
     s.parked = m_parked;
     s.programmer = m_programmer;
@@ -468,7 +477,7 @@ bool Show::Snapshot::sameData(const Snapshot &o) const
 {
     return library.sharesDataWith(o.library) && name == o.name && fixtures.isSharedWith(o.fixtures) && groups.isSharedWith(o.groups)
            && presets.isSharedWith(o.presets) && sequences.isSharedWith(o.sequences) && effects.isSharedWith(o.effects)
-           && shapes.isSharedWith(o.shapes) && progEffects.isSharedWith(o.progEffects) && macros.isSharedWith(o.macros)
+           && shapes.isSharedWith(o.shapes) && progEffects.isSharedWith(o.progEffects) && macros.isSharedWith(o.macros) && images.isSharedWith(o.images)
            && selection.isSharedWith(o.selection) && parked.isSharedWith(o.parked) && programmer.isSharedWith(o.programmer)
            && defaults.isSharedWith(o.defaults) && extra == o.extra && pageNames.isSharedWith(o.pageNames)
            && views.isSharedWith(o.views) && spreads.isSharedWith(o.spreads) && selGrid.isSharedWith(o.selGrid)
@@ -521,6 +530,7 @@ void Show::restore(const Snapshot &s)
     m_executors = executors;
     m_rateMasters = masters;
     m_macros = s.macros;
+    m_images = s.images;
     m_selection = s.selection;
     m_parked = s.parked;
     m_programmer = s.programmer;
@@ -547,13 +557,13 @@ void Show::restore(const Snapshot &s)
         if (e.pb().cueIndex >= 0 && (!sq || e.pb().cueIndex >= sq->cues.size()))
             e.pb().cueIndex = sq && !sq->cues.isEmpty() ? int(sq->cues.size()) - 1 : -1;
     }
-    emit changed(Parts(AllParts) & ~Parts(PlotsPart));
+    notifyChanged(Parts(AllParts) & ~Parts(PlotsPart));
 }
 
 void Show::restorePlots(const QMap<int, Plot> &plots)
 {
     m_plots = plots;
-    emit changed(PlotsPart);
+    notifyChanged(PlotsPart);
 }
 
 QStringList Show::typeIdsInShow() const
@@ -582,7 +592,7 @@ void Show::updateFixtureType(const FixtureType &type)
         if (f.typeId == type.id && t && !t->modes.isEmpty() && t->mode(f.mode)->name != f.mode)
             f.mode = t->modes.first().name;
     rebuildCells();
-    emit changed(PatchPart | ProgrammerPart);
+    notifyChanged(PatchPart | ProgrammerPart);
 }
 
 bool Show::updateFixture(const Fixture &f, QString *error)
@@ -622,7 +632,7 @@ bool Show::updateFixtures(const QVector<Fixture> &list, QString *error)
     for (const Fixture &f : list)
         adoptType(f.typeId);
     rebuildCells();
-    emit changed(PatchPart | ProgrammerPart);
+    notifyChanged(PatchPart | ProgrammerPart);
     return true;
 }
 
@@ -642,7 +652,7 @@ void Show::removeFixture(int fid)
         for (Group &g : m_groups)
             g.fixtures.removeAll(id);
     }
-    emit changed(PatchPart | GroupsPart | ProgrammerPart);
+    notifyChanged(PatchPart | GroupsPart | ProgrammerPart);
 }
 
 // ===========================================================================
@@ -655,17 +665,53 @@ const Group *Show::group(int id) const
     return it == m_groups.constEnd() ? nullptr : &it.value();
 }
 
-bool Show::storeGroup(int id, const QString &name)
+bool Show::storeGroup(int id, const QString &name, StoreMode mode)
 {
     if (m_selection.isEmpty()) {
         emit message(tr("Nothing selected to store in Group %1").arg(id));
         return false;
     }
+    const Group *old = group(id);
+    if (!old)
+        mode = StoreMode::Overwrite;
     Group g = m_groups.value(id);
     g.id = id;
-    g.fixtures = m_selection;
-    // Its matrix layout, unless it's simply one row in order.
-    g.grid = selectionGrid(m_selection);
+    if (mode == StoreMode::Remove) {
+        // The selection comes out of the group (and out of its layout).
+        const bool hasGrid = g.grid.size() == g.fixtures.size();
+        for (int i = int(g.fixtures.size()) - 1; i >= 0; --i)
+            if (m_selection.contains(g.fixtures[i])) {
+                g.fixtures.removeAt(i);
+                if (hasGrid)
+                    g.grid.removeAt(i);
+            }
+        if (g.fixtures.isEmpty()) {
+            deleteGroup(id);
+            return true;
+        }
+    } else if (mode == StoreMode::Merge) {
+        // The selection's new fixtures join the group: in its row when it's one row, else in a
+        // new row under its layout.
+        const bool hasGrid = g.grid.size() == g.fixtures.size();
+        const QVector<QPoint> sel = selectionGrid(m_selection);
+        int below = -1;
+        for (const QPoint &pt : g.grid)
+            below = std::max(below, pt.y());
+        int col = 0;
+        for (int i = 0; i < m_selection.size(); ++i) {
+            const int fid = m_selection[i];
+            if (g.fixtures.contains(fid))
+                continue;
+            g.fixtures << fid;
+            if (hasGrid)
+                g.grid << QPoint(i < sel.size() ? sel[i].x() : col, below + 1 + (i < sel.size() ? sel[i].y() : 0));
+            ++col;
+        }
+    } else {
+        g.fixtures = m_selection;
+        // Its matrix layout, unless it's simply one row in order.
+        g.grid = selectionGrid(m_selection);
+    }
     bool oneRow = true;
     for (int i = 0; i < g.grid.size(); ++i)
         oneRow = oneRow && g.grid[i] == QPoint(i, 0);
@@ -676,20 +722,20 @@ bool Show::storeGroup(int id, const QString &name)
     if (g.name.isEmpty())
         g.name = tr("Group %1").arg(id);
     m_groups.insert(id, g);
-    emit changed(GroupsPart);
+    notifyChanged(GroupsPart);
     return true;
 }
 
 void Show::setGroup(const Group &g)
 {
     m_groups.insert(g.id, g);
-    emit changed(GroupsPart);
+    notifyChanged(GroupsPart);
 }
 
 void Show::deleteGroup(int id)
 {
     if (m_groups.remove(id))
-        emit changed(GroupsPart | SequencesPart | ExecutorsPart);
+        notifyChanged(GroupsPart | SequencesPart | ExecutorsPart);
 }
 
 // ===========================================================================
@@ -716,6 +762,8 @@ bool Show::storePreset(int type, int id, StoreMode mode, const QString &name, st
 {
     if (type < 1 || type > kPresetTypeAll)
         return false;
+    if (mode == StoreMode::Remove)
+        return removeFromPreset(type, id);
     Preset p;
     const bool existed = preset(type, id) != nullptr;
     if (mode == StoreMode::Merge && existed)
@@ -814,20 +862,63 @@ bool Show::storePreset(int type, int id, StoreMode mode, const QString &name, st
         r.presetType = type;
         r.presetId = id;
     }
-    emit changed(PresetsPart | ProgrammerPart);
+    notifyChanged(PresetsPart | ProgrammerPart);
+    return true;
+}
+
+bool Show::removeFromPreset(int type, int id)
+{
+    // The programmer's fixtures and attributes come out of every layer of the preset, and its
+    // running effects out of the preset's effects. Nothing left: the preset goes.
+    const Preset *cur = preset(type, id);
+    if (!cur)
+        return false;
+    Preset p = *cur;
+    bool any = false;
+    for (auto f = m_programmer.cbegin(); f != m_programmer.cend(); ++f) {
+        const Fixture *fx = fixture(f.key());
+        for (auto a = f->cbegin(); a != f->cend(); ++a) {
+            if (p.perFixture.contains(f.key()) && p.perFixture[f.key()].remove(a.key())) {
+                any = true;
+                if (p.perFixture[f.key()].isEmpty())
+                    p.perFixture.remove(f.key());
+            }
+            if (fx && p.perType.contains(fx->typeId) && p.perType[fx->typeId].remove(a.key())) {
+                any = true;
+                if (p.perType[fx->typeId].isEmpty())
+                    p.perType.remove(fx->typeId);
+            }
+            if (p.universal.remove(a.key()))
+                any = true;
+        }
+    }
+    for (const EffectInstance &inst : m_progEffects)
+        for (int i = int(p.effects.size()) - 1; i >= 0; --i)
+            if (p.effects[i].effectId == inst.effectId) {
+                p.effects.removeAt(i);
+                any = true;
+            }
+    if (!any) {
+        emit message(tr("Nothing in the programmer is in Preset %1").arg(presetRef(type, id)));
+        return false;
+    }
+    if (p.universal.isEmpty() && p.perType.isEmpty() && p.perFixture.isEmpty() && p.effects.isEmpty())
+        deletePreset(type, id);
+    else
+        setPreset(p);
     return true;
 }
 
 void Show::setPreset(const Preset &p)
 {
     m_presets[p.type].insert(p.id, p);
-    emit changed(PresetsPart | ProgrammerPart);
+    notifyChanged(PresetsPart | ProgrammerPart);
 }
 
 void Show::deletePreset(int type, int id)
 {
     if (m_presets[type].remove(id))
-        emit changed(PresetsPart | ProgrammerPart | SequencesPart);
+        notifyChanged(PresetsPart | ProgrammerPart | SequencesPart);
 }
 
 bool Show::resolvePreset(int type, int id, int fid, const QString &attribute, double *out) const
@@ -870,7 +961,7 @@ void Show::select(const QVector<int> &fids, SelectMode mode)
     }
     if (m_selection.isEmpty())
         m_gridCursor = QPoint();
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::putProgrammer(int fid, const QString &attribute, ValueRef r)
@@ -923,7 +1014,7 @@ void Show::selectGroup(int id, SelectMode mode)
         m_gridCursor = QPoint(last.x() + 1, last.y());
     m_stepList.clear();
     m_stepIndex = -1;
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 QVector<QPoint> Show::selectionGrid(const QVector<int> &fids) const
@@ -939,13 +1030,13 @@ void Show::nextY()
 {
     if (m_gridCursor.x() > 0)
         m_gridCursor = QPoint(0, m_gridCursor.y() + 1);
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::setGridCursor(const QPoint &at)
 {
     m_gridCursor = QPoint(std::max(0, at.x()), std::max(0, at.y()));
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::placeInGrid(const QVector<int> &fids, const QPoint &at)
@@ -961,7 +1052,7 @@ void Show::placeInGrid(const QVector<int> &fids, const QPoint &at)
         p.rx()++;
     }
     m_gridCursor = p;
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::fillGridArea(const QPoint &from, const QPoint &to)
@@ -973,19 +1064,7 @@ void Show::fillGridArea(const QPoint &from, const QPoint &to)
         m_selGrid[m_selection[i]] = QPoint(x0 + i % width, y0 + i / width);
     const int n = int(m_selection.size());
     m_gridCursor = QPoint(x0 + n % width, y0 + n / width);
-    emit changed(ProgrammerPart);
-}
-
-void Show::setGridPosition(int fid, const QPoint &at)
-{
-    if (!m_selGrid.contains(fid))
-        return;
-    const QPoint was = m_selGrid.value(fid);
-    for (auto it = m_selGrid.begin(); it != m_selGrid.end(); ++it)
-        if (it.key() != fid && it.value() == at)
-            it.value() = was;   // swap with whoever was there
-    m_selGrid[fid] = QPoint(std::max(0, at.x()), std::max(0, at.y()));
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::moveInGrid(const QVector<int> &fidsIn, const QPoint &offsetIn)
@@ -1030,7 +1109,7 @@ void Show::moveInGrid(const QVector<int> &fidsIn, const QPoint &offsetIn)
         m_selGrid[inTheWay[i]] = freed[i];
     for (auto it = moved.begin(); it != moved.end(); ++it)
         m_selGrid[it.key()] = it.value();
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::resetGrid()
@@ -1039,7 +1118,7 @@ void Show::resetGrid()
     for (int i = 0; i < m_selection.size(); ++i)
         m_selGrid.insert(m_selection[i], QPoint(i, 0));
     m_gridCursor = QPoint(int(m_selection.size()), 0);
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::setAttribute(const QString &attribute, double value)
@@ -1047,7 +1126,7 @@ void Show::setAttribute(const QString &attribute, double value)
     for (int fid : workingSelection())
         if (fixtureHas(fid, attribute))
             putProgrammer(fid, attribute, ValueRef{clampValue(fid, attribute, value), 0, 0});
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::setAttribute(int fid, const QString &attribute, double value)
@@ -1055,7 +1134,7 @@ void Show::setAttribute(int fid, const QString &attribute, double value)
     if (!fixtureHas(fid, attribute))
         return;
     putProgrammer(fid, attribute, ValueRef{clampValue(fid, attribute, value), 0, 0});
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::nudgeAttribute(const QString &attribute, double delta)
@@ -1071,7 +1150,7 @@ void Show::nudgeAttribute(const QString &attribute, double delta)
             base = m_lastOutput.value(fid).value(attribute, defaultValue(fid, attribute));
         putProgrammer(fid, attribute, ValueRef{clampValue(fid, attribute, base + delta * valueSpan(fid, attribute)), 0, 0});
     }
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 int Show::flip(const QVector<int> &fidsIn)
@@ -1105,7 +1184,7 @@ int Show::flip(const QVector<int> &fidsIn)
         ++n;
     }
     if (n)
-        emit changed(ProgrammerPart);
+        notifyChanged(ProgrammerPart);
     return n;
 }
 
@@ -1152,7 +1231,7 @@ bool Show::applyPreset(int type, int id)
     }
     for (const EffectInstance &spec : p->effects)
         any |= applyEffectInstance(spec, presetEffectFixtures(spec, workingSelection()));
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
     return any;
 }
 
@@ -1192,7 +1271,7 @@ void Show::removeProgrammerValues(const QVector<int> &fids)
     for (int fid : fids)
         m_programmer.remove(fid);
     removeEffectsFrom(fids);
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::clearSelection()
@@ -1205,14 +1284,14 @@ void Show::clearSelection()
     m_activeSpreadY = Spread::none(Spread::Axis::Y);
     m_selGrid.clear();
     m_gridCursor = QPoint();
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
 }
 
 void Show::clearProgrammer()
 {
     m_programmer.clear();
     m_progEffects.clear();
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
 }
 
 void Show::clearAll()
@@ -1227,7 +1306,7 @@ void Show::clearAll()
     m_gridCursor = QPoint();
     m_programmer.clear();
     m_progEffects.clear();
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
 }
 
 QString Show::clearStep()
@@ -1264,7 +1343,7 @@ QString Show::stepSelection(int direction)
     else if (m_stepIndex < -1)
         m_stepIndex = n - 1;
     m_selection = m_stepIndex < 0 ? m_stepList : QVector<int>{m_stepList[m_stepIndex]};
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
     if (m_stepIndex < 0)
         return tr("All %1 fixtures").arg(n);
     return tr("Fixture %1  (%2 of %3)").arg(idText(m_stepList[m_stepIndex])).arg(m_stepIndex + 1).arg(n);
@@ -1277,7 +1356,7 @@ QString Show::wholeSelection()
     m_selection = m_stepList;
     m_stepList.clear();
     m_stepIndex = -1;
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
     return tr("All %1 fixtures").arg(m_selection.size());
 }
 
@@ -1295,7 +1374,7 @@ bool Show::reselectLast()
     m_stepIndex = -1;
     if (!now.isEmpty())
         m_lastSelection = now;
-    emit changed(ProgrammerPart);
+    notifyChanged(ProgrammerPart);
     return true;
 }
 
@@ -1341,7 +1420,7 @@ int Show::park(const QVector<int> &fids, const QString &attribute, int feature)
             ++n;
         }
     if (n)
-        emit changed(ParkPart);
+        notifyChanged(ParkPart);
     return n;
 }
 
@@ -1368,7 +1447,7 @@ int Show::unpark(const QVector<int> &fids, const QString &attribute, int feature
             m_parked.erase(f);
     }
     if (n)
-        emit changed(ParkPart);
+        notifyChanged(ParkPart);
     return n;
 }
 
@@ -1383,7 +1462,7 @@ bool Show::storeDefaults(StoreMode mode)
     for (auto f = m_programmer.begin(); f != m_programmer.end(); ++f)
         for (auto a = f->begin(); a != f->end(); ++a)
             m_defaults[f.key()][a.key()] = a.value();
-    emit changed(SettingsPart | ProgrammerPart);
+    notifyChanged(SettingsPart | ProgrammerPart);
     return true;
 }
 
@@ -1394,7 +1473,7 @@ void Show::clearDefaults(const QVector<int> &fids)
     else
         for (int fid : fids)
             m_defaults.remove(fid);
-    emit changed(SettingsPart | ProgrammerPart);
+    notifyChanged(SettingsPart | ProgrammerPart);
 }
 
 int Show::home(const QVector<int> &fidsIn, const QStringList &attributes)
@@ -1422,7 +1501,7 @@ int Show::home(const QVector<int> &fidsIn, const QStringList &attributes)
         }
     }
     if (n)
-        emit changed(ProgrammerPart);
+        notifyChanged(ProgrammerPart);
     return n;
 }
 
@@ -1467,7 +1546,7 @@ Sequence &Show::ensureSequence(int id)
         s.id = id;
         s.name = tr("Sequence %1").arg(id);
         it = m_sequences.insert(id, s);
-        emit changed(SequencesPart);
+        notifyChanged(SequencesPart);
     }
     return it.value();
 }
@@ -1475,7 +1554,7 @@ Sequence &Show::ensureSequence(int id)
 void Show::setSequence(const Sequence &s)
 {
     m_sequences.insert(s.id, s);
-    emit changed(SequencesPart | ExecutorsPart);
+    notifyChanged(SequencesPart | ExecutorsPart);
 }
 
 void Show::deleteSequence(int id)
@@ -1487,13 +1566,13 @@ void Show::deleteSequence(int id)
             e.sequenceId = 0;
             e.state = std::make_shared<PlaybackState>();
         }
-    emit changed(SequencesPart | ExecutorsPart);
+    notifyChanged(SequencesPart | ExecutorsPart);
 }
 
 void Show::setSelectedSequence(int id)
 {
     m_selectedSequence = id;
-    emit changed(SequencesPart);
+    notifyChanged(SequencesPart);
 }
 
 bool Show::storeCue(int sequenceId, double number, StoreMode mode, double *storedNumber)
@@ -1503,6 +1582,28 @@ bool Show::storeCue(int sequenceId, double number, StoreMode mode, double *store
         number = s.cues.isEmpty() ? 1.0 : std::floor(s.cues.last().number) + 1.0;
 
     int idx = s.indexOf(number);
+    if (mode == StoreMode::Remove) {
+        // The programmer's fixtures and attributes, and its effects, come out of the cue.
+        if (idx < 0)
+            return false;
+        Cue &c = s.cues[idx];
+        for (auto f = m_programmer.cbegin(); f != m_programmer.cend(); ++f) {
+            if (!c.values.contains(f.key()))
+                continue;
+            for (auto a = f->cbegin(); a != f->cend(); ++a)
+                c.values[f.key()].remove(a.key());
+            if (c.values[f.key()].isEmpty())
+                c.values.remove(f.key());
+        }
+        for (const EffectInstance &inst : m_progEffects)
+            for (int i = int(c.effects.size()) - 1; i >= 0; --i)
+                if (c.effects[i].effectId == inst.effectId)
+                    c.effects.removeAt(i);
+        if (storedNumber)
+            *storedNumber = number;
+        notifyChanged(SequencesPart | ExecutorsPart);
+        return true;
+    }
     Cue cue;
     if (idx >= 0) {
         cue = s.cues[idx];
@@ -1529,7 +1630,7 @@ bool Show::storeCue(int sequenceId, double number, StoreMode mode, double *store
     s.insertSorted(cue);
     if (storedNumber)
         *storedNumber = number;
-    emit changed(SequencesPart | ExecutorsPart);
+    notifyChanged(SequencesPart | ExecutorsPart);
     return true;
 }
 
@@ -1548,7 +1649,7 @@ bool Show::addEmptyCue(int sequenceId, double number, double *storedNumber)
     s.insertSorted(cue);
     if (storedNumber)
         *storedNumber = number;
-    emit changed(SequencesPart | ExecutorsPart);
+    notifyChanged(SequencesPart | ExecutorsPart);
     return true;
 }
 
@@ -1564,7 +1665,7 @@ bool Show::deleteCue(int sequenceId, double number)
     for (Executor &e : m_executors)
         if (e.sequenceId == sequenceId && e.pb().cueIndex >= s->cues.size())
             e.pb().cueIndex = s->cues.size() - 1;
-    emit changed(SequencesPart | ExecutorsPart);
+    notifyChanged(SequencesPart | ExecutorsPart);
     return true;
 }
 
@@ -1582,7 +1683,7 @@ bool Show::addBlueprintLine(int sequenceId, double number, const BlueprintLine &
         idx = s.indexOf(number);
     }
     s.cues[idx].blueprints.append(line);
-    emit changed(SequencesPart);
+    notifyChanged(SequencesPart);
     return true;
 }
 
@@ -1671,7 +1772,7 @@ int Show::dimmerPresetFor(double level, bool create)
     p.name = level >= 0.9995 ? tr("Full") : level <= 0.0005 ? tr("Out") : QStringLiteral("%1%").arg(std::lround(level * 100));
     p.universal.insert("Dimmer", level);
     m_presets[dimmer].insert(id, p);
-    emit changed(PresetsPart);
+    notifyChanged(PresetsPart);
     return id;
 }
 
@@ -1762,7 +1863,7 @@ int Show::removeFromCue(int sequenceId, double number, const QVector<int> &fids)
     for (int fid : fids)
         removed += s->cues[idx].values.remove(fid);
     if (removed)
-        emit changed(SequencesPart);
+        notifyChanged(SequencesPart);
     return removed;
 }
 
@@ -1778,7 +1879,7 @@ bool Show::renumberSequence(int from, int to)
             e.sequenceId = to;
     if (m_selectedSequence == from)
         m_selectedSequence = to;
-    emit changed(SequencesPart | ExecutorsPart);
+    notifyChanged(SequencesPart | ExecutorsPart);
     return true;
 }
 
@@ -1831,7 +1932,7 @@ bool Show::buildCue(int sequenceId, double number)
             built[f.key()][a.key()] = a.value();
     cue.values = built;
     cue.blueprints.clear();
-    emit changed(SequencesPart);
+    notifyChanged(SequencesPart);
     return true;
 }
 
@@ -1851,7 +1952,7 @@ void Show::setEffect(const Effect &e)
     if (copy.spreadId < 0)
         copy.spreadId = spreadForLayout(copy.ownLayout(), QString());
     m_effects.insert(copy.id, copy);
-    emit changed(EffectsPart);
+    notifyChanged(EffectsPart);
 }
 
 int Show::spreadForLayout(const Spread &layout, const QString &name)
@@ -1883,7 +1984,7 @@ int Show::spreadForLayout(const Spread &layout, const QString &name)
         m.name = parts.join(QStringLiteral(" · "));
     }
     m_spreads.insert(m.id, m);
-    emit changed(SpreadsPart);
+    notifyChanged(SpreadsPart);
     return m.id;
 }
 
@@ -1892,7 +1993,7 @@ void Show::deleteEffect(int id)
     if (!m_effects.remove(id))
         return;
     removeEffect(id);
-    emit changed(EffectsPart | SequencesPart);
+    notifyChanged(EffectsPart | SequencesPart);
 }
 
 QStringList Show::blueprintProblems(const BlueprintLine &line) const
@@ -1954,7 +2055,7 @@ bool Show::renumberEffect(int from, int to)
                         id = to;
         }
     fix(m_progEffects);
-    emit changed(EffectsPart | PresetsPart | SequencesPart | ProgrammerPart);
+    notifyChanged(EffectsPart | PresetsPart | SequencesPart | ProgrammerPart);
     return true;
 }
 
@@ -1987,7 +2088,7 @@ bool Show::renumberPreset(int type, int from, int to)
                     pt.presetId = to;
     fixTable(m_programmer);
     fixTable(m_defaults);
-    emit changed(PresetsPart | SequencesPart | EffectsPart | ProgrammerPart);
+    notifyChanged(PresetsPart | SequencesPart | EffectsPart | ProgrammerPart);
     return true;
 }
 
@@ -2068,7 +2169,7 @@ bool Show::renumberFixtures(const QMap<int, int> &oldToNew, QString *error)
     m_programmer = remapKeys(m_programmer, map);
     m_defaults = remapKeys(m_defaults, map);
     m_lastOutput = remapKeys(m_lastOutput, map);
-    emit changed(PatchPart | GroupsPart | PresetsPart | SequencesPart | ProgrammerPart | EffectsPart);
+    notifyChanged(PatchPart | GroupsPart | PresetsPart | SequencesPart | ProgrammerPart | EffectsPart);
     return true;
 }
 
@@ -2084,7 +2185,7 @@ bool Show::renumberGroup(int from, int to)
             for (BlueprintLine &r : c.blueprints)
                 if (r.groupId == from)
                     r.groupId = to;
-    emit changed(GroupsPart | SequencesPart);
+    notifyChanged(GroupsPart | SequencesPart);
     return true;
 }
 
@@ -2105,7 +2206,7 @@ const Shape *Show::shape(int id) const
 void Show::setShape(const Shape &s)
 {
     m_shapes.insert(s.id, s);
-    emit changed(EffectsPart);
+    notifyChanged(EffectsPart);
 }
 
 int Show::nextFreeShapeId() const
@@ -2158,7 +2259,7 @@ bool Show::applyEffect(int effectId, double rate, double size, double spread)
     inst.size = size;
     inst.spread = spread;
     m_progEffects.append(inst);
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
     return true;
 }
 
@@ -2212,7 +2313,7 @@ bool Show::applyEffectInstance(const EffectInstance &spec, const QVector<int> &f
         inst.layoutY = *y;
     }
     m_progEffects.append(inst);
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
     return true;
 }
 
@@ -2221,7 +2322,7 @@ void Show::setProgrammerEffect(int index, const EffectInstance &inst)
     if (index < 0 || index >= m_progEffects.size())
         return;
     m_progEffects[index] = inst;
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
 }
 
 void Show::removeProgrammerEffect(int index)
@@ -2229,7 +2330,7 @@ void Show::removeProgrammerEffect(int index)
     if (index < 0 || index >= m_progEffects.size())
         return;
     m_progEffects.removeAt(index);
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
 }
 
 void Show::removeEffectsFrom(const QVector<int> &fids)
@@ -2240,7 +2341,7 @@ void Show::removeEffectsFrom(const QVector<int> &fids)
         if (m_progEffects[i].fixtures.isEmpty())
             m_progEffects.removeAt(i);
     }
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
 }
 
 void Show::removeEffect(int effectId)
@@ -2248,7 +2349,7 @@ void Show::removeEffect(int effectId)
     for (int i = m_progEffects.size() - 1; i >= 0; --i)
         if (m_progEffects[i].effectId == effectId)
             m_progEffects.removeAt(i);
-    emit changed(ProgrammerPart | EffectsPart);
+    notifyChanged(ProgrammerPart | EffectsPart);
 }
 
 QVector<EffectInstance> Show::cueEffects(const Cue &cue) const
@@ -2314,7 +2415,7 @@ QVector<EffectInstance> Show::cueEffects(const Cue &cue) const
 void Show::setPage(int page)
 {
     m_page = std::max(1, page);
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
 }
 
 QString Show::pageLabel(int page) const
@@ -2331,7 +2432,7 @@ void Show::setPageName(int page, const QString &name)
         m_pageNames.remove(page);
     else
         m_pageNames.insert(page, name.trimmed());
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
 }
 
 QList<int> Show::pages() const
@@ -2384,7 +2485,7 @@ bool Show::assignSequence(int sequenceId, int page, int number)
     e.sequenceId = sequenceId;
     e.rateMaster = 0;
     linkPlaybacks();
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
     return true;
 }
 
@@ -2403,7 +2504,7 @@ void Show::setRateMaster(const RateMaster &m)
     for (Executor &e : m_executors)
         if (e.rateMaster == m.id)
             e.fader = m.faderPosition();
-    emit changed(EffectsPart | ExecutorsPart);
+    notifyChanged(EffectsPart | ExecutorsPart);
 }
 
 bool Show::assignRateMaster(int id, int page, int number)
@@ -2419,7 +2520,7 @@ bool Show::assignRateMaster(int id, int page, int number)
     e.rateMaster = id;
     e.fader = m->faderPosition();
     linkPlaybacks();
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
     return true;
 }
 
@@ -2515,7 +2616,7 @@ bool Show::setExecutorKind(int page, int number, ExecKind kind)
             e.faderFn = FaderFn::Master;
         }
     }
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
     return true;
 }
 
@@ -2525,7 +2626,7 @@ void Show::unassign(int page, int number)
         e->sequenceId = 0;
         e->rateMaster = 0;
         e->state = std::make_shared<PlaybackState>();   // the sequence plays on elsewhere
-        emit changed(ExecutorsPart);
+        notifyChanged(ExecutorsPart);
     }
 }
 
@@ -2586,7 +2687,7 @@ void Show::startFade(Executor &e, int targetIndex, double fade, double delay, bo
     pb.xfadeTarget = -1;
     pb.sinceGo = 0.0;
     pb.stamp = ++m_stamp;
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
 }
 
 void Show::go(Executor &e)
@@ -2597,8 +2698,16 @@ void Show::go(Executor &e)
     m_lastGoSequence = s->id;
     if (e.pb().paused && e.pb().fading) {   // Go resumes a paused fade
         e.pb().paused = false;
-        emit changed(ExecutorsPart);
+        notifyChanged(ExecutorsPart);
         return;
+    }
+    if (const int loaded = e.pb().loadedIndex; loaded >= 0) {
+        // Load: this Go fires the loaded cue, in its own fade.
+        e.pb().loadedIndex = -1;
+        if (loaded < s->cues.size()) {
+            startFade(e, loaded, s->cues[loaded].fade, s->cues[loaded].delay);
+            return;
+        }
     }
     int next = e.pb().cueIndex + 1;
     if (next >= s->cues.size()) {
@@ -2656,14 +2765,23 @@ void Show::off(Executor &e, bool immediately)
         pb.paused = false;
         pb.xfadeTarget = -1;
         pb.goingOff = true;
-        emit changed(ExecutorsPart);
+        notifyChanged(ExecutorsPart);
         return;
     }
     quint64 stamp = e.pb().stamp;
+    const int loaded = e.pb().loadedIndex;   // a loaded cue waits for the next Go
     e.pb() = PlaybackState();
     e.pb().stamp = stamp;
+    e.pb().loadedIndex = loaded;
     e.flashStartedPlayback = false;
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
+}
+
+void Show::loadCue(Executor &e, int cueIndex)
+{
+    const Sequence *s = sequence(e.sequenceId);
+    e.pb().loadedIndex = s && cueIndex >= 0 && cueIndex < s->cues.size() ? cueIndex : -1;
+    notifyChanged(ExecutorsPart);
 }
 
 void Show::togglePause(Executor &e)
@@ -2671,7 +2789,7 @@ void Show::togglePause(Executor &e)
     if (!e.pb().fading)
         return;
     e.pb().paused = !e.pb().paused;
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
 }
 
 void Show::releaseFlash(Executor &e, bool useOffTime)
@@ -2687,16 +2805,16 @@ void Show::pressButton(Executor &e, int button, bool down)
         return;
     e.buttonDown[button] = down;
     if (e.rateMaster) {
-        // A rate master's buttons: Learn (tap tempo), Reset, Freeze.
+        // A rate master's keys: Learn (tap tempo), Reset or Freeze, as set on the executor.
         if (down) {
-            if (button == 0)
-                tapRateMaster(e.rateMaster);
-            else if (button == 1)
-                resetRateMaster(e.rateMaster);
-            else
-                toggleRateMasterFreeze(e.rateMaster);
+            switch (e.rateKeys[button]) {
+            case RateKey::Learn: tapRateMaster(e.rateMaster); break;
+            case RateKey::Reset: resetRateMaster(e.rateMaster); break;
+            case RateKey::Freeze: toggleRateMasterFreeze(e.rateMaster); break;
+            case RateKey::None: break;
+            }
         }
-        emit changed(ExecutorsPart);
+        notifyChanged(ExecutorsPart);
         return;
     }
     const ButtonFn fn = e.buttons[button];
@@ -2720,18 +2838,40 @@ void Show::pressButton(Executor &e, int button, bool down)
         e.flashHeld = down;
         if (down) startForHold(); else releaseFlash(e);
         break;
-    case ButtonFn::Temp:
+    case ButtonFn::Temp: {
         // Like Flash, but in and out with the times: the first cue's fade, then the Off line's.
+        // With a Temp fader on the sequence, the key takes it all the way while held; letting
+        // go turns it off and the Temp fader back to 0, until the fader is moved or the key
+        // pressed again.
         e.tempHeld = down;
+        QList<Executor *> tempFaders;
+        for (Executor *x : executorsOf(e.sequenceId))
+            if (x->faderFn == FaderFn::Temp && executorKind(x->number, x) == ExecKind::Fader)
+                tempFaders << x;
         if (down) {
             if (!e.pb().isOn() || e.pb().goingOff) {
-                gotoCue(e, 0, true);
+                // With a Temp fader the takeover itself fades (in the cue's time), so the cue's
+                // values are there at once; where it showed, partway out, it carries on from.
+                const double shown = e.pb().goingOff ? e.pb().tempShown : -1.0;
+                gotoCue(e, 0, tempFaders.isEmpty());
+                if (!tempFaders.isEmpty())
+                    e.pb().tempShown = shown;
                 e.flashStartedPlayback = true;
+            } else if (!tempFaders.isEmpty()) {
+                e.flashStartedPlayback = true;   // up on the fader: the key's release still ends it
             }
+        } else if (!tempFaders.isEmpty()) {
+            // Let go: out in the Off line's times, whatever the fader said; the fader is back at 0
+            // until it's moved (or the key pressed) again.
+            for (Executor *x : tempFaders)
+                x->fader = 0.0;
+            if (e.flashStartedPlayback && !e.flashHeld && !e.swopHeld)
+                off(e, false);
         } else {
             releaseFlash(e, true);
         }
         break;
+    }
     case ButtonFn::Swop:
         e.swopHeld = down;
         if (down) startForHold(); else releaseFlash(e);
@@ -2749,6 +2889,10 @@ void Show::pressButton(Executor &e, int button, bool down)
         break;
     case ButtonFn::Top:   // back to the first cue, in its fade
         if (down) gotoCue(e, 0, true);
+        break;
+    case ButtonFn::Load:   // the same list: the picked cue waits for the next Go
+        if (down && sequence(e.sequenceId))
+            emit loadRequested(e.page, e.number);
         break;
     case ButtonFn::Goto:   // the screens show the cue list to pick from
         if (down && sequence(e.sequenceId))
@@ -2768,7 +2912,7 @@ void Show::pressButton(Executor &e, int button, bool down)
     case ButtonFn::None:
         break;
     }
-    emit changed(ExecutorsPart);
+    notifyChanged(ExecutorsPart);
 }
 
 void Show::setFader(Executor &e, double v)
@@ -2782,7 +2926,7 @@ void Show::setFader(Executor &e, double v)
             for (Executor &x : m_executors)
                 if (x.rateMaster == m.id)
                     x.fader = v;
-            emit changed(EffectsPart | ExecutorsPart);
+            notifyChanged(EffectsPart | ExecutorsPart);
         }
         return;
     }
@@ -2821,7 +2965,7 @@ void Show::setFader(Executor &e, double v)
                 e.pb().xfadeStart = v > 0.5 ? 1.0 : 0.0;
             }
         }
-        emit changed(ExecutorsPart);
+        notifyChanged(ExecutorsPart);
         return;
     }
 
@@ -2833,11 +2977,18 @@ void Show::setFader(Executor &e, double v)
 
     // Master / Temp: optional auto start and stop
     const bool temp = e.faderFn == FaderFn::Temp;
-    if ((e.autoStart || temp) && old <= kEps && v > kEps && !e.pb().isOn() && s && !s->cues.isEmpty())
+    bool keyHeld = false;   // a Flash, Temp or Swop key on the sequence keeps it on
+    for (const Executor *x : executorsOf(e.sequenceId))
+        keyHeld |= x->flashHeld || x->tempHeld || x->swopHeld;
+    if (temp && v > kEps && e.pb().goingOff && s && !s->cues.isEmpty()) {
+        // Moved by hand while a Temp key's Off fade runs: the fader takes over from there.
+        gotoCue(e, std::clamp(e.pb().cueIndex, 0, int(s->cues.size()) - 1), false);
+    } else if ((e.autoStart || temp) && old <= kEps && v > kEps && !e.pb().isOn() && s && !s->cues.isEmpty()) {
         gotoCue(e, 0, false);
-    else if ((e.autoStop || temp) && v <= kEps && e.pb().isOn() && !e.flashHeld)
+    } else if ((e.autoStop || temp) && v <= kEps && e.pb().isOn() && !keyHeld) {
         off(e, true);
-    emit changed(ExecutorsPart);
+    }
+    notifyChanged(ExecutorsPart);
 }
 
 // ===========================================================================
@@ -2847,26 +2998,26 @@ void Show::setFader(Executor &e, double v)
 void Show::setGrandMaster(double v)
 {
     m_grandMaster = std::clamp(v, 0.0, 1.0);
-    emit changed(SettingsPart);
+    notifyChanged(SettingsPart);
 }
 
 void Show::setBlackout(bool on)
 {
     m_blackout = on;
-    emit changed(SettingsPart);
+    notifyChanged(SettingsPart);
 }
 
 void Show::setHighlight(bool on)
 {
     m_highlight = on;
-    emit changed(SettingsPart);
+    notifyChanged(SettingsPart);
 }
 
 void Show::setDefaultCueTimes(double fade, double delay)
 {
     m_defaultCueFade = std::clamp(fade, 0.0, 3600.0);
     m_defaultCueDelay = std::clamp(delay, 0.0, 3600.0);
-    emit changed(SettingsPart);
+    notifyChanged(SettingsPart);
 }
 
 void Show::setProgFade(bool on, double seconds)
@@ -2874,7 +3025,7 @@ void Show::setProgFade(bool on, double seconds)
     m_progFadeOn = on;
     if (seconds >= 0)
         m_progFadeTime = std::min(seconds, 600.0);
-    emit changed(SettingsPart);
+    notifyChanged(SettingsPart);
 }
 
 // ===========================================================================
@@ -2936,6 +3087,9 @@ QJsonObject Show::toJson() const
     QJsonArray plots;
     for (const Plot &p : m_plots)
         plots.append(p.toJson());
+    QJsonArray images;
+    for (const PoolImage &img : m_images)
+        images.append(img.toJson());
 
     QJsonArray parked;
     for (auto f = m_parked.begin(); f != m_parked.end(); ++f)
@@ -2948,7 +3102,7 @@ QJsonObject Show::toJson() const
         {"presets", presets}, {"sequences", sequences}, {"executors", executors},
         {"defaults", valueTableToJson(m_defaults)},
         {"effects", effects}, {"shapes", shapes}, {"pages", pages},
-        {"views", views}, {"spreads", spreads}, {"parked", parked}, {"rateMasters", rateMasters}, {"macros", macros}, {"plots", plots},
+        {"views", views}, {"spreads", spreads}, {"parked", parked}, {"rateMasters", rateMasters}, {"macros", macros}, {"plots", plots}, {"images", images},
         {"settings", QJsonObject{{"page", m_page}, {"grandMaster", m_grandMaster},
                                  {"selectedSequence", m_selectedSequence},
                                  {"progFade", m_progFadeOn}, {"progFadeTime", m_progFadeTime},
@@ -3036,6 +3190,17 @@ bool Show::fromJson(const QJsonObject &o, QString *error)
         if (p.id > 0)
             m_plots.insert(p.id, p);
     }
+    // The image pool. Shows from before it start with the built-in symbols, and the pictures
+    // their plots kept go into the pool.
+    if (o.contains("images")) {
+        m_images.clear();
+        for (const QJsonValue &v : o["images"].toArray()) {
+            const PoolImage img = PoolImage::fromJson(v.toObject());
+            if (img.id > 0 && !img.data.isEmpty())
+                m_images.insert(img.id, img);
+        }
+    }
+    imagesIntoPool();
     for (const QJsonValue &v : o["macros"].toArray()) {
         const Macro m = Macro::fromJson(v.toObject());
         if (m.id > 0)
@@ -3084,13 +3249,27 @@ bool Show::fromJson(const QJsonObject &o, QString *error)
     m_defaultCueFade = settings["cueFade"].toDouble(2.0);
     m_defaultCueDelay = settings["cueDelay"].toDouble(0.0);
     static const QStringList known = {"format", "version", "name", "fixtureTypes", "patch", "groups",
-                                      "presets", "sequences", "executors", "settings", "effects", "shapes", "macros", "plots",
+                                      "presets", "sequences", "executors", "settings", "effects", "shapes", "macros", "plots", "images",
                                       "pages", "defaults", "views", "spreads", "parked", "rateMasters"};
     for (auto it = o.begin(); it != o.end(); ++it)
         if (!known.contains(it.key()))
             m_extra[it.key()] = it.value();
     linkPlaybacks();
-    emit changed(AllParts);
+    // Playbacks saved running carry on: newer ones keep winning, fades keep their own times.
+    for (Executor &e : m_executors) {
+        PlaybackState &pb = e.pb();
+        if (!pb.isOn())
+            continue;
+        const Sequence *sq = sequence(e.sequenceId);
+        if (!sq || pb.cueIndex >= sq->cues.size()) {
+            pb = PlaybackState();
+            continue;
+        }
+        m_stamp = std::max(m_stamp, pb.stamp);
+        if (pb.fading && !pb.goingOff && pb.timing.isEmpty())
+            pb.timing = cueTiming(sq->cues[pb.cueIndex]);
+    }
+    notifyChanged(AllParts);
     return true;
 }
 
@@ -3107,13 +3286,13 @@ const Spread *Show::spread(int id) const
 void Show::setSpread(const Spread &m)
 {
     m_spreads.insert(m.id, m);
-    emit changed(SpreadsPart | SequencesPart);
+    notifyChanged(SpreadsPart | SequencesPart);
 }
 
 void Show::deleteSpread(int id)
 {
     if (m_spreads.remove(id))
-        emit changed(SpreadsPart | SequencesPart);
+        notifyChanged(SpreadsPart | SequencesPart);
 }
 
 bool Show::storeSpread(int id, const QString &name, int axis, int *secondId)
@@ -3183,7 +3362,7 @@ void Show::setActiveSpread(const Spread &m)
         m_activeSpread.onX = true;
         m_activeSpread.onY = false;
     }
-    emit changed(ProgrammerPart | SpreadsPart);
+    notifyChanged(ProgrammerPart | SpreadsPart);
 }
 
 void Show::setActiveSpread(Spread::Axis axis, const Spread &m)
@@ -3192,13 +3371,13 @@ void Show::setActiveSpread(Spread::Axis axis, const Spread &m)
     one.onX = axis == Spread::Axis::X;
     one.onY = axis == Spread::Axis::Y;
     (axis == Spread::Axis::Y ? m_activeSpreadY : m_activeSpread) = one;
-    emit changed(ProgrammerPart | SpreadsPart);
+    notifyChanged(ProgrammerPart | SpreadsPart);
 }
 
 void Show::setSpreadAxisOn(Spread::Axis axis, bool on)
 {
     (axis == Spread::Axis::Y ? m_spreadYOn : m_spreadXOn) = on;
-    emit changed(ProgrammerPart | SpreadsPart);
+    notifyChanged(ProgrammerPart | SpreadsPart);
 }
 
 const Spread *Show::liveSpread(Spread::Axis axis) const
@@ -3243,8 +3422,239 @@ int Show::setProgrammerTiming(bool delay, const QVector<double> &points, int fea
         }
     }
     if (n)
-        emit changed(ProgrammerPart);
+        notifyChanged(ProgrammerPart);
     return n;
+}
+
+// ===========================================================================
+// Images
+// ===========================================================================
+
+void Show::resetImages()
+{
+    m_images.clear();
+    for (const PoolImage &img : defaultPoolImages())
+        m_images.insert(img.id, img);
+}
+
+const PoolImage *Show::image(int id) const
+{
+    auto it = m_images.constFind(id);
+    return it == m_images.constEnd() ? nullptr : &it.value();
+}
+
+void Show::setImage(const PoolImage &img)
+{
+    if (img.id <= 0)
+        return;
+    m_images.insert(img.id, img);
+    notifyChanged(ImagesPart | PlotsPart);
+}
+
+int Show::nextFreeImage(int from) const
+{
+    int id = std::max(1, from);
+    while (m_images.contains(id))
+        ++id;
+    return id;
+}
+
+bool Show::imageDataUsable(const QByteArray &d)
+{
+    if (PoolImage::dataIsSvg(d))
+        return d.contains("<svg");
+    return d.startsWith("\x89PNG") || d.startsWith("\xFF\xD8") || d.startsWith("GIF8") || d.startsWith("BM");
+}
+
+int Show::addImage(const QByteArray &data, const QString &name, const QString &file, int id)
+{
+    if (!imageDataUsable(data))
+        return 0;
+    PoolImage img;
+    img.id = id > 0 ? id : nextFreeImage();
+    img.name = name;
+    img.data = data;
+    img.file = file;
+    setImage(img);
+    return img.id;
+}
+
+int Show::importImage(const QString &path, int id, QString *error)
+{
+    QFile f(path);
+    if (!f.open(QIODevice::ReadOnly)) {
+        if (error)
+            *error = tr("Couldn't open %1").arg(path);
+        return 0;
+    }
+    const QByteArray data = f.readAll();
+    const QFileInfo info(path);
+    const int got = addImage(data, info.completeBaseName(), info.fileName(), id);
+    if (!got && error)
+        *error = tr("%1 isn't a picture Lumora can use (SVG, PNG, JPEG, BMP or GIF)").arg(info.fileName());
+    return got;
+}
+
+void Show::deleteImage(int id)
+{
+    if (m_images.remove(id))
+        notifyChanged(ImagesPart | PlotsPart);
+}
+
+bool Show::moveImage(int from, int to, bool copy)
+{
+    if (!m_images.contains(from) || to <= 0 || from == to || m_images.contains(to))
+        return false;
+    PoolImage img = m_images.value(from);
+    img.id = to;
+    m_images.insert(to, img);
+    if (!copy) {
+        m_images.remove(from);
+        // What used it follows it to its new number.
+        for (Plot &p : m_plots) {
+            for (PlotItem &it : p.items)
+                if (it.kind == PlotItem::Image) {
+                    if (it.imageId == from)
+                        it.imageId = to;
+                    if (it.litImageId == from)
+                        it.litImageId = to;
+                }
+            if (p.backgroundImageId == from)
+                p.backgroundImageId = to;
+        }
+    }
+    notifyChanged(ImagesPart | PlotsPart);
+    return true;
+}
+
+bool Show::commandLive(const QString &command) const
+{
+    const QString c = command.simplified();
+    // Goto Cue 3 Sequence 5 / Goto Cue 3 Executor 1.201 (in either order, Fade… after it)
+    static const QRegularExpression gotoRx(QStringLiteral("^goto\\b"), QRegularExpression::CaseInsensitiveOption);
+    if (gotoRx.match(c).hasMatch()) {
+        static const QRegularExpression cueRx(QStringLiteral("\\bcue\\s+(\\d+(?:\\.\\d+)?)"), QRegularExpression::CaseInsensitiveOption);
+        static const QRegularExpression seqRx(QStringLiteral("\\bsequence\\s+(\\d+)"), QRegularExpression::CaseInsensitiveOption);
+        static const QRegularExpression exRx(QStringLiteral("\\bexecutor\\s+(?:(\\d+)\\.)?(\\d+)"), QRegularExpression::CaseInsensitiveOption);
+        const auto cue = cueRx.match(c);
+        if (!cue.hasMatch())
+            return false;
+        const double number = cue.captured(1).toDouble();
+        QVector<const Executor *> candidates;
+        if (const auto sq = seqRx.match(c); sq.hasMatch()) {
+            const int id = sq.captured(1).toInt();
+            for (const Executor &e : m_executors)
+                if (e.sequenceId == id)
+                    candidates << &e;
+        } else if (const auto ex = exRx.match(c); ex.hasMatch()) {
+            const int page = ex.captured(1).isEmpty() ? m_page : ex.captured(1).toInt();
+            auto it = m_executors.constFind(page * 1000 + ex.captured(2).toInt());
+            if (it != m_executors.constEnd())
+                candidates << &*it;
+        } else {
+            for (const Executor &e : m_executors)
+                if (e.sequenceId == m_selectedSequence)
+                    candidates << &e;
+        }
+        for (const Executor *e : candidates) {
+            const Sequence *sq = sequence(e->sequenceId);
+            const PlaybackState &pb = e->pb();
+            if (sq && pb.isOn() && !pb.goingOff && pb.cueIndex == sq->indexOf(number))
+                return true;
+        }
+        return false;
+    }
+    // Copy Preset 4.2 At 4.101 (/o), Copy Color.2 At Color.101
+    static const QRegularExpression copyRx(
+        QStringLiteral("^copy\\s+(?:preset\\s+)?([a-z]*\\.?\\d+(?:\\.\\d+)?)\\s+at\\s+(?:preset\\s+)?([a-z]*\\.?\\d+(?:\\.\\d+)?)"),
+        QRegularExpression::CaseInsensitiveOption);
+    if (const auto m = copyRx.match(c); m.hasMatch()) {
+        auto ref = [](const QString &t, int *type, int *id) {
+            const QString head = t.section('.', 0, 0), tail = t.section('.', 1);
+            if (tail.isEmpty())
+                return false;
+            *type = head.toInt() > 0 ? head.toInt() : presetTypeFromName(head);
+            *id = tail.toInt();
+            return *type > 0 && *id > 0;
+        };
+        int t1, i1, t2, i2;
+        if (!ref(m.captured(1), &t1, &i1) || !ref(m.captured(2), &t2, &i2))
+            return false;
+        const Preset *a = preset(t1, i1), *b = preset(t2, i2);
+        if (!a || !b)
+            return false;
+        auto content = [](const Preset &p) {
+            QJsonObject o = p.toJson();
+            o.remove(QStringLiteral("id"));
+            o.remove(QStringLiteral("name"));
+            o.remove(QStringLiteral("type"));
+            return o;
+        };
+        return content(*a) == content(*b);
+    }
+    return false;
+}
+
+int Show::imageUses(int id) const
+{
+    int n = 0;
+    for (const Plot &p : m_plots) {
+        for (const PlotItem &it : p.items)
+            n += it.kind == PlotItem::Image && (it.imageId == id || it.litImageId == id);
+        n += p.backgroundImageId == id;
+    }
+    return n;
+}
+
+bool Show::addImageToPlot(int plotId, int imageId)
+{
+    const PoolImage *img = image(imageId);
+    if (plotId <= 0 || !img)
+        return false;
+    Plot p = m_plots.value(plotId);
+    p.id = plotId;
+    const QRectF b = p.bounds();
+    PlotItem it;
+    it.kind = PlotItem::Image;
+    it.imageId = imageId;
+    it.imageName = img->name;
+    if (img->tintable)
+        it.color = QStringLiteral("#e6e9ee");
+    const bool truss = img->builtin == QLatin1String("truss");
+    it.rect = QRectF(b.isNull() ? 0.0 : b.left(), b.isNull() ? 0.0 : b.bottom() + 24.0, truss ? 192 : 64, truss ? 24 : 64);
+    p.items << it;
+    m_plots.insert(plotId, p);
+    notifyChanged(PlotsPart);
+    return true;
+}
+
+void Show::imagesIntoPool()
+{
+    // Pictures kept inside plots (shows before the image pool): each different one goes into
+    // the pool once (the built-in symbols match the ones already there) and the plot uses it.
+    auto poolId = [this](const QByteArray &data, const QString &name) {
+        for (auto it = m_images.cbegin(); it != m_images.cend(); ++it)
+            if (it->data == data)
+                return it.key();
+        PoolImage img;
+        img.id = nextFreeImage();
+        img.name = QFileInfo(name).completeBaseName();
+        img.file = name;
+        img.data = data;
+        m_images.insert(img.id, img);
+        return img.id;
+    };
+    for (Plot &p : m_plots) {
+        for (PlotItem &it : p.items)
+            if (it.kind == PlotItem::Image && it.imageId <= 0 && !it.image.isEmpty()) {
+                it.imageId = poolId(it.image, it.imageName);
+                it.image.clear();
+            }
+        if (p.backgroundImageId <= 0 && !p.backgroundImage.isEmpty()) {
+            p.backgroundImageId = poolId(p.backgroundImage, p.backgroundName);
+            p.backgroundImage.clear();
+        }
+    }
 }
 
 // ===========================================================================
@@ -3262,7 +3672,7 @@ void Show::setPlot(const Plot &p)
     if (p.id <= 0)
         return;
     m_plots.insert(p.id, p);
-    emit changed(PlotsPart);
+    notifyChanged(PlotsPart);
 }
 
 bool Show::storePlot(int id, const QString &name)
@@ -3274,14 +3684,14 @@ bool Show::storePlot(int id, const QString &name)
     if (!name.isEmpty())
         p.name = name;
     m_plots.insert(id, p);
-    emit changed(PlotsPart);
+    notifyChanged(PlotsPart);
     return true;
 }
 
 void Show::deletePlot(int id)
 {
     if (m_plots.remove(id))
-        emit changed(PlotsPart);
+        notifyChanged(PlotsPart);
 }
 
 bool Show::movePlot(int from, int to, bool copy)
@@ -3293,7 +3703,7 @@ bool Show::movePlot(int from, int to, bool copy)
     if (!copy)
         m_plots.remove(from);
     m_plots.insert(to, p);
-    emit changed(PlotsPart);
+    notifyChanged(PlotsPart);
     return true;
 }
 
@@ -3320,7 +3730,7 @@ int Show::addFixturesToPlot(int id, const QVector<int> &fids)
         ++n;
     }
     m_plots.insert(id, p);
-    emit changed(PlotsPart);
+    notifyChanged(PlotsPart);
     return n;
 }
 
@@ -3337,7 +3747,7 @@ bool Show::addObjectToPlot(int id, const QString &object)
     it.rect = QRectF(b.isNull() ? 0.0 : b.left(), b.isNull() ? 0.0 : b.bottom() + 24.0, 120, 56);
     p.items << it;
     m_plots.insert(id, p);
-    emit changed(PlotsPart);
+    notifyChanged(PlotsPart);
     return true;
 }
 
@@ -3356,7 +3766,7 @@ void Show::setMacro(const Macro &m)
     if (m.id <= 0)
         return;
     m_macros.insert(m.id, m);
-    emit changed(MacrosPart);
+    notifyChanged(MacrosPart);
 }
 
 bool Show::storeMacro(int id, const QString &name)
@@ -3368,7 +3778,7 @@ bool Show::storeMacro(int id, const QString &name)
     if (!name.isEmpty())
         m.name = name;
     m_macros.insert(id, m);
-    emit changed(MacrosPart);
+    notifyChanged(MacrosPart);
     return true;
 }
 
@@ -3376,7 +3786,7 @@ void Show::deleteMacro(int id)
 {
     offMacro(id);
     if (m_macros.remove(id))
-        emit changed(MacrosPart);
+        notifyChanged(MacrosPart);
 }
 
 bool Show::moveMacro(int from, int to, bool copy)
@@ -3390,7 +3800,7 @@ bool Show::moveMacro(int from, int to, bool copy)
         m_macros.remove(from);
     }
     m_macros.insert(to, m);
-    emit changed(MacrosPart);
+    notifyChanged(MacrosPart);
     return true;
 }
 
@@ -3421,7 +3831,7 @@ void Show::goMacro(int id)
     if (!running)
         m_macroRuns.append({id, 0, 0.0, false});
     processMacros();
-    emit changed(MacrosPart);
+    notifyChanged(MacrosPart);
 }
 
 void Show::offMacro(int id)
@@ -3431,7 +3841,7 @@ void Show::offMacro(int id)
         if (id == 0 || m_macroRuns[i].id == id)
             m_macroRuns.removeAt(i);
     if (int(m_macroRuns.size()) != before)
-        emit changed(MacrosPart);
+        notifyChanged(MacrosPart);
 }
 
 void Show::tickMacros(double dt)
@@ -3446,7 +3856,7 @@ void Show::tickMacros(double dt)
         }
     if (due) {
         processMacros();
-        emit changed(MacrosPart);
+        notifyChanged(MacrosPart);
     }
 }
 
@@ -3564,7 +3974,7 @@ bool Show::setAppearance(const QString &what, int id, const QString &color)
         if (!seq)
             return false;
         seq->color = color;
-        emit changed(SequencesPart | ExecutorsPart);
+        notifyChanged(SequencesPart | ExecutorsPart);
         return true;
     }
     if (what == QLatin1String("ratemaster")) {
@@ -3581,7 +3991,7 @@ bool Show::setAppearance(const QString &what, int id, const QString &color)
         if (it == m_macros.end())
             return false;
         it->color = color;
-        emit changed(MacrosPart);
+        notifyChanged(MacrosPart);
         return true;
     }
     return false;
@@ -3662,7 +4072,7 @@ bool Show::storeView(int id, const QString &name)
     if (v.name.isEmpty())
         v.name = tr("View %1").arg(id);
     m_views.insert(id, v);
-    emit changed(ViewsPart);
+    notifyChanged(ViewsPart);
     return true;
 }
 
@@ -3671,7 +4081,7 @@ void Show::setView(const StoredView &v)
     if (v.id <= 0)
         return;
     m_views.insert(v.id, v);
-    emit changed(ViewsPart);
+    notifyChanged(ViewsPart);
 }
 
 void Show::setViews(const QList<StoredView> &views)
@@ -3680,13 +4090,13 @@ void Show::setViews(const QList<StoredView> &views)
     for (const StoredView &v : views)
         if (v.id > 0)
             m_views.insert(v.id, v);
-    emit changed(ViewsPart);
+    notifyChanged(ViewsPart);
 }
 
 void Show::deleteView(int id)
 {
     if (m_views.remove(id))
-        emit changed(ViewsPart);
+        notifyChanged(ViewsPart);
 }
 
 int Show::nextFreeViewId() const

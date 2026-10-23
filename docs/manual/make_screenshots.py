@@ -18,10 +18,8 @@ OUT = os.path.join(HERE, 'images')
 # name: (arguments, extra environment, crop box or None)
 SHOTS = {
     'overview': (['--page', '0', '--run', 'Fixture 1 Thru 8;At 80;Color.9'], {}, None),
-    'sequences': (['--page', '1'], {}, None),
     'effects': (['--page', '2', '--edit-effect', '1'], {}, None),
     'effect-relative': (['--page', '2', '--edit-effect', '19'], {}, (700, 55, 1500, 735)),
-    'playback': (['--page', '3', '--run', 'Go Executor 201'], {'LUMORA_SHOT_DELAY': '4000'}, None),
     'patch': (['--page', '5'], {}, None),
     'outputs': (['--page', '6'], {}, None),
     'midi': (['--page', '7'], {}, (0, 0, 1500, 850)),
@@ -66,17 +64,21 @@ SHOTS = {
     'plot': (['--page', '4', '--run', 'Go Executor 201;Fixture 11 Thru 14;At 80;Color.1;Clear;Fixture 21.1 Thru 21.8;At 100;Color.9'],
              {'LUMORA_SHOT_DELAY': '3500'}, (120, 55, 1500, 735)),
     'macros': (['--page', '0', '--add-window', 'macros', '--run', 'Macro 2'], {}, (120, 310, 1500, 735)),
+    'images': (['--page', '4', '--run', 'Go Executor 201'], {'LUMORA_SHOT_DELAY': '2500'}, (0, 52, 1500, 740)),
     'help': (['--page', '0', '--add-window', 'help'], {}, (120, 310, 1500, 735)),
     'fixture-library': (['--library-shot', '{file}', '--library-search', '1:spot'], {}, None),
     'fixture-library-builtin': (['--library-shot', '{file}', '--library-search', '-1:'], {}, None),
 }
 SPECIAL = {
     'fixture-editor': ({'LUMORA_EDITOR_SHOT': 'generic/moving-spot|{file}'}, ['--page', '0']),
-    'preset-picker': ({'LUMORA_PICKER_SHOT': '{file}'}, ['--page', '0']),
     'macro-editor': ({'LUMORA_MACRO_SHOT': '2|{file}'}, ['--page', '0']),
     'goto': ({'LUMORA_DIALOG_SHOT': '{file}'}, ['--page', '3', '--run', 'Go Executor 201;Go Executor 201;Goto Executor 201']),
     'link-picker': ({'LUMORA_LINK_SHOT': '{file}'}, ['--page', '0']),
     'preset-builder': ({'LUMORA_OPEN_BUILDER': '1', 'LUMORA_DIALOG_SHOT': '{file}'}, ['--page', '0']),
+    'loading': ({'LUMORA_SPLASH_SHOT': '{file}'}, []),
+    'store-existing': ({'LUMORA_CHOICE_SHOT': '{file}'}, ['--page', '0', '--run', 'Fixture 1 Thru 4;At Color.1;Store Preset 4.1']),
+    'load': ({'LUMORA_DIALOG_SHOT': '{file}'}, ['--page', '3', '--run', 'Go Executor 201;Load Cue 3 Executor 201;Load Executor 201']),
+    'macro-library': ({'LUMORA_OPEN_MACRO_LIBRARY': '1', 'LUMORA_DIALOG_SHOT': '{file}'}, ['--page', '0']),
 }
 
 
@@ -88,7 +90,7 @@ def run(binary, args, env_extra, file):
     env.update({k: v.replace('{file}', file) for k, v in env_extra.items()})
     own = any('{file}' in a for a in args)   # the option saves its own picture
     cmd = [binary, '--demo'] + [a.replace('{file}', file) for a in args]
-    if not own and not any(k in env_extra for k in ('LUMORA_EDITOR_SHOT', 'LUMORA_PICKER_SHOT', 'LUMORA_MACRO_SHOT', 'LUMORA_DIALOG_SHOT', 'LUMORA_LINK_SHOT')):
+    if not own and not any(k in env_extra for k in ('LUMORA_EDITOR_SHOT', 'LUMORA_PICKER_SHOT', 'LUMORA_MACRO_SHOT', 'LUMORA_DIALOG_SHOT', 'LUMORA_LINK_SHOT', 'LUMORA_SPLASH_SHOT', 'LUMORA_CHOICE_SHOT')):
         cmd += ['--screenshot', file]
     subprocess.run(cmd, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=90)
 

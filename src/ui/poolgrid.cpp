@@ -155,6 +155,17 @@ void PoolTiles::paintEvent(QPaintEvent *)
         p.setPen(theme::muted);
         p.drawText(r.adjusted(7, 6, -6, -4), Qt::AlignLeft | Qt::AlignTop, QString::number(id));
         QRectF labelRect = r.adjusted(7, 20, -7, -5);
+        if (item->picture && !item->image.isNull()) {
+            // The picture over the tile, the name in a line along the bottom.
+            const QRectF area = r.adjusted(22, 6, -6, -18);
+            const QImage scaled = item->image.scaled(area.size().toSize(), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+            p.drawImage(QPointF(area.center().x() - scaled.width() / 2.0, area.center().y() - scaled.height() / 2.0), scaled);
+            p.setFont(theme::uiFont(8, QFont::Medium));
+            p.setPen(theme::text);
+            const QRectF nameRect = r.adjusted(6, r.height() - 17, -6, -3);
+            p.drawText(nameRect, Qt::AlignLeft | Qt::AlignVCenter, p.fontMetrics().elidedText(item->label, Qt::ElideRight, int(nameRect.width())));
+            continue;
+        }
         if (!item->image.isNull()) {
             const int size = int(r.height()) - 12;
             p.drawPixmap(QPointF(r.right() - size - 6, r.top() + 6), goboPixmap(item->image, size));
@@ -246,7 +257,11 @@ PoolPanel::PoolPanel(const QString &title, QWidget *parent) : QWidget(parent)
     auto *v = new QVBoxLayout(this);
     v->setContentsMargins(0, 0, 0, 0);
     v->setSpacing(4);
-    m_header = new QHBoxLayout;
+    // The bar above the tiles: paging, and whatever the pool adds there. A pool locked to its
+    // place hides the whole bar.
+    m_headerBox = new QWidget(this);
+    m_header = new QHBoxLayout(m_headerBox);
+    m_header->setContentsMargins(0, 0, 0, 0);
     m_header->setSpacing(6);
     auto *label = new QLabel(title, this);
     label->setProperty("role", "title");
@@ -272,7 +287,7 @@ PoolPanel::PoolPanel(const QString &title, QWidget *parent) : QWidget(parent)
     m_header->addWidget(m_at);
     m_header->addWidget(m_down);
     m_header->addStretch(1);
-    v->addLayout(m_header);
+    v->addWidget(m_headerBox);
 
     m_tiles = new PoolTiles(this);   // fills the window; the wheel scrolls by rows
     v->addWidget(m_tiles, 1);
@@ -304,6 +319,7 @@ void PoolPanel::syncNav()
     if (!m_at->hasFocus())
         m_at->setText(QString::number(m_tiles->position()));
     const bool locked = m_tiles->locked();
+    m_headerBox->setVisible(!locked);
     m_up->setEnabled(!locked && !m_tiles->atTop());
     m_down->setEnabled(!locked);
     m_at->setReadOnly(locked);

@@ -12,6 +12,8 @@ namespace lumora {
 enum class MacroWait { Follow, Wait };
 
 struct MacroLine {
+    MacroLine() = default;
+    MacroLine(const QString &cmd, MacroWait then = MacroWait::Follow, double after = 0.0) : command(cmd), wait(then), time(after) {}
     QString command;
     MacroWait wait = MacroWait::Follow;
     double time = 0.0;      // Follow: seconds before the next line

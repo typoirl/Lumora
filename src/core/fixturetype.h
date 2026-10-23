@@ -31,6 +31,9 @@ struct ChannelDef {
     double defaultValue = 0.0;
     double highlightValue = 1.0;
     bool hasHighlight = true;   // false: Highlight leaves this channel alone
+    // Snap: in a fade it jumps to the new value as soon as the fade (after its delay) starts,
+    // instead of passing through the values in between: a gobo or color wheel slot, a macro.
+    bool snap = false;
     QVector<ChannelSet> sets;
     // Subfixtures (two levels): cell 0 is the fixture itself; cell 1… a subfixture
     // (a head, a pixel); sub 1… a subfixture of that one (a head's ring, its beam).
@@ -99,6 +102,12 @@ private:
         QVector<QPair<int, int>> paths;
     };
     std::shared_ptr<const Parts> m_parts;
+    // attributes(), sorted, for the attribute names it was sorted from: live views ask for it
+    // every repaint, and the channels rarely change.
+    struct SortedAttributes {
+        QStringList names, sorted;
+    };
+    mutable std::shared_ptr<const SortedAttributes> m_sorted;
 };
 
 struct FixtureType {
@@ -118,8 +127,11 @@ struct FixtureType {
     // Types from before highlight could be left out of a channel: finalize() keeps highlight on
     // the dimmer, color and shutter channels only, the way it always worked.
     bool highlightsExplicit = false;
+    // Types from before snapping: finalize() gives gobos, color wheels and macros Snap.
+    bool snapsExplicit = false;
 
     const FixtureMode *mode(const QString &name) const;
+    static bool snapsByDefault(const QString &attribute);   // gobo and color wheels, macros
 
     QJsonObject toJson() const;
     static FixtureType fromJson(const QJsonObject &o);
@@ -146,7 +158,9 @@ public:
     // Lumora's own format (.lft), written by the fixture editor: FixtureType::toJson.
     bool loadLftFile(const QString &path, QString *error = nullptr, QString *typeId = nullptr);
     bool loadFile(const QString &path, QString *error = nullptr, QString *typeId = nullptr);   // by extension
-    int loadDirectory(const QString &dir);   // recursive .json (OFL), .gdtf and .qxf; returns number loaded
+    // Recursive .json (OFL), .gdtf, .qxf and .lft; returns the number loaded. progress (when
+    // given) hears about each file before it's read: (files done, files in all, the file).
+    int loadDirectory(const QString &dir, const std::function<void(int, int, const QString &)> &progress = {});
 
     // The id GDTF and QLC+ fixtures get: "manufacturer/name", lower case, dashes for the rest.
     static QString makeTypeId(const QString &manufacturer, const QString &name);

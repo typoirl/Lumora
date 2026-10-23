@@ -49,4 +49,13 @@ private:
 
 void openMacroEditor(AppContext *ctx, int id, QWidget *parent);
 
+// Lumora's macro library: ready-made macros to import into the pool, from the first free slot at
+// or after `fromSlot`.
+class MacroLibraryDialog : public QDialog {
+    Q_OBJECT
+public:
+    MacroLibraryDialog(AppContext *ctx, int fromSlot, QWidget *parent = nullptr);
+    static void open(AppContext *ctx, int fromSlot, QWidget *parent);
+};
+
 } // namespace lumora

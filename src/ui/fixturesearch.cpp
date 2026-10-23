@@ -142,12 +142,6 @@ void FixtureSearch::setSearchText(const QString &text)
     populate();
 }
 
-void FixtureSearch::debugPick(int row)
-{
-    if (row >= 0 && row < m_list->topLevelItemCount())
-        m_list->setCurrentItem(m_list->topLevelItem(row));
-}
-
 void FixtureSearch::focusSearch()
 {
     m_search->setFocus();

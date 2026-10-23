@@ -3,6 +3,7 @@
 
 #include "appcontext.h"
 #include "theme.h"
+#include "uiutil.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -295,7 +296,7 @@ SelectionMatrixPanel::SelectionMatrixPanel(AppContext *ctx, QWidget *parent) : Q
     v->addWidget(scroll, 1);
     connect(next, &QToolButton::clicked, this, [this]() { m_ctx->run(QStringLiteral("NextY")); });
     connect(oneRow, &QToolButton::clicked, this, [this]() { m_ctx->show->resetGrid(); });
-    connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, ctx->show, [this](Show::Parts p) {
         if (p & (Show::ProgrammerPart | Show::SpreadsPart))
             refresh();
     });
@@ -408,7 +409,7 @@ SpreadModifierPanel::SpreadModifierPanel(AppContext *ctx, QWidget *parent) : QWi
     note->setWordWrap(true);
     v->addWidget(note);
     v->addStretch(1);
-    connect(ctx->show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, ctx->show, [this](Show::Parts p) {
         if (p & (Show::ProgrammerPart | Show::SpreadsPart))
             refresh();
     });

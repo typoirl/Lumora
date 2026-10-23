@@ -10,6 +10,7 @@
 #include "effectsui.h"
 #include "executorbar.h"
 #include "controlview.h"
+#include "imagesui.h"
 #include "helpview.h"
 #include "matrixui.h"
 #include "media.h"
@@ -102,9 +103,8 @@ GroupsPanel::GroupsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Group
     Show *show = ctx->show;
     connect(tiles(), &PoolTiles::tileClicked, this, [this, show](int id, bool occupied, Qt::KeyboardModifiers mods) {
         if (m_ctx->storeArmed()) {
-            if (show->storeGroup(id))
-                emit m_ctx->status(tr("Group %1 stored").arg(id));
             m_ctx->setStoreArmed(false);
+            m_ctx->run(QStringLiteral("Store Group %1").arg(id));   // asks when it exists
             return;
         }
         if (m_ctx->tapTarget(QStringLiteral("Group %1").arg(id), show->group(id) ? show->group(id)->name : QString()))
@@ -129,7 +129,7 @@ GroupsPanel::GroupsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Group
         ed->addAction(tr("Delete"), [show, id]() { show->deleteGroup(id); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & (Show::GroupsPart | Show::ProgrammerPart | Show::PatchPart))
             refresh();
     });
@@ -278,7 +278,7 @@ SpreadsPanel::SpreadsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Spr
         ed->addAction(tr("Delete"), [this, id]() { m_ctx->run(QStringLiteral("Delete Spread %1").arg(id)); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & (Show::SpreadsPart | Show::ProgrammerPart))
             refresh();
     });
@@ -327,7 +327,7 @@ ExecutorPagesPanel::ExecutorPagesPanel(AppContext *ctx, QWidget *parent) : PoolP
         ed->addAction(tr("Go to page %1").arg(id), [show, id]() { show->setPage(id); });
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & (Show::ExecutorsPart | Show::SequencesPart))
             refresh();
     });
@@ -712,7 +712,7 @@ ViewsPanel::ViewsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Views")
             ed->addAction(tr("Delete view"), [this, id]() { m_ctx->run(QStringLiteral("Delete View %1").arg(id)); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & Show::ViewsPart)
             refresh();
     });
@@ -785,9 +785,8 @@ PresetsPanel::PresetsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Pre
 
     connect(tiles(), &PoolTiles::tileClicked, this, [this, show](int id, bool occupied, Qt::KeyboardModifiers) {
         if (m_ctx->storeArmed()) {
-            if (show->storePreset(m_type, id))
-                emit m_ctx->status(tr("Preset %1 stored").arg(presetRef(m_type, id)));
             m_ctx->setStoreArmed(false);
+            m_ctx->run(QStringLiteral("Store Preset %1.%2").arg(m_type).arg(id));   // asks when it exists
             return;
         }
         if (m_ctx->tapTarget(presetRef(m_type, id),
@@ -823,7 +822,7 @@ PresetsPanel::PresetsPanel(AppContext *ctx, QWidget *parent) : PoolPanel(tr("Pre
         ed->addAction(tr("Delete"), [show, type, id]() { show->deletePreset(type, id); }, QIcon(), true);
         ed->popup(pos);
     });
-    connect(show, &Show::changed, this, [this](Show::Parts p) {
+    onShowChanged(this, show, [this](Show::Parts p) {
         if (p & (Show::PresetsPart | Show::ProgrammerPart | Show::PatchPart))
             refresh();
     });
@@ -925,6 +924,7 @@ const QList<PanelType> &panelTypes()
              grid->setGridDefaults(101, 0, 0);   // from 101, as many as fit
              return grid;
          }},
+        {"images", QObject::tr("Images"), [](AppContext *c, QWidget *p) -> QWidget * { return new ImagesPanel(c, p); }},
         {"executorpages", QObject::tr("Executor pages"), [](AppContext *c, QWidget *p) -> QWidget * { return new ExecutorPagesPanel(c, p); }},
         {"park", QObject::tr("Park"), [](AppContext *c, QWidget *p) -> QWidget * { return new ParkView(c, p); }},
         {"ratemasters", QObject::tr("Masters"), [](AppContext *c, QWidget *p) -> QWidget * { return new RateMastersPanel(c, p); }},
@@ -976,6 +976,9 @@ public:
         m_tabs->setExpanding(false);
         m_tabs->setDrawBase(false);
         m_tabs->setElideMode(Qt::ElideRight);
+        // Never scroll: a narrow window squeezes its tabs (eliding their titles) instead of
+        // sliding them out of sight behind scroll arrows, where they looked gone.
+        m_tabs->setUsesScrollButtons(false);
         m_tabs->setCursor(Qt::ArrowCursor);
         m_tabs->installEventFilter(this);
         m_tabs->setToolTip(QObject::tr("Drag a tab onto another window to stack it, or onto empty space to give it its own window"));
@@ -1020,10 +1023,23 @@ public:
         });
     }
 
+    // A tab always says what it is: the panel's title, or its kind's name while it has none.
+    static QString tabText(QWidget *panel, const QString &title)
+    {
+        if (!title.trimmed().isEmpty())
+            return title;
+        const QString type = panel->property("panelType").toString();
+        for (const PanelType &t : panelTypes())
+            if (t.id == type)
+                return t.title;
+        return QObject::tr("Window");
+    }
     void addTab(QWidget *panel, const QString &title, bool makeCurrent = true)
     {
         m_stack->addWidget(panel);
-        const int i = m_tabs->addTab(title);
+        const int i = m_tabs->addTab(tabText(panel, title));
+        if (panel->testAttribute(Qt::WA_SetWindowIcon))   // its own icon, not the app's it inherits
+            m_tabs->setTabIcon(i, panel->windowIcon());
         auto *close = new QToolButton(m_tabs);
         close->setObjectName("tabClose");
         close->setText(QStringLiteral("\u00d7"));
@@ -1039,10 +1055,15 @@ public:
         if (makeCurrent)
             m_tabs->setCurrentIndex(i);
         m_stack->setCurrentIndex(m_tabs->currentIndex());
+        QObject::connect(panel, &QWidget::windowIconChanged, m_tabs, [this, panel](const QIcon &icon) {
+            const int at = m_stack->indexOf(panel);
+            if (at >= 0)
+                m_tabs->setTabIcon(at, panel->testAttribute(Qt::WA_SetWindowIcon) ? icon : QIcon());
+        });
         QObject::connect(panel, &QWidget::windowTitleChanged, m_tabs, [this, panel](const QString &title) {
             const int at = m_stack->indexOf(panel);
             if (at >= 0)
-                m_tabs->setTabText(at, title);
+                m_tabs->setTabText(at, tabText(panel, title));
         });
     }
     QWidget *takeTab(int i)
@@ -1454,20 +1475,15 @@ PanelFrame *Workspace::createFrame(const QRect &cells)
     return f;
 }
 
-QWidget *Workspace::debugOptions(const QString &typeId, const QJsonObject &options, bool openEditor)
+void Workspace::debugOptions(const QString &typeId, const QJsonObject &options)
 {
     for (PanelFrame *f : m_frames)
         for (int i = 0; i < f->count(); ++i)
             if (f->panel(i)->property("panelType").toString() == typeId) {
                 if (PanelOptions *o = optionsOf(f->panel(i)); o && !options.isEmpty())
                     o->loadOptions(options);
-                if (openEditor) {
-                    f->showOptionsAt(i, f->mapToGlobal(QPoint(20, 20)));
-                    return QApplication::activePopupWidget();
-                }
-                return f->panel(i);
+                return;
             }
-    return nullptr;
 }
 
 void panelStateChanged(QWidget *panel)
@@ -1509,6 +1525,10 @@ QWidget *Workspace::createPanel(const QString &requestedId, const QJsonObject &o
             QObject::connect(content, &QWidget::windowTitleChanged, w, [w, fallback](const QString &title) {
                 w->setWindowTitle(title.isEmpty() ? fallback : title);
             });
+            // A mark on the tab (a locked executor page): the window's own icon, when it sets one.
+            auto ownIcon = [content]() { return content->testAttribute(Qt::WA_SetWindowIcon) ? content->windowIcon() : QIcon(); };
+            w->setWindowIcon(ownIcon());
+            QObject::connect(content, &QWidget::windowIconChanged, w, [w, ownIcon]() { w->setWindowIcon(ownIcon()); });
             return w;
         }
     return nullptr;
@@ -1673,17 +1693,22 @@ void Workspace::mousePressEvent(QMouseEvent *ev)
         showAddMenu(ev->globalPosition().toPoint(), nullptr, cellAt(ev->position().toPoint()));
 }
 
-void Workspace::paintEvent(QPaintEvent *)
+void Workspace::paintEvent(QPaintEvent *ev)
 {
     QPainter p(this);
     p.setRenderHint(QPainter::Antialiasing);
-    // Grid dots where windows can snap.
+    // Grid dots where windows can snap: only those in the part being repainted (a window
+    // repainting repaints the workspace behind it).
     const double cw = double(width()) / kCols, ch = double(height()) / m_rows;
+    const QRect area = ev->rect().adjusted(-2, -2, 2, 2);
+    const int x0 = std::max(0, int(std::floor(area.left() / cw))), x1 = std::min(kCols, int(std::ceil(area.right() / cw)));
+    const int y0 = std::max(0, int(std::floor(area.top() / ch))), y1 = std::min(m_rows, int(std::ceil(area.bottom() / ch)));
     p.setPen(Qt::NoPen);
     p.setBrush(m_guides ? theme::faint : theme::line);
-    for (int y = 0; y <= m_rows; ++y)
-        for (int x = 0; x <= kCols; ++x)
-            p.drawEllipse(QPointF(x * cw, y * ch), 1.4, 1.4);
+    for (int y = y0; y <= y1; ++y)
+        for (int x = x0; x <= x1; ++x)
+            if (area.contains(QPoint(int(x * cw), int(y * ch))))
+                p.drawEllipse(QPointF(x * cw, y * ch), 1.4, 1.4);
     if (m_dropPreview.isValid()) {
         QColor fill = theme::live;
         fill.setAlpha(40);

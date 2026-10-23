@@ -24,6 +24,7 @@ struct PoolItem {
     QColor tag;          // feature color strip
     QColor swatch;       // optional color chip (color presets)
     QImage image;        // optional picture (gobo presets)
+    bool picture = false;   // the picture fills the tile, with the name under it (the image pool)
     QString badge;       // optional short marker in the corner (preset scope)
     QString tooltip;
     bool active = false; // e.g. the selected sequence
@@ -87,7 +88,7 @@ private:
 
 // Titled panel holding a PoolTiles grid, with room for header controls. The header starts with
 // ▲ / the slot in the top-left corner (type one to go there) / ▼. Right-click the tab to set the
-// grid (tiles wide × tall), the tile size, and to lock the position.
+// grid (tiles wide × tall), the tile size, and to lock the position (which hides the header bar).
 class PoolPanel : public QWidget, public PanelOptions {
     Q_OBJECT
 public:
@@ -104,6 +105,7 @@ private:
     void syncNav();
     PoolTiles *m_tiles = nullptr;
     QHBoxLayout *m_header = nullptr;
+    QWidget *m_headerBox = nullptr;
     QToolButton *m_up = nullptr;
     QToolButton *m_down = nullptr;
     QLineEdit *m_at = nullptr;

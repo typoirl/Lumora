@@ -13,6 +13,7 @@
 
 #include <algorithm>
 #include <cmath>
+#include <tuple>
 
 namespace lumora {
 
@@ -228,16 +229,24 @@ void FixtureMode::buildParts()
 
 QStringList FixtureMode::attributes() const
 {
-    QStringList out;
+    QStringList names;
+    names.reserve(channels.size());
     for (const ChannelDef &c : channels)
-        if (!out.contains(c.attribute))
-            out << c.attribute;
-    std::stable_sort(out.begin(), out.end(), [](const QString &a, const QString &b) {
-        int fa = int(featureOf(a)), fb = int(featureOf(b));
-        if (fa != fb)
-            return fa < fb;
-        return attributeSortKey(a) < attributeSortKey(b);
-    });
+        if (!names.contains(c.attribute))
+            names << c.attribute;
+    if (m_sorted && m_sorted->names == names)
+        return m_sorted->sorted;
+    // By feature, then in the usual order within it; the sort keys worked out once each.
+    QVector<std::tuple<int, int, int>> keys;   // feature, sort key, position
+    keys.reserve(names.size());
+    for (int i = 0; i < names.size(); ++i)
+        keys.append({int(featureOf(names[i])), attributeSortKey(names[i]), i});
+    std::sort(keys.begin(), keys.end());   // the position keeps it stable
+    QStringList out;
+    out.reserve(names.size());
+    for (const auto &k : keys)
+        out << names[std::get<2>(k)];
+    m_sorted = std::make_shared<const SortedAttributes>(SortedAttributes{names, out});
     return out;
 }
 
@@ -247,6 +256,13 @@ const FixtureMode *FixtureType::mode(const QString &n) const
         if (m.name == n)
             return &m;
     return modes.isEmpty() ? nullptr : &modes.first();
+}
+
+bool FixtureType::snapsByDefault(const QString &a)
+{
+    static const QStringList wheels = {"Gobo1", "Gobo2", "Gobo3", "Color1", "Color2", "AnimationWheel"};
+    static const QStringList macros = {"ColorMacro", "PositionMacro", "Ctl_Macro", "Effects", "Ctl_Mode"};
+    return wheels.contains(a) || macros.contains(a);
 }
 
 void FixtureType::finalize()
@@ -268,6 +284,12 @@ void FixtureType::finalize()
                 c.hasHighlight = f == Feature::Dimmer || f == Feature::Color || c.attribute == QLatin1String("Shutter");
             }
         highlightsExplicit = true;
+    }
+    if (!snapsExplicit) {
+        for (FixtureMode &m : modes)
+            for (ChannelDef &c : m.channels)
+                c.snap = snapsByDefault(c.attribute);
+        snapsExplicit = true;
     }
     for (FixtureMode &m : modes) {
         m.ensureVirtualDimmer();
@@ -347,6 +369,8 @@ QJsonObject FixtureType::toJson() const
                           {"default", c.defaultValue}};
             if (c.hasHighlight)
                 o["highlight"] = c.highlightValue;
+            if (c.snap)
+                o["snap"] = true;
             if (c.dmxFrom != 0.0 || c.dmxTo != 1.0)
                 o["dmx"] = QJsonArray{c.dmxFrom, c.dmxTo};
             if (c.fine >= 0)
@@ -376,7 +400,7 @@ QJsonObject FixtureType::toJson() const
     }
     QJsonObject o{{"id", id}, {"manufacturer", manufacturer}, {"name", name},
                   {"shortName", shortName}, {"modes", jm}, {"source", source}, {"openDefaults", openDefaults},
-                  {"angles", true}, {"highlights", true}};
+                  {"angles", true}, {"highlights", true}, {"snaps", true}};
     if (!media.isEmpty()) {
         QJsonObject jmedia;
         for (auto it = media.begin(); it != media.end(); ++it)
@@ -409,6 +433,7 @@ FixtureType FixtureType::fromJson(const QJsonObject &o)
             c.defaultValue = co["default"].toDouble();
             c.hasHighlight = co.contains("highlight");   // before co["highlight"], which would add it
             c.highlightValue = co.value("highlight").toDouble(1.0);
+            c.snap = co["snap"].toBool(false);
             if (const QJsonArray dmx = co["dmx"].toArray(); dmx.size() == 2) {
                 c.dmxFrom = std::clamp(dmx[0].toDouble(), 0.0, 1.0);
                 c.dmxTo = std::clamp(dmx[1].toDouble(), 0.0, 1.0);
@@ -432,6 +457,7 @@ FixtureType FixtureType::fromJson(const QJsonObject &o)
     t.openDefaults = o["openDefaults"].toBool();
     t.angles = o["angles"].toBool(false);   // files from before degrees: pan and tilt as 0..1
     t.highlightsExplicit = o["highlights"].toBool(false);
+    t.snapsExplicit = o["snaps"].toBool(false);
     const QJsonObject jmedia = o["media"].toObject();
     for (auto it = jmedia.begin(); it != jmedia.end(); ++it)
         t.media.insert(it.key(), QByteArray::fromBase64(it.value().toString().toLatin1()));
@@ -654,24 +680,54 @@ QStringList oflRepeatKeys(const QJsonValue &repeatFor, const QVector<OflPixel> &
     return out;
 }
 
-QJsonValue replacePixelKey(const QJsonValue &v, const QString &key)
+// "$pixelKey" in any string of a template replaced by the key. Parts without it are kept as
+// they are (most of a channel's capabilities), rather than copied.
+bool replacePixelKeyIn(QJsonValue &v, const QString &key)
 {
-    if (v.isString())
-        return v.toString().replace(QLatin1String("$pixelKey"), key);
+    static const QLatin1String token("$pixelKey");
+    if (v.isString()) {
+        QString str = v.toString();
+        if (!str.contains(token))
+            return false;
+        v = str.replace(token, key);
+        return true;
+    }
     if (v.isArray()) {
-        QJsonArray a;
-        for (const QJsonValue &x : v.toArray())
-            a.append(replacePixelKey(x, key));
-        return a;
+        QJsonArray a = v.toArray();
+        bool changed = false;
+        for (qsizetype i = 0; i < a.size(); ++i) {
+            QJsonValue x = a.at(i);
+            if (replacePixelKeyIn(x, key)) {
+                a.replace(i, x);
+                changed = true;
+            }
+        }
+        if (changed)
+            v = a;
+        return changed;
     }
     if (v.isObject()) {
-        QJsonObject o;
-        const QJsonObject in = v.toObject();
-        for (auto it = in.begin(); it != in.end(); ++it)
-            o.insert(it.key(), replacePixelKey(it.value(), key));
-        return o;
+        QJsonObject o = v.toObject();
+        bool changed = false;
+        for (auto it = o.begin(); it != o.end(); ++it) {
+            QJsonValue x = it.value();
+            if (replacePixelKeyIn(x, key)) {
+                it.value() = x;
+                changed = true;
+            }
+        }
+        if (changed)
+            v = o;
+        return changed;
     }
-    return v;
+    return false;
+}
+
+QJsonValue replacePixelKey(const QJsonValue &v, const QString &key)
+{
+    QJsonValue out = v;
+    replacePixelKeyIn(out, key);
+    return out;
 }
 
 } // namespace
@@ -745,12 +801,16 @@ bool FixtureLibrary::parseOfl(const QJsonObject &ofl, const QString &manufacture
         mo["channels"] = flat;
         modesIn[mi] = mo;
     }
+    // Template channels become one channel per pixel key ("Red $pixelKey" -> "Red 1"). Only the
+    // names are made here; a channel is read when a mode uses it (big pixel fixtures name many
+    // more than their modes use).
     const QJsonObject templates = ofl["templateChannels"].toObject();
+    QHash<QString, QPair<QString, QString>> templated;   // channel name -> (template, pixel key)
     for (auto it = templates.begin(); it != templates.end(); ++it)
         for (const QString &k : pixelKeys) {
             const QString name = QString(it.key()).replace(QLatin1String("$pixelKey"), k);
-            if (!channels.contains(name))
-                channels.insert(name, replacePixelKey(it.value(), k));
+            if (!channels.contains(name) && !templated.contains(name))
+                templated.insert(name, {it.key(), k});
         }
 
     struct Parsed {
@@ -759,13 +819,27 @@ bool FixtureLibrary::parseOfl(const QJsonObject &ofl, const QString &manufacture
     };
     QHash<QString, Parsed> parsed;
     QHash<QString, QString> fineAlias;   // "Pan fine" -> "Pan"
+    for (auto it = channels.begin(); it != channels.end(); ++it)
+        for (const QJsonValue &f : it.value().toObject()["fineChannelAliases"].toArray())
+            fineAlias.insert(f.toString(), it.key());
+    for (auto it = templated.begin(); it != templated.end(); ++it)
+        for (const QJsonValue &f : templates[it.value().first].toObject()["fineChannelAliases"].toArray())
+            fineAlias.insert(QString(f.toString()).replace(QLatin1String("$pixelKey"), it.value().second), it.key());
 
-    for (auto it = channels.begin(); it != channels.end(); ++it) {
-        const QString chName = it.key();
-        const QJsonObject ch = it.value().toObject();
+    // One channel, read once: its attribute (the capability covering the widest DMX range),
+    // physical range, named ranges with their pictures, default and highlight.
+    auto parseChannel = [&](const QString &chName) -> const Parsed * {
+        if (auto found = parsed.constFind(chName); found != parsed.constEnd())
+            return &found.value();
+        QJsonObject ch;
+        if (channels.contains(chName)) {
+            ch = channels[chName].toObject();
+        } else if (auto tp = templated.constFind(chName); tp != templated.constEnd()) {
+            ch = replacePixelKey(templates[tp->first], tp->second).toObject();
+        } else {
+            return nullptr;
+        }
         const QJsonArray fines = ch["fineChannelAliases"].toArray();
-        for (const QJsonValue &f : fines)
-            fineAlias.insert(f.toString(), chName);
         const double maxRaw = fines.isEmpty() ? 255.0 : 65535.0;
 
         QVector<QJsonObject> caps;
@@ -824,8 +898,8 @@ bool FixtureLibrary::parseOfl(const QJsonObject &ofl, const QString &manufacture
         // Position defaults to center if the file doesn't say otherwise.
         if (!ch.contains("defaultValue") && (def.attribute == "Pan" || def.attribute == "Tilt"))
             def.defaultValue = 0.5;
-        parsed.insert(chName, {def, !fines.isEmpty()});
-    }
+        return &parsed.insert(chName, {def, !fines.isEmpty()}).value();
+    };
 
     QHash<QString, int> pixelOrder;   // matrix order of real pixels (not pixel groups)
     for (int i = 0; i < pixels.size(); ++i)
@@ -863,9 +937,10 @@ bool FixtureLibrary::parseOfl(const QJsonObject &ofl, const QString &manufacture
                         c.fine = offset;
                 continue;
             }
-            if (!parsed.contains(name))
+            const Parsed *pc = parseChannel(name);
+            if (!pc)
                 continue;
-            ChannelDef def = parsed.value(name).def;
+            ChannelDef def = pc->def;
             def.coarse = offset;
             def.cell = int(used_pixels.indexOf(channelPixel[mi].value(name))) + 1;   // 0: the fixture's own
             QString attr = def.attribute;
@@ -969,26 +1044,27 @@ bool FixtureLibrary::loadFile(const QString &path, QString *error, QString *type
     return loadOflFile(path, error, typeId);
 }
 
-int FixtureLibrary::loadDirectory(const QString &dir)
+int FixtureLibrary::loadDirectory(const QString &dir, const std::function<void(int, int, const QString &)> &progress)
 {
-    int n = 0;
+    QStringList files, later;   // edited types (.lft) load last so they replace the originals
     QDirIterator it(dir, {"*.json", "*.gdtf", "*.qxf", "*.lft"}, QDir::Files, QDirIterator::Subdirectories);
-    QStringList later;   // edited types (.lft) load last so they replace the originals
     while (it.hasNext()) {
-        QString path = it.next();
+        const QString path = it.next();
         const QString fn = QFileInfo(path).fileName();
         if (fn == "manufacturers.json" || fn == "register.json" || fn == "index.json")
             continue;
-        if (fn.endsWith(QLatin1String(".lft"), Qt::CaseInsensitive)) {
-            later << path;
-            continue;
-        }
-        if (loadFile(path))
+        (fn.endsWith(QLatin1String(".lft"), Qt::CaseInsensitive) ? later : files) << path;
+    }
+    files += later;
+    int n = 0;
+    for (int i = 0; i < files.size(); ++i) {
+        if (progress)
+            progress(i, int(files.size()), files[i]);
+        if (loadFile(files[i]))
             ++n;
     }
-    for (const QString &path : later)
-        if (loadFile(path))
-            ++n;
+    if (progress)
+        progress(int(files.size()), int(files.size()), QString());
     return n;
 }
 

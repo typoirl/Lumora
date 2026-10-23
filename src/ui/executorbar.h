@@ -6,6 +6,7 @@
 
 #include "paneloptions.h"
 
+#include <QSet>
 #include <QWidget>
 
 class QGridLayout;
@@ -30,6 +31,9 @@ class ExecutorStrip : public QWidget {
 public:
     ExecutorStrip(AppContext *ctx, int number, QWidget *parent = nullptr);
     int number() const { return m_number; }
+    // The page it shows: its window's locked page, or the current page (0: follow).
+    void setLockedPage(int page) { m_lockedPage = page; update(); }
+    int page() const;
     ExecKind kind() const;
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
@@ -58,6 +62,7 @@ private:
 
     AppContext *m_ctx = nullptr;
     int m_number;
+    int m_lockedPage = 0;
     int m_pressed = None;
     bool m_dragging = false;
     int m_dragY = 0;           // encoders turn by dragging up and down
@@ -69,8 +74,7 @@ private:
 class ExecutorBar : public QWidget, public PanelOptions {
     Q_OBJECT
 public:
-    enum class Mode { Panel, Learn };
-    explicit ExecutorBar(AppContext *ctx, QWidget *parent = nullptr, Mode mode = Mode::Panel);
+    explicit ExecutorBar(AppContext *ctx, QWidget *parent = nullptr);
 
     // Right-click the window's tab: how many executors, which numbers (101…, 201…), page buttons.
     QJsonObject saveOptions() const override;
@@ -78,6 +82,7 @@ public:
     void buildOptions(QuickEditor *editor) override;
     // The Executor grid window: from this executor, wide × tall (0 fits).
     void setGridDefaults(int first, int wide, int tall);
+    void setLockedPage(int page);   // 0: follows the current page
 
 protected:
     void resizeEvent(QResizeEvent *ev) override;
@@ -90,7 +95,6 @@ private:
     int rowEnd() const;
     bool fixedGrid() const;
     AppContext *m_ctx = nullptr;
-    Mode m_mode;
     QGridLayout *m_grid = nullptr;
     QLineEdit *m_pageEdit = nullptr;
     QSize m_shownGrid;
@@ -98,12 +102,17 @@ private:
     QWidget *m_head = nullptr;
     bool m_showPages = true;
     QList<ExecKind> m_kinds;
-    bool m_wasActive = true;
+    QSet<ExecutorStrip *> m_wasMoving;   // strips the last animation frame repainted
     QString m_pageSignature;
     int m_first = 201;
     int m_wide = 0;          // executors across; 0 with one row: Interface settings, else fit
     int m_tall = 1;          // rows; 0 fits
     bool m_fitWide = false;  // wide 0 really means fit
+    int m_lockedPage = 0;    // a page of its own (0: the current page)
+    QString m_baseTitle;     // "Faders 201–210"
+    void updateTitle();
+    int shownPage() const;
+    QWidget *m_pageControls = nullptr;
     QList<ExecutorStrip *> m_strips;
 };
 

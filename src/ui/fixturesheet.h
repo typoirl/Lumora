@@ -6,6 +6,7 @@
 #include "paneloptions.h"
 
 #include <QAbstractTableModel>
+#include <QIcon>
 #include <QColor>
 #include <QSet>
 #include <QWidget>
@@ -16,12 +17,16 @@ class QTableView;
 namespace lumora {
 
 class AppContext;
+class Show;
 struct FixtureMode;
 
 // Best guess at the color a fixture emits, from mixing channels or a wheel slot name.
 // Returns an invalid color when the values carry no color information.
 QColor approximateColor(const RawAttr &values, const FixtureMode *mode);
 QColor colorForName(const QString &name);
+// A sequence's appearance as a color to draw: its own, or with "Follow fixtures" the color its
+// fixtures show (on stage while it plays, else its first cue's). Invalid when it has none.
+QColor sequenceAppearance(const Show *show, int sequenceId);
 
 class FixtureSheetModel : public QAbstractTableModel {
     Q_OBJECT
@@ -38,7 +43,7 @@ public:
     int fidAt(int row) const { return m_fids.value(row); }
     int rowOf(int fid) const { return m_fids.indexOf(fid); }
     const QVector<int> &fids() const { return m_fids; }
-    void reloadPatch();
+    void reloadPatch(bool force = false);   // force: reset even when the rows are the same
     void refreshValues();
 
     // Which fixtures are listed.
@@ -63,6 +68,21 @@ public:
     void cellState(int fid, Feature f, bool *programmed, bool *changed) const;
 
 private:
+    // What a row shows, worked out once per refresh (not once per paint and role): a refresh
+    // repaints only the rows that changed, and nothing when the stage stands still.
+    struct Row {
+        QString text[7];
+        quint8 state[7] = {};   // 1: programmed, 2: away from its default
+        QColor color;           // the Color cell's swatch
+        double gobo = -1;       // Gobo1's value, -1 without one
+        QIcon goboIcon;
+        bool operator==(const Row &o) const;
+    };
+    Row computeRow(int fid) const;
+    const Row &row(int fid) const;
+    mutable QHash<int, Row> m_rows;
+    QString computeCellText(int fid, Feature f) const;
+    void computeCellState(int fid, Feature f, bool *programmed, bool *changed) const;
     // The preset a running playback gives this attribute, when its value is still that preset's.
     QString playbackPresetName(int fid, Feature f) const;
     QString effectNames(int fid, Feature f) const;   // effects running on this fixture's feature

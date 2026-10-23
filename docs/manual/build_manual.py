@@ -82,9 +82,9 @@ def styles():
     s['h1'] = ParagraphStyle('h1', parent=base, fontName='Sans-Bold', fontSize=22, leading=27,
                              textColor=DARK, spaceBefore=0, spaceAfter=6)
     s['h2'] = ParagraphStyle('h2', parent=base, fontName='Sans-Bold', fontSize=13.5, leading=18,
-                             textColor=DARK, spaceBefore=12, spaceAfter=5)
+                             textColor=DARK, spaceBefore=12, spaceAfter=5, keepWithNext=1)
     s['h3'] = ParagraphStyle('h3', parent=base, fontName='Sans-Bold', fontSize=11, leading=15,
-                             textColor=DARK, spaceBefore=8, spaceAfter=4)
+                             textColor=DARK, spaceBefore=8, spaceAfter=4, keepWithNext=1)
     s['chapnum'] = ParagraphStyle('chapnum', parent=base, fontName='Sans-Bold', fontSize=10,
                                   textColor=ACCENT, spaceAfter=2)
     s['code'] = ParagraphStyle('code', fontName='Mono', fontSize=8.6, leading=12, textColor=INK)
@@ -340,6 +340,19 @@ def build_story(blocks, s, doc):
 
     # Collect structure first: chapters per part and sections per chapter, for the link lists.
     parts = []
+    def room_after(i, base):
+        # A heading needs room for itself and what it introduces: a picture straight after it
+        # goes to the next page with it rather than leaving the heading alone at the bottom.
+        if i + 1 < len(blocks) and blocks[i + 1][0] == 'image':
+            path = os.path.join(HERE, blocks[i + 1][1][1])   # ('image', (caption, path))
+            if os.path.exists(path):
+                from reportlab.lib.utils import ImageReader
+                iw, ih = ImageReader(path).getSize()
+                w = min(doc.width, iw * 0.55)
+                h = min(w * ih / iw, doc.height * 0.55)
+                return base + h + 0.4 * inch
+        return base
+
     for kind, data in blocks:
         if kind == 'h1':
             parts.append({'title': data[0], 'chapters': []})
@@ -372,7 +385,7 @@ def build_story(blocks, s, doc):
     chap_in_part = None
     sections = []
     pending_keys = {}
-    for kind, data in blocks:
+    for i, (kind, data) in enumerate(blocks):
         if kind == 'h1':
             current_part = next(part_iter)
             chap_in_part = iter(current_part['chapters'])
@@ -410,10 +423,10 @@ def build_story(blocks, s, doc):
             story.append(_rule(frame_w))
         elif kind == 'h3':
             key = pending_keys.get((chap_no, data[0])) or section_key(data[0], data[1])
-            story.append(CondPageBreak(1.6 * inch))
+            story.append(CondPageBreak(room_after(i, 1.6 * inch)))
             story.append(Heading(inline(data[0]), s['h2'], 2, key))
         elif kind == 'h4':
-            story.append(CondPageBreak(0.8 * inch))
+            story.append(CondPageBreak(room_after(i, 0.8 * inch)))
             story.append(Paragraph(inline(data[0]), s['h3']))
         elif kind == 'para':
             story.append(Paragraph(inline(data), s['body']))

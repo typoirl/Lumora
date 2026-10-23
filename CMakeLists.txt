@@ -62,6 +62,7 @@ add_library(lumora_core STATIC
   src/core/midi.h src/core/midi.cpp
   src/core/osc.h src/core/osc.cpp
   src/core/undo.h src/core/undo.cpp
+  src/core/images.h src/core/images.cpp
   src/core/commandline.h src/core/commandline.cpp
   src/core/zipreader.h src/core/zipreader.cpp
   src/core/gdtf.cpp
@@ -70,6 +71,7 @@ add_library(lumora_core STATIC
   src/core/importhelpers.h
   src/core/effects.h src/core/effects.cpp
   src/core/macros.h src/core/macros.cpp
+  src/core/macrolibrary.h src/core/macrolibrary.cpp
   src/core/plots.h src/core/plots.cpp
 )
 target_include_directories(lumora_core PUBLIC src/core)
@@ -93,6 +95,7 @@ if(LUMORA_BUILD_APP)
     src/ui/gotodialog.h src/ui/gotodialog.cpp
     src/ui/helpview.h src/ui/helpview.cpp
     src/ui/controlview.h src/ui/controlview.cpp
+    src/ui/imagesui.h src/ui/imagesui.cpp
     src/ui/presetbuilder.h src/ui/presetbuilder.cpp
     src/ui/matrixui.h src/ui/matrixui.cpp
     src/ui/poolgrid.h src/ui/poolgrid.cpp
@@ -119,10 +122,14 @@ if(LUMORA_BUILD_APP)
     src/ui/playbackmonitor.h src/ui/playbackmonitor.cpp
     src/ui/credentials.h src/ui/credentials.cpp
     src/ui/uiutil.h src/ui/uiutil.cpp
+    src/ui/splash.h src/ui/splash.cpp
+    src/ui/choicedialog.h src/ui/choicedialog.cpp
+    src/ui/devtools.h src/ui/devtools.cpp
   )
   qt_add_resources(lumora "library" PREFIX "/library" BASE resources/library
     FILES resources/library/ofl-index.json resources/library/qlcplus-index.json)
   qt_add_resources(lumora "icons" PREFIX "/icons" BASE resources FILES resources/lumora.png)
+  qt_add_resources(lumora "macrolibrary" PREFIX "/macros" BASE resources/macros FILES resources/macros/library.json)
   # The user guide, built in for the Help window (F1).
   file(GLOB _lumora_help_images RELATIVE ${CMAKE_SOURCE_DIR} CONFIGURE_DEPENDS docs/manual/images/*.png)
   qt_add_resources(lumora "help" PREFIX "/help" BASE docs/manual FILES docs/manual/manual.md ${_lumora_help_images})
@@ -165,6 +172,9 @@ END
   endif()
   target_include_directories(lumora PRIVATE src/ui)
   target_link_libraries(lumora PRIVATE lumora_core Qt6::Widgets Qt6::Svg)
+  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(lumora PRIVATE -Wall -Wextra)
+  endif()
   if(WIN32)
     target_link_libraries(lumora PRIVATE crypt32)   # DPAPI, for "Stay signed in"
   endif()

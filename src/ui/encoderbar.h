@@ -14,6 +14,8 @@ class QToolButton;
 
 namespace lumora {
 
+class ElidedLabel;
+
 class AppContext;
 struct ChannelDef;
 
@@ -148,7 +150,7 @@ private:
     int m_perPage = 0;            // a window's own encoder count (0: Config)
     QWidget *m_body = nullptr;
     QWidget *m_tucked = nullptr;           // the strip left when the bar is tucked away
-    QLabel *m_tuckedSelection = nullptr;   // the selection, beside "Encoders" there
+    ElidedLabel *m_tuckedSelection = nullptr;   // the selection, beside "Encoders" there
     QString m_selText;
     void showSelectionText();
     QToolButton *m_arrow = nullptr;
@@ -164,7 +166,7 @@ private:
     int m_page = 0;
     bool m_fine = false;
     QList<QToolButton *> m_categories;
-    QLabel *m_selection = nullptr;
+    ElidedLabel *m_selection = nullptr;
     QWidget *m_dialArea = nullptr;
     QHBoxLayout *m_dialLayout = nullptr;
     QLabel *m_pageLabel = nullptr;

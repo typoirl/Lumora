@@ -17,11 +17,27 @@ Engine::Engine(Show *show, QObject *parent) : QObject(parent), m_show(show)
         const qint64 ns = m_clock.nsecsElapsed();
         m_clock.restart();
         const double dt = std::min(0.25, ns / 1e9);
-        if (dt > 0)
-            m_fps = m_fps * 0.9 + (1.0 / dt) * 0.1;
         tick(dt);
         emit frameDone();
     });
+    connect(show, &Show::changed, this, [this](Show::Parts parts) {
+        if (parts != Show::Parts(Show::AllParts))
+            return;
+        // A show opened (or a new one): its effects carry on where they were saved.
+        m_phases.clear();
+        const QJsonObject saved = m_show->extra(QStringLiteral("effectPhases"));
+        for (auto it = saved.begin(); it != saved.end(); ++it)
+            m_phases.insert(it.key(), it.value().toDouble());
+    });
+}
+
+QJsonObject Engine::phasesJson() const
+{
+    QJsonObject o;
+    for (auto it = m_phases.begin(); it != m_phases.end(); ++it)
+        if (!it.key().startsWith(QLatin1Char('p')))   // the programmer isn't saved: nor are its effects
+            o[it.key()] = std::fmod(it.value(), 1.0);
+    return o;
 }
 
 void Engine::start(int hz)
@@ -74,6 +90,12 @@ double Engine::executorMaster(const Executor &e, bool anySwop)
     return e.fader;
 }
 
+bool Engine::snaps(int fid, const QString &attribute) const
+{
+    const ChannelDef *c = m_show->channelOf(fid, attribute);
+    return c && c->snap;
+}
+
 void Engine::advance(Executor &e, double dt)
 {
     PlaybackState &pb = e.pb();
@@ -93,7 +115,10 @@ void Engine::advance(Executor &e, double dt)
     // Each attribute fades with its own times when it has individual ones, otherwise
     // with the cue's.
     const bool individual = !pb.timing.isEmpty();
-    auto at = [&](int fid, const QString &a) { return individual ? pb.progressAt(fid, a) : pb.progressFor(pb.fadeTime, pb.delayTime); };
+    auto at = [&](int fid, const QString &a) {
+        const double q = individual ? pb.progressAt(fid, a) : pb.progressFor(pb.fadeTime, pb.delayTime);
+        return q > 0.0 && snaps(fid, a) ? 1.0 : q;   // a snapping channel jumps once its fade starts
+    };
     RawTable cur;
     for (auto f = pb.to.begin(); f != pb.to.end(); ++f) {
         const RawAttr fromAttrs = pb.from.value(f.key());
@@ -122,8 +147,10 @@ void Engine::advance(Executor &e, double dt)
         pb.current = pb.to;
         if (pb.goingOff) {   // the off fade finished: the playback is off now
             const quint64 stamp = pb.stamp;
+            const int loaded = pb.loadedIndex;   // a loaded cue waits for the next Go
             e.pb() = PlaybackState();
             e.pb().stamp = stamp;
+            e.pb().loadedIndex = loaded;
             e.flashStartedPlayback = false;
         }
         m_show->notifyExecutors();
@@ -187,6 +214,8 @@ void Engine::tick(double dt)
             m_show->go(*t.first);
     }
     render(dt, execs);
+    if (m_outputChanged)
+        emit outputChanged();
 }
 
 namespace {
@@ -244,13 +273,13 @@ RawTable Engine::fadedProgrammer(const RawTable &under, double dt)
                 ProgFade lf;
                 lf.from = lf.shown = underValue(f.key(), a.key());
                 lf.to = a.value();
-                lf.duration = dur;
+                lf.duration = snaps(f.key(), a.key()) ? 0.0 : dur;
                 it = fx.insert(a.key(), lf);
             } else if (it->releasing || std::fabs(it->to - a.value()) > 1e-6) {
                 it->from = it->shown;
                 it->to = a.value();
                 it->elapsed = 0;
-                it->duration = dur;
+                it->duration = snaps(f.key(), it.key()) ? 0.0 : dur;
                 it->releasing = false;
             }
             step(*it);
@@ -268,7 +297,7 @@ RawTable Engine::fadedProgrammer(const RawTable &under, double dt)
                 a->releasing = true;
                 a->from = a->shown;
                 a->elapsed = 0;
-                a->duration = dur;
+                a->duration = snaps(f.key(), a.key()) ? 0.0 : dur;
             }
             a->to = underValue(f.key(), a.key());   // follows the playbacks while it fades
             if (step(*a) >= 1.0) {
@@ -324,6 +353,9 @@ void Engine::render(double dt, QList<Executor *> execs)
         int level;
         double master;
         bool held;   // a flash, temp or swop is held: never turned off for being overridden
+        // On a Temp fader: how far it has taken over from what's underneath (0..1), every
+        // attribute alike; -1 when it isn't on one.
+        double temp = -1.0;
     };
     QVector<Source> sources;
     QSet<const PlaybackState *> seen;
@@ -332,10 +364,40 @@ void Engine::render(double dt, QList<Executor *> execs)
             continue;
         seen.insert(e->state.get());
         const Sequence *seq = m_show->sequence(e->sequenceId);
-        bool held = false;
-        for (const Executor *x : m_show->executorsOf(e->sequenceId))
+        bool held = false, swop = false;
+        double temp = -1.0;
+        bool keyHeld = false;
+        for (const Executor *x : m_show->executorsOf(e->sequenceId)) {
             held |= x->flashHeld || x->tempHeld || x->swopHeld;
-        sources.append({e, seq, int(seq ? seq->priority : SeqPriority::LTP), sequenceMaster(*m_show, *e, anySwop), held});
+            keyHeld |= x->flashHeld || x->tempHeld || x->swopHeld;
+            swop |= x->swopHeld;
+            if (x->faderFn == FaderFn::Temp && executorKind(x->number, x) == ExecKind::Fader)
+                temp = std::max(temp, x->fader);
+        }
+        Source src{e, seq, int(seq ? seq->priority : SeqPriority::LTP), sequenceMaster(*m_show, *e, anySwop), held};
+        if (temp >= 0.0) {
+            // A Temp fader: a temporary takeover. Moved by hand, the fader says how far it has
+            // come, whatever the times. A Flash, Temp or Swop key takes it all the way in the
+            // cue's fade while held, and back out in the Off line's times once let go.
+            PlaybackState &pb = e->pb();
+            if (keyHeld) {
+                const double fade = seq && pb.cueIndex >= 0 && pb.cueIndex < seq->cues.size() ? seq->cues[pb.cueIndex].fade : 0.0;
+                const double was = std::max(0.0, pb.tempShown);
+                pb.tempShown = fade > 1e-6 ? std::min(1.0, was + dt / fade) : 1.0;
+                pb.tempFrom = -1.0;
+            } else if (pb.goingOff) {
+                if (pb.tempFrom < 0.0)
+                    pb.tempFrom = std::max(0.0, pb.tempShown);
+                pb.tempShown = pb.tempFrom * (1.0 - pb.progressFor(pb.fadeTime, pb.delayTime));
+            } else {
+                pb.tempShown = temp;
+                pb.tempFrom = -1.0;
+            }
+            src.temp = anySwop && !swop ? 0.0 : pb.tempShown;
+            src.master = 1.0;
+            src.held = true;
+        }
+        sources.append(src);
     }
     std::sort(sources.begin(), sources.end(), [](const Source &a, const Source &b) {
         return a.level != b.level ? a.level < b.level : a.lead->pb().stamp < b.lead->pb().stamp;
@@ -373,10 +435,20 @@ void Engine::render(double dt, QList<Executor *> execs)
             if (target == out.end())
                 continue;
             QHash<QString, int> &ow = owners[f.key()];
+            const double temp = who >= 0 ? sources[who].temp : -1.0;
             for (auto a = f->begin(); a != f->end(); ++a) {
                 if (!target->contains(a.key()))
                     continue;
                 double v = a.value();
+                if (temp >= 0.0) {
+                    // Temp fader: from what's underneath to its own value, as far as the fader
+                    // is up; a snapping channel goes all the way as soon as it leaves zero.
+                    const double q = temp > 0.0 && snaps(f.key(), a.key()) ? 1.0 : temp;
+                    const double under = target->value(a.key());
+                    (*target)[a.key()] = under + (v - under) * q;
+                    ow[a.key()] = who;
+                    continue;
+                }
                 if (isIntensity(a.key())) {
                     v *= master;
                     // HTP: the highest intensity of the HTP sequences.
@@ -390,15 +462,21 @@ void Engine::render(double dt, QList<Executor *> execs)
             }
         }
     };
+    // A Temp fader going off fades by how far it shows, from the values it had (not the Off
+    // line's own fade on top of that).
+    auto valuesOf = [&](int i) -> const RawTable & {
+        const PlaybackState &pb = sources[i].lead->pb();
+        return sources[i].temp >= 0.0 && pb.goingOff ? pb.from : pb.current;
+    };
     Owners owner, fxOwner;
     for (int i = 0; i < sources.size(); ++i)
         if (sources[i].level < int(SeqPriority::Ultra))
-            merge(sources[i].lead->pb().current, i, sources[i].master, owner);
+            merge(valuesOf(i), i, sources[i].master, owner);
     // 3. Programmer (fading in and out with Programmer fade), then Ultra sequences over it.
     overlay(out, fadedProgrammer(out, dt));
     for (int i = 0; i < sources.size(); ++i)
         if (sources[i].level == int(SeqPriority::Ultra))
-            merge(sources[i].lead->pb().current, i, sources[i].master, owner);
+            merge(valuesOf(i), i, sources[i].master, owner);
 
     // 4. Effects, on top of those values. Among effects on the same attribute: the higher
     //    priority, then the latest, wins (the programmer's sit above every sequence but Ultra).
@@ -421,6 +499,17 @@ void Engine::render(double dt, QList<Executor *> execs)
         }
         return table;
     };
+    // Each source's effects: the cue it's on, and while it fades, the cue it's leaving. A fade
+    // goes from whatever is underneath to the new effect (and back to what's underneath when
+    // it ends), underneath being everything merged so far: the values, and the effects of the
+    // sources below it. So one color effect crossfades into another instead of passing
+    // through the rest values.
+    struct FxPlan {
+        RawTable was, will;
+        bool blending = false;
+        const PlaybackState *pb = nullptr;
+    };
+    QVector<FxPlan> plans(sources.size());
     QVector<RawTable> sourceFx(sources.size());
     for (int i = 0; i < sources.size(); ++i) {
         const Source &src = sources[i];
@@ -433,40 +522,61 @@ void Engine::render(double dt, QList<Executor *> execs)
         };
         const double p = pb.progress();
         const int toCue = pb.goingOff ? -1 : pb.cueIndex;   // fading out: its effects fade out too
+        FxPlan &plan = plans[i];
+        plan.pb = &pb;
+        plan.will = cueFx(toCue);
         if (pb.fading && p < 1.0 && pb.fromCueIndex != toCue) {
-            // Effects follow the fade: the old cue's fade out as the new cue's fade in.
-            const RawTable was = cueFx(pb.fromCueIndex), will = cueFx(toCue);
-            RawTable blend = will;
-            for (auto f = was.begin(); f != was.end(); ++f)
-                for (auto a = f->begin(); a != f->end(); ++a)
-                    if (!will.value(f.key()).contains(a.key()))
-                        blend[f.key()][a.key()] = staticValue(f.key(), a.key());
-            for (auto f = blend.begin(); f != blend.end(); ++f)
-                for (auto a = f->begin(); a != f->end(); ++a) {
-                    const double from = was.value(f.key()).value(a.key(), staticValue(f.key(), a.key()));
-                    // Effects take the fixture's individual times too (a spread's fade across a line).
-                    const double q = pb.timing.isEmpty() ? pb.progressFor(pb.fadeTime, pb.delayTime) : pb.progressAt(f.key(), a.key());
-                    a.value() = from + (a.value() - from) * q;
-                }
-            sourceFx[i] = blend;
-        } else {
-            sourceFx[i] = cueFx(toCue);
+            plan.was = cueFx(pb.fromCueIndex);
+            plan.blending = true;
         }
     }
+    auto fxTable = [&](int i) {
+        const FxPlan &plan = plans[i];
+        if (sources[i].temp >= 0.0 && plan.pb->goingOff)
+            return plan.was;   // a Temp fader going off: its effects fade with it, by how far it shows
+        if (!plan.blending)
+            return plan.will;
+        RawTable t = plan.will;
+        for (auto f = plan.was.begin(); f != plan.was.end(); ++f)
+            for (auto a = f->begin(); a != f->end(); ++a)
+                t[f.key()].insert(a.key(), 0.0);   // the keys of both
+        const PlaybackState &pb = *plan.pb;
+        for (auto f = t.begin(); f != t.end(); ++f) {
+            const auto under = out.constFind(f.key());
+            const auto wasF = plan.was.constFind(f.key());
+            const auto willF = plan.will.constFind(f.key());
+            for (auto a = f->begin(); a != f->end(); ++a) {
+                const double below = under != out.constEnd() && under->contains(a.key()) ? under->value(a.key())
+                                                                                        : staticValue(f.key(), a.key());
+                const double from = wasF != plan.was.constEnd() && wasF->contains(a.key()) ? wasF->value(a.key()) : below;
+                const double to = willF != plan.will.constEnd() && willF->contains(a.key()) ? willF->value(a.key()) : below;
+                // Effects take the fixture's individual times too (a spread's fade across a line).
+                double q = pb.timing.isEmpty() ? pb.progressFor(pb.fadeTime, pb.delayTime) : pb.progressAt(f.key(), a.key());
+                if (q > 0.0 && snaps(f.key(), a.key()))
+                    q = 1.0;
+                a.value() = from + (to - from) * q;
+            }
+        }
+        return t;
+    };
     const RawTable progFx = evaluate(m_show->programmerEffects(), QStringLiteral("p"));
     for (int i = 0; i < sources.size(); ++i)
-        if (sources[i].level < int(SeqPriority::Ultra))
+        if (sources[i].level < int(SeqPriority::Ultra)) {
+            sourceFx[i] = fxTable(i);
             merge(sourceFx[i], i, sources[i].master, fxOwner);
+        }
     merge(progFx, -1, 1.0, fxOwner);
     for (int i = 0; i < sources.size(); ++i)
-        if (sources[i].level == int(SeqPriority::Ultra))
+        if (sources[i].level == int(SeqPriority::Ultra)) {
+            sourceFx[i] = fxTable(i);
             merge(sourceFx[i], i, sources[i].master, fxOwner);
+        }
 
     // Off When Overridden: a sequence turns off once other sequences have taken everything it
     // has. A sequence with values is judged by its values (its effects go with it); one with
-    // only effects by its effects, which only other effects take. Low sequences never take
-    // anything away like that, HTP intensities never lose to each other, and the programmer
-    // never turns a sequence off.
+    // only effects by its effects, which only other effects take. Low sequences take things away
+    // only from other Low sequences, HTP intensities never lose to each other, the programmer
+    // never turns a sequence off, and nothing is taken until the taking cue has finished fading.
     QVector<Executor *> overridden;
     for (int i = 0; i < sources.size(); ++i) {
         const Source &src = sources[i];
@@ -485,7 +595,13 @@ void Engine::render(double dt, QList<Executor *> execs)
                     continue;   // the fixture lacks it, or the programmer has it: doesn't count
                 const bool htpPair = isIntensity(a.key()) && src.level == int(SeqPriority::HTP)
                                      && levelOf(*w) == int(SeqPriority::HTP);
-                if (*w == i || *w < 0 || htpPair || levelOf(*w) == int(SeqPriority::Low)) {
+                // Low sequences take things only from other Low ones; and a sequence still
+                // fading in hasn't taken anything yet (the one it replaces plays on under it
+                // until its fade is done, so nothing snaps off and back).
+                const bool lowOverHigher = levelOf(*w) == int(SeqPriority::Low) && src.level != int(SeqPriority::Low);
+                // A Temp fader takes nothing for good: what it covers plays on underneath.
+                const bool byTemp = *w >= 0 && sources[*w].temp >= 0.0;
+                if (*w == i || *w < 0 || htpPair || lowOverHigher || byTemp || sources[*w].lead->pb().fading) {
                     ++mine;
                     break;
                 }
@@ -525,6 +641,7 @@ void Engine::render(double dt, QList<Executor *> execs)
             attrs[a.key()] = a.value();
     }
 
+    m_outputChanged = out != m_merged;
     m_merged = out;
     m_show->setLastOutput(m_merged);
     for (Executor *e : overridden)

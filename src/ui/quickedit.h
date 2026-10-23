@@ -35,7 +35,6 @@ public:
     void addSegmented(const QString &label, const QStringList &options, int current, std::function<void(int)> apply);
     void addNumber(const QString &label, int min, int max, int value, std::function<void(int)> apply, int step = 1);
     // Seconds, applied as you change them; with `optional`, the bottom of the range is "None" (-1).
-    void addSeconds(const QString &label, double value, std::function<void(double)> apply, bool optional = true);
     // A scrolling list of choices, for long lists such as a gobo wheel's slots.
     struct Choice {
         QString label;

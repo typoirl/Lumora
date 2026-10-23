@@ -144,7 +144,9 @@ struct Sequence {
     QString name;
     SeqPriority priority = SeqPriority::LTP;   // everything LTP, dimmer included
     bool offWhenOverridden = true;   // turns itself off once other sequences have taken all its values
-    QString color;                   // its appearance on pools and executors, "#rrggbb"; empty: none
+    QString color;                   // its appearance on pools and executors, "#rrggbb"; empty: none;
+                                     // "follow": the color its fixtures show on stage
+    bool followsFixtures() const { return color == QLatin1String("follow"); }
     QVector<Cue> cues;   // kept sorted by number
     bool tracking = true;
     bool wrap = true;
@@ -168,8 +170,13 @@ struct Sequence {
 // ---------------------------------------------------------------------------
 
 // Goto: opens a list of the sequence's cues to pick one (with its fade).
-enum class ButtonFn { None, Go, GoBack, Pause, Flash, Temp, Toggle, On, Off, Swop, Select, Top, Goto };
+// Load: the same list, to pick the cue the next Go fires.
+enum class ButtonFn { None, Go, GoBack, Pause, Flash, Temp, Toggle, On, Off, Swop, Select, Top, Goto, Load };
 enum class FaderFn { Master, XFade, Temp };
+// The keys of an executor that controls a rate master.
+enum class RateKey { None, Learn, Reset, Freeze };
+QString rateKeyName(RateKey k);
+RateKey rateKeyFromName(const QString &n);
 // What an executor is on screen. The hundreds say it: 101–199 buttons, 201–299 faders,
 // 301–399 encoders; 401–499 are whichever each one is set to (a fader until changed).
 enum class ExecKind { Fader, Button, Encoder };
@@ -197,6 +204,11 @@ using TimingTable = QHash<int, QHash<QString, AttrTiming>>;
 struct PlaybackState {
     int cueIndex = -1;        // -1 = off
     int fromCueIndex = -1;    // the cue it's fading from (its effects fade out as the new cue's fade in)
+    int loadedIndex = -1;     // Load: the cue the next Go fires (-1: the next in the list)
+    // A Temp fader's takeover as it shows (0..1, -1: none yet): the fader, or a Temp key's
+    // fade toward full while held and its Off time after; tempFrom is where that Off fade began.
+    double tempShown = -1.0;
+    double tempFrom = -1.0;
     RawTable from;            // snapshot at Go
     RawTable to;              // tracked target state
     RawTable current;         // what this playback outputs right now (before master)
@@ -228,6 +240,7 @@ struct Executor {
     int sequenceId = 0;
     int rateMaster = 0;   // instead of a sequence: this executor controls rate master 1–10
     ButtonFn buttons[3] = {ButtonFn::Go, ButtonFn::GoBack, ButtonFn::Off};
+    RateKey rateKeys[3] = {RateKey::Learn, RateKey::Reset, RateKey::Freeze};   // its keys for a rate master
     FaderFn faderFn = FaderFn::Master;
     double fader = 1.0;
     bool autoStart = true;   // raising the master from 0 starts the sequence

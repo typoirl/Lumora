@@ -132,8 +132,14 @@ FixtureSources::FixtureSources(AppContext *ctx) : QObject(ctx), m_ctx(ctx), m_ne
     m_jar->setCookies(saved);
     // A kept session counts as signed in until the server says otherwise.
     m_signedIn = !saved.isEmpty();
-    for (int s = 0; s < SourceCount; ++s)
-        loadIndex(s);
+    // The lists are read when first needed (the Patch window's search, the library browser).
+}
+
+void FixtureSources::ensureIndex(int source)
+{
+    if (source < 0 || source >= SourceCount || m_indexLoaded[source])
+        return;
+    loadIndex(source);
 }
 
 QString FixtureSources::cacheDir()
@@ -160,6 +166,7 @@ bool FixtureSources::fetching(int source, int index) const
 
 void FixtureSources::loadIndex(int source)
 {
+    m_indexLoaded[source] = true;
     QFile cached(cacheDir() + '/' + kCacheFiles[source]);
     QByteArray data;
     if (cached.open(QIODevice::ReadOnly))
@@ -179,6 +186,7 @@ void FixtureSources::loadIndex(int source)
 
 void FixtureSources::parseOflIndex(const QByteArray &json)
 {
+    m_indexLoaded[Ofl] = true;   // a fresh list from the network counts too
     const QJsonObject root = QJsonDocument::fromJson(json).object();
     const QJsonObject makers = root["manufacturers"].toObject();
     m_oflMakers.clear();
@@ -211,6 +219,7 @@ void FixtureSources::parseOflIndex(const QByteArray &json)
 
 void FixtureSources::parseQlcIndex(const QByteArray &json)
 {
+    m_indexLoaded[Qlc] = true;   // a fresh list from the network counts too
     QVector<Entry> &list = m_entries[Qlc];
     list.clear();
     for (const QJsonValue &v : QJsonDocument::fromJson(json).object()["fixtures"].toArray()) {
@@ -226,6 +235,7 @@ void FixtureSources::parseQlcIndex(const QByteArray &json)
 
 void FixtureSources::parseGdtfList(const QByteArray &json)
 {
+    m_indexLoaded[Gdtf] = true;   // a fresh list from the network counts too
     // The list has one row per revision: keep the newest revision of each fixture.
     QHash<QString, QJsonObject> newest;
     for (const QJsonValue &v : QJsonDocument::fromJson(json).object()["list"].toArray()) {
@@ -474,6 +484,7 @@ void FixtureSources::refresh(int source)
 
 void FixtureSources::fetch(int source, int index)
 {
+    ensureIndex(source);
     if (index < 0 || index >= m_entries[source].size() || fetching(source, index))
         return;
     if (source == Gdtf && !m_signedIn) {

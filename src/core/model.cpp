@@ -448,7 +448,7 @@ const QList<QPair<ButtonFn, QString>> &buttonNames()
         {ButtonFn::Pause, "Pause"}, {ButtonFn::Flash, "Flash"}, {ButtonFn::Temp, "Temp"},
         {ButtonFn::Toggle, "Toggle"}, {ButtonFn::On, "On"}, {ButtonFn::Off, "Off"},
         {ButtonFn::Swop, "Swop"}, {ButtonFn::Select, "Select"}, {ButtonFn::Top, "Top"},
-        {ButtonFn::Goto, "Goto"},
+        {ButtonFn::Goto, "Goto"}, {ButtonFn::Load, "Load"},
     };
     return names;
 }
@@ -511,6 +511,25 @@ bool executorButtonLit(const Executor &e, int i)
     case ButtonFn::On: return e.pb().isOn();
     default: return e.buttonDown[i];
     }
+}
+
+QString rateKeyName(RateKey k)
+{
+    switch (k) {
+    case RateKey::Learn: return "Learn";
+    case RateKey::Reset: return "Reset";
+    case RateKey::Freeze: return "Freeze";
+    case RateKey::None: break;
+    }
+    return "None";
+}
+
+RateKey rateKeyFromName(const QString &n)
+{
+    for (RateKey k : {RateKey::Learn, RateKey::Reset, RateKey::Freeze})
+        if (rateKeyName(k).compare(n, Qt::CaseInsensitive) == 0)
+            return k;
+    return RateKey::None;
 }
 
 QString execKindName(ExecKind k)
@@ -591,14 +610,66 @@ double PlaybackState::progressAt(int fid, const QString &attribute) const
     return progressFor(fade, delay);
 }
 
+namespace {
+// A running playback, saved with the show so it carries on where it was when the show opens.
+QJsonObject playbackToJson(const PlaybackState &pb)
+{
+    QJsonObject o{{"cue", pb.cueIndex}, {"fromCue", pb.fromCueIndex}, {"to", rawTableToJson(pb.to)},
+                  {"current", rawTableToJson(pb.current)}, {"sinceGo", pb.sinceGo}, {"stamp", double(pb.stamp)}};
+    if (pb.fading) {
+        o["fading"] = true;
+        o["from"] = rawTableToJson(pb.from);
+        o["fade"] = pb.fadeTime;
+        o["delay"] = pb.delayTime;
+        o["duration"] = pb.duration;
+        o["elapsed"] = pb.elapsed;
+    }
+    if (pb.paused) o["paused"] = true;
+    if (pb.loadedIndex >= 0) o["loaded"] = pb.loadedIndex;
+    if (pb.goingOff) o["goingOff"] = true;
+    if (pb.xfadeTarget >= 0) {
+        o["xfadeTarget"] = pb.xfadeTarget;
+        o["xfadeStart"] = pb.xfadeStart;
+    }
+    return o;
+}
+
+PlaybackState playbackFromJson(const QJsonObject &o)
+{
+    PlaybackState pb;
+    pb.cueIndex = o["cue"].toInt(-1);
+    pb.fromCueIndex = o["fromCue"].toInt(-1);
+    pb.to = rawTableFromJson(o["to"].toObject());
+    pb.current = rawTableFromJson(o["current"].toObject());
+    pb.sinceGo = o["sinceGo"].toDouble();
+    pb.stamp = quint64(o["stamp"].toDouble());
+    pb.fading = o["fading"].toBool(false);
+    pb.from = rawTableFromJson(o["from"].toObject());
+    pb.fadeTime = o["fade"].toDouble();
+    pb.delayTime = o["delay"].toDouble();
+    pb.duration = o["duration"].toDouble();
+    pb.elapsed = o["elapsed"].toDouble();
+    pb.paused = o["paused"].toBool(false);
+    pb.loadedIndex = o["loaded"].toInt(-1);
+    pb.goingOff = o["goingOff"].toBool(false);
+    pb.xfadeTarget = o["xfadeTarget"].toInt(-1);
+    pb.xfadeStart = o["xfadeStart"].toDouble();
+    return pb;
+}
+} // namespace
+
 QJsonObject Executor::toJson() const
 {
     QJsonObject o{{"page", page}, {"number", number}, {"sequence", sequenceId},
                   {"buttons", QJsonArray{buttonFnName(buttons[0]), buttonFnName(buttons[1]), buttonFnName(buttons[2])}},
                   {"fader", faderFnName(faderFn)}, {"level", fader},
                   {"autoStart", autoStart}, {"autoStop", autoStop}, {"kind", execKindName(kind)}};
-    if (rateMaster)
+    if (rateMaster) {
         o["rateMaster"] = rateMaster;
+        o["rateKeys"] = QJsonArray{rateKeyName(rateKeys[0]), rateKeyName(rateKeys[1]), rateKeyName(rateKeys[2])};
+    }
+    if (sequenceId && (pb().isOn() || pb().loadedIndex >= 0))
+        o["playback"] = playbackToJson(pb());
     return o;
 }
 
@@ -609,6 +680,9 @@ Executor Executor::fromJson(const QJsonObject &o)
     e.number = o["number"].toInt(201);
     e.sequenceId = o["sequence"].toInt();
     e.rateMaster = e.sequenceId ? 0 : std::clamp(o["rateMaster"].toInt(0), 0, 10);
+    const QJsonArray rk = o["rateKeys"].toArray();
+    for (int i = 0; i < 3 && i < rk.size(); ++i)
+        e.rateKeys[i] = rateKeyFromName(rk[i].toString());
     QJsonArray b = o["buttons"].toArray();
     for (int i = 0; i < 3 && i < b.size(); ++i)
         e.buttons[i] = buttonFnFromName(b[i].toString());
@@ -617,6 +691,8 @@ Executor Executor::fromJson(const QJsonObject &o)
     e.autoStart = o["autoStart"].toBool(true);
     e.autoStop = o["autoStop"].toBool(true);
     e.kind = execKindFromName(o["kind"].toString());
+    if (e.sequenceId && o.contains("playback"))
+        *e.state = playbackFromJson(o["playback"].toObject());
     return e;
 }
 

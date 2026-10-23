@@ -10,8 +10,15 @@ namespace lumora {
 class Show;
 
 struct CommandResult {
+    CommandResult() = default;
+    CommandResult(bool ok_, const QString &message_ = QString()) : ok(ok_), message(message_) {}
     bool ok = true;
     QString message;
+    // A Store onto something that exists, with no option saying what to do: the question and
+    // its answers (option, label), in the same order everywhere. Running the command again with
+    // "/option" added does it. Without anyone to ask (a macro, say), it fails with the message.
+    QString question;
+    QVector<QPair<QString, QString>> choices;
 };
 
 // A command line that reads commands like these:

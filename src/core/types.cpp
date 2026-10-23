@@ -77,7 +77,8 @@ QVector<Feature> allFeatures()
             Feature::Beam, Feature::Focus, Feature::Control};
 }
 
-Feature featureOf(const QString &a)
+namespace {
+Feature featureOfUncached(const QString &a)
 {
     if (a == QLatin1String("Dimmer"))
         return Feature::Dimmer;
@@ -97,6 +98,21 @@ Feature featureOf(const QString &a)
     if (a.startsWith(QLatin1String("Zoom")) || a.startsWith(QLatin1String("Focus")))
         return Feature::Focus;
     return Feature::Control;
+}
+} // namespace
+
+Feature featureOf(const QString &a)
+{
+    // Asked for every attribute of every fixture, many times a frame: remembered per name (a
+    // show has a few hundred attribute names at most).
+    thread_local QHash<QString, Feature> known;
+    const auto it = known.constFind(a);
+    if (it != known.constEnd())
+        return it.value();
+    const Feature f = featureOfUncached(a);
+    if (known.size() < 4096)
+        known.insert(a, f);
+    return f;
 }
 
 double linearToSrgb(double c)
@@ -143,8 +159,13 @@ int attributeSortKey(const QString &a)
         "Blade4A", "Blade4B", "Blade4Rot", "BladeSystemRot",
         "Zoom", "Focus1", "Focus2",
     };
-    int i = order.indexOf(a);
-    return i >= 0 ? i : 1000;
+    static const QHash<QString, int> index = [] {
+        QHash<QString, int> h;
+        for (int i = 0; i < order.size(); ++i)
+            h.insert(order[i], i);
+        return h;
+    }();
+    return index.value(a, 1000);
 }
 
 } // namespace lumora

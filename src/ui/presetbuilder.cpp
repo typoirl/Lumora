@@ -286,11 +286,14 @@ private:
                 return;
         QPixmap chip(14, 14);
         chip.fill(c.display);
-        auto *it = new QListWidgetItem(QIcon(chip), c.name, m_colors);
+        // Complete before it joins the list: every change to an item in it reruns the summary,
+        // which reads the item's color by its index.
+        m_colorItems << c;
+        auto *it = new QListWidgetItem(QIcon(chip), c.name);
         it->setFlags(Qt::ItemIsEnabled | Qt::ItemIsUserCheckable);
         it->setCheckState(checked ? Qt::Checked : Qt::Unchecked);
-        it->setData(Qt::UserRole, int(m_colorItems.size()));
-        m_colorItems << c;
+        it->setData(Qt::UserRole, int(m_colorItems.size()) - 1);
+        m_colors->addItem(it);
     }
 
     void pickGels()
@@ -335,7 +338,8 @@ private:
         QVector<ColorItem> out;
         for (int i = 0; i < m_colors->count(); ++i)
             if (m_colors->item(i)->checkState() == Qt::Checked)
-                out << m_colorItems[m_colors->item(i)->data(Qt::UserRole).toInt()];
+                if (const int k = m_colors->item(i)->data(Qt::UserRole).toInt(); k >= 0 && k < m_colorItems.size())
+                    out << m_colorItems[k];
         return out;
     }
 

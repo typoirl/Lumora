@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #include "mainwindow.h"
+#include "splash.h"
 #include "controlview.h"
 #include "gotodialog.h"
 #include "helpview.h"
@@ -149,8 +150,8 @@ QList<StoredView> standardViews()
         // Encoders over the faders, keys under them.
         {4, QObject::tr("Playback"),
          QJsonArray{execFrame(0, 0, 24, 5, 301), execFrame(0, 5, 24, 7, 201), execFrame(0, 12, 24, 4, 101)}},
-        // The plots pool beside a plot: tap fixtures to select them, objects to use them.
-        {5, QObject::tr("Plot"), QJsonArray{frameJson(0, 0, 4, 16, {"plots"}), frameJson(4, 0, 20, 16, {"plot"})}},
+        // The plots pool and the image pool beside a plot: tap fixtures to select them, objects to use them.
+        {5, QObject::tr("Plot"), QJsonArray{frameJson(0, 0, 4, 8, {"plots"}), frameJson(0, 8, 4, 8, {"images"}), frameJson(4, 0, 20, 16, {"plot"})}},
     };
 }
 
@@ -280,13 +281,6 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
     middle->addWidget(m_stack, 1);
     root->addLayout(middle, 1);
 
-    // Executors slide in here while Store or Learn MIDI is on and the view has no executor window.
-    m_execStrip = new ExecutorBar(ctx, central, ExecutorBar::Mode::Learn);
-    m_execStrip->setObjectName("execStrip");
-    m_execStrip->setAttribute(Qt::WA_StyledBackground);
-    m_execStrip->setFixedHeight(262);
-    m_execStrip->hide();
-    root->addWidget(m_execStrip);
     m_storePicker = new StoreExecutorPicker(ctx, central);
     m_storePicker->hide();
     root->addWidget(m_storePicker);
@@ -338,6 +332,10 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
     connect(ctx->show, &Show::gotoRequested, this, [this](int page, int number) {
         if (m_screen == 1)
             GotoDialog::open(m_ctx, page, number, this);
+    });
+    connect(ctx->show, &Show::loadRequested, this, [this](int page, int number) {
+        if (m_screen == 1)
+            GotoDialog::open(m_ctx, page, number, this, true);
     });
 
     Show *show = ctx->show;
@@ -411,6 +409,11 @@ MainWindow::MainWindow(AppContext *ctx, int screen, QWidget *parent) : QMainWind
             saveShow(m_path);
         }
     });
+    // SaveShow (a command or a macro line): as Ctrl+S, once the command has finished.
+    if (m_screen == 1)
+        connect(m_ctx->show, &Show::saveRequested, this, [this, save]() {
+            QTimer::singleShot(0, this, [save]() { emit save->activated(); });
+        });
     auto *open = new QShortcut(QKeySequence::Open, this);
     open->setEnabled(m_screen == 1);
     connect(open, &QShortcut::activated, this, [this]() {
@@ -749,11 +752,10 @@ void MainWindow::updateBottomBars()
     // Store gets compact tiles for every row; Learn MIDI needs the real faders and buttons.
     const bool learning = m_ctx->midi->learnMode();
     m_storePicker->setVisible(m_ctx->storeArmed() && !learning && !hasExecWindow);
-    m_execStrip->setVisible(false);   // Learn MIDI works on the executor windows already on screen
-    // Encoders belong to programming; setup screens get the room instead.
-    // While the executor strip is up (Store, Learn MIDI) it takes the encoders' place, so the
-    // window never has to grow taller than the screen.
-    m_encoders->setVisible(m_screen == 1 && w != nullptr && !m_execStrip->isVisible() && !m_storePicker->isVisible());
+    // Encoders belong to programming; setup screens get the room instead. Store's executor
+    // tiles take the encoders' place, so the window never has to grow taller than the screen.
+    // (Learn MIDI works on the executor windows already on screen.)
+    m_encoders->setVisible(m_screen == 1 && w != nullptr && !m_storePicker->isVisible());
     // Re-lay out now, so bars that appear or disappear never leave the others squeezed until
     // the next window resize.
     if (QLayout *l = centralWidget() ? centralWidget()->layout() : nullptr) {
@@ -773,8 +775,7 @@ void MainWindow::setKeypadVisible(bool on)
             m_keypad->move(qBound(0, saved.x(), area->width() - w), qBound(0, saved.y(), area->height() - m_keypad->height()));
         } else {
             // First time: centered above the bottom bars so it hides neither.
-            QWidget *bottom = m_execStrip->isVisible() ? static_cast<QWidget *>(m_execStrip)
-                              : m_storePicker->isVisible() ? static_cast<QWidget *>(m_storePicker)
+            QWidget *bottom = m_storePicker->isVisible() ? static_cast<QWidget *>(m_storePicker)
                               : m_encoders->isVisible() ? static_cast<QWidget *>(m_encoders)
                                                         : static_cast<QWidget *>(m_commandBar);
             m_keypad->move((area->width() - w) / 2, std::max(60, bottom->y() - m_keypad->height() - 12));
@@ -883,6 +884,7 @@ void MainWindow::showInterfaceSettings()
     auto *v = new QVBoxLayout(&d);
     auto *form = new QFormLayout;
     form->setVerticalSpacing(12);
+    form->setFieldGrowthPolicy(QFormLayout::FieldsStayAtSizeHint);   // short fields, not the dialog's width
     auto *scale = new QComboBox(&d);
     for (int pct : {90, 100, 115, 130, 150, 175})
         scale->addItem(QStringLiteral("%1%").arg(pct), pct);
@@ -903,9 +905,10 @@ void MainWindow::showInterfaceSettings()
     liveTime->setDecimals(1);
     liveTime->setSuffix(tr(" s"));
     liveTime->setValue(m_ctx->show->progFadeTime());
-    auto *liveRow = new QHBoxLayout;
+    auto *liveRow = new QHBoxLayout;   // the time, and its tick box to the right of it
+    liveRow->addWidget(liveTime);
     liveRow->addWidget(liveOn);
-    liveRow->addWidget(liveTime, 1);
+    liveRow->addStretch(1);
     form->addRow(tr("Programmer fade"), liveRow);
     auto seconds = [&d](double v) {
         auto *b = new QDoubleSpinBox(&d);
@@ -919,6 +922,8 @@ void MainWindow::showInterfaceSettings()
     auto *cueDelay = seconds(m_ctx->show->defaultCueDelay());
     form->addRow(tr("New cues: fade"), cueFade);
     form->addRow(tr("New cues: delay"), cueDelay);
+    for (QWidget *w : std::initializer_list<QWidget *>{scale, execs, encs, liveTime, cueFade, cueDelay})
+        w->setFixedWidth(110);
     v->addLayout(form);
     auto *note = new QLabel(tr("Executors per row (up to 99: 101–199, 201–299…) sets how many an executor window shows by default; encoders per page caps the encoder bar (fewer show when they don't fit). Programmer fade is how long programmer changes take while it's on (ProgFade 3 in a macro sets it too). New cues get the fade and delay set here. These are saved with the show. Interface size is for this computer (it depends on the screen) "
                              "and applies the next time you open Lumora; larger sizes suit touch screens."), &d);
@@ -1130,11 +1135,13 @@ QWidget *MainWindow::buildTopBar()
         const bool down = m_ctx->show->blackout() || m_ctx->show->grandMaster() < 0.999;
         m_pulse = down && !m_pulse;
         const QString alert = theme::programmer.name();
-        m_masterBox->setStyleSheet(
+        const QString style =
             m_pulse ? QStringLiteral("QFrame#masterBox { background: #3a2422; border: 1px solid %1; border-radius: 6px; }"
                                      "QFrame#masterBox QLabel { color: %1; }").arg(alert)
             : down  ? QStringLiteral("QFrame#masterBox { border: 1px solid #4a2b28; border-radius: 6px; }")
-                    : QStringLiteral("QFrame#masterBox { border: 1px solid transparent; border-radius: 6px; }"));
+                    : QStringLiteral("QFrame#masterBox { border: 1px solid transparent; border-radius: 6px; }");
+        if (m_masterBox->styleSheet() != style)   // restyling is costly: only when the look changes
+            m_masterBox->setStyleSheet(style);
     });
     pulse->start(650);
     connect(m_gm, &QSlider::valueChanged, this, [this](int v) {
@@ -1200,6 +1207,7 @@ bool MainWindow::saveShow(const QString &path)
     // renames it, and the top bar follows.
     show->setName(QFileInfo(p).completeBaseName());
     show->setExtra("midi", m_ctx->midi->toJson());
+    show->setExtra("effectPhases", m_ctx->engine->phasesJson());   // running playbacks carry on from here
     show->removeExtra("outputs");   // network settings stay on this computer
     QFile f(p);
     if (!f.open(QIODevice::WriteOnly)) {
@@ -1216,6 +1224,7 @@ bool MainWindow::saveShow(const QString &path)
 
 bool MainWindow::openShow(const QString &path)
 {
+    Splash::status(tr("Reading %1").arg(QFileInfo(path).fileName()));
     QFile f(path);
     if (!f.open(QIODevice::ReadOnly)) {
         QMessageBox::warning(this, tr("Couldn't open"), tr("%1: %2").arg(path, f.errorString()));
@@ -1223,11 +1232,13 @@ bool MainWindow::openShow(const QString &path)
     }
     QJsonParseError pe;
     QJsonDocument doc = QJsonDocument::fromJson(f.readAll(), &pe);
+    Splash::status(tr("Loading %1").arg(QFileInfo(path).completeBaseName()));
     QString err;
     m_loading = true;
     const bool hadOutputs = QSettings().contains("network/outputs");   // before the show adds any
     const bool ok = !doc.isNull() && m_ctx->show->fromJson(doc.object(), &err);
     if (ok) {
+        Splash::status(tr("Loading MIDI mappings"));
         m_ctx->midi->fromJson(m_ctx->show->extra("midi"));
         // Outputs are this computer's network settings. A show from before that carries some is
         // only used when this computer had none yet.
@@ -1252,6 +1263,7 @@ bool MainWindow::openShow(const QString &path)
 
 void MainWindow::newDemoShow()
 {
+    Splash::status(tr("Building the demo show"));
     m_loading = true;
     buildDemoShow(m_ctx);
     m_loading = false;
@@ -1308,8 +1320,10 @@ void MainWindow::openScreen(int n)
 void MainWindow::restoreScreens()
 {
     for (const QString &n : QSettings().value("screens/open").toStringList())
-        if (n.toInt() > 1 && n.toInt() <= kMaxScreens)
+        if (n.toInt() > 1 && n.toInt() <= kMaxScreens) {
+            Splash::status(tr("Opening screen %1").arg(n));
             openScreen(n.toInt());
+        }
     activateWindow();
 }
 
@@ -1341,6 +1355,7 @@ void MainWindow::refreshScreenButtons()
 void buildDemoShow(AppContext *ctx)
 {
     Show *s = ctx->show;
+    const Show::Batch batch(s);   // the windows see the finished show, once
     s->clearShow();
     ctx->midi->fromJson(QJsonObject());
     s->setName(QObject::tr("Demo show"));
@@ -1403,7 +1418,7 @@ void buildDemoShow(AppContext *ctx)
 
     // The standard colors as Universal color presets 1–13, then a 3200K warm white as 14.
     {
-        auto colorPreset = [&](int id, const QString &name, const LinearRgb &lin, const QColor &display) {
+        auto colorPreset = [&](int id, const QString &name, const LinearRgb &lin) {
             const double peak = std::max({lin.r, lin.g, lin.b, 1e-6});
             const double r = lin.r / peak, g = lin.g / peak, b = lin.b / peak;
             Preset p;
@@ -1417,9 +1432,9 @@ void buildDemoShow(AppContext *ctx)
         };
         const QVector<Swatch> &colors = standardColors();
         for (int i = 0; i < colors.size(); ++i)
-            colorPreset(i + 1, colors[i].name, toLinear(colors[i].color), colors[i].color);
+            colorPreset(i + 1, colors[i].name, toLinear(colors[i].color));
         const LinearRgb warm = kelvinToLinear(3200);
-        colorPreset(int(colors.size()) + 1, QStringLiteral("3200K"), warm, toDisplay(warm));
+        colorPreset(int(colors.size()) + 1, QStringLiteral("3200K"), warm);
     }
 
     // Universal Dimmer presets: blueprint lines get their level from these.
@@ -1664,21 +1679,25 @@ void buildDemoShow(AppContext *ctx)
             it.rect = QRectF(x, y, 128, 48);
             plot.items << it;
         };
-        auto icon = [&plot](int index, double x, double y, double size) {
-            const auto icons = builtinPlotIcons();
+        // Symbols from the image pool, by their built-in name.
+        auto poolSymbol = [s](const QString &key) {
+            for (const PoolImage &img : s->images())
+                if (img.builtin == key)
+                    return img.id;
+            return 0;
+        };
+        auto icon = [&plot, poolSymbol](const QString &key, double x, double y, double size) {
             PlotItem it;
             it.kind = PlotItem::Image;
-            it.image = icons[index].second;
-            it.imageName = icons[index].first;
+            it.imageId = poolSymbol(key);
             it.color = QStringLiteral("#5b6472");
             it.rect = QRectF(x, y, size, size);
             plot.items << it;
         };
-        auto truss = [&plot](double y) {
+        auto truss = [&plot, poolSymbol](double y) {
             PlotItem t;
             t.kind = PlotItem::Image;
-            t.image = builtinPlotIcons()[1].second;
-            t.imageName = QStringLiteral("Truss");
+            t.imageId = poolSymbol(QStringLiteral("truss"));
             t.color = QStringLiteral("#5b6472");
             t.rect = QRectF(0, y, 600, 16);
             plot.items << t;
@@ -1695,14 +1714,14 @@ void buildDemoShow(AppContext *ctx)
         truss(334);
         for (int i = 0; i < 8; ++i)
             fixture(1 + i, 12 + i * 74, 318, true);
-        icon(4, 280, 384, 40);   // a performer
+        icon(QStringLiteral("person"), 280, 384, 40);   // a performer
         for (int i = 0; i < 4; ++i)
             for (int c = 1; c <= 2; ++c)
                 fixture(s->parseId(QStringLiteral("%1.%2").arg(31 + i).arg(c)), 40 + i * 148 + (c - 1) * 40, 440, false, 36);
         text(QObject::tr("DOWNSTAGE"), 0, 488, 200, 13, QStringLiteral("#7d8796"));
-        icon(3, 0, 200, 40);     // speakers either side, grouped so they move together
+        icon(QStringLiteral("speaker"), 0, 200, 40);     // speakers either side, grouped so they move together
         plot.items.last().group = 1;
-        icon(3, 560, 200, 40);
+        icon(QStringLiteral("speaker"), 560, 200, 40);
         plot.items.last().group = 1;
         object(QStringLiteral("Group 1"), 640, 40);
         object(QStringLiteral("Group 2"), 640, 96);
